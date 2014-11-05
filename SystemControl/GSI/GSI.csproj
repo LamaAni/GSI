@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{61DA3F8E-30C5-4E67-AE8F-C29845807297}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GSI</RootNamespace>
+    <AssemblyName>GSI</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Cloo">
+      <HintPath>..\..\OpenCL\OpenTK.Cloo\Cloo\bin\Debug\Cloo.dll</HintPath>
+    </Reference>
+    <Reference Include="lumenera.api">
+      <HintPath>..\..\Camera\Dll\lumenera.api.dll</HintPath>
+    </Reference>
+    <Reference Include="MathNet.Numerics">
+      <HintPath>..\packages\MathNet.Numerics.3.0.2\lib\net40\MathNet.Numerics.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Camera\LumeneraControl\CameraSettings.cs" />
+    <Compile Include="Camera\LumeneraControl\CameraPreviewInfo.cs" />
+    <Compile Include="Camera\LumeneraControl\LumeneraCamera.cs" />
+    <Compile Include="Camera\ImageRecivedEventArgs.cs" />
+    <Compile Include="Camera\ICamera.cs" />
+    <Compile Include="Camera\LumeneraControl\CameraConnectionInfo.cs" />
+    <Compile Include="Camera\LumeneraControl\Lt255.cs" />
+    <Compile Include="Coading\CodeTimer.cs" />
+    <Compile Include="Coading\Extentions.cs" />
+    <Compile Include="Coading\ActionQueueExecuter.cs" />
+    <Compile Include="Coading\OrderedDictionary.cs" />
+    <Compile Include="Context\AsyncPendingEventQueue.cs" />
+    <Compile Include="Context\SpectralScan.cs" />
+    <Compile Include="Context\SpectralWorkContext.cs" />
+    <Compile Include="IP\PreviewStream.cs" />
+    <Compile Include="IP\ImageStream.cs" />
+    <Compile Include="IP\RawImageConverter.cs" />
+    <Compile Include="IP\SpectrumPreviewGenerator.cs" />
+    <Compile Include="JSON\IJsonObject.cs" />
+    <Compile Include="JSON\__Global_JSON_EXTENTIONS.cs" />
+    <Compile Include="OpenCL\ExecutingKernal.cs" />
+    <Compile Include="OpenCL\GpuTask.cs" />
+    <Compile Include="OpenCL\FFT\R2FFT.cs" />
+    <Compile Include="OpenCL\IP\MakeStack.cs" />
+    <Compile Include="OpenCL\IP\MakeImageData.cs" />
+    <Compile Include="Processing\DataProcessesor.cs" />
+    <Compile Include="Storage\Extentions.cs" />
+    <Compile Include="Storage\Spectrum\ISpectrumStreamProcedure.cs" />
+    <Compile Include="Storage\Spectrum\SpectrumStreamProcessor.cs" />
+    <Compile Include="Storage\Spectrum\SpectrumStreamReader.cs" />
+    <Compile Include="Storage\Spectrum\SpectrumStreamWorker.cs" />
+    <Compile Include="Storage\Spectrum\SpectrumStreamWriter.cs" />
+    <Compile Include="Processing\FFTProcessor.cs" />
+    <Compile Include="Processing\ImageData.cs" />
+    <Compile Include="Processing\RawImageProcessor.cs" />
+    <Compile Include="Processing\StackingCollector.cs" />
+    <Compile Include="Processing\StackingReader.cs" />
+    <Compile Include="Processing\StackingWriter.cs" />
+    <Compile Include="Processing\VectorReadyEventArgs.cs" />
+    <Compile Include="Context\SpectralContext.cs" />
+    <Compile Include="Stage\IPositionControl.cs" />
+    <Compile Include="Stage\Piror\ProScan.cs" />
+    <Compile Include="Stage\Piror\StopAtEndStageCommand.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Stage\StageCommand.cs" />
+    <Compile Include="Stage\StageServer.cs" />
+    <Compile Include="Storage\Spectrum\SpectrumStreamSettings.cs" />
+    <Compile Include="Timing\ITimeKeeper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="OpenCL\FFT\r2fft.c" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="OpenCL\IP\makeimagedata.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="OpenCL\IP\makestack.c" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

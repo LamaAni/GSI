@@ -1,0 +1,12 @@
+D:\Code\SystemControl\GSI\bin\Release\GSI.dll
+D:\Code\SystemControl\GSI\bin\Release\GSI.pdb
+D:\Code\SystemControl\GSI\bin\Release\Cloo.dll
+D:\Code\SystemControl\GSI\bin\Release\lumenera.api.dll
+D:\Code\SystemControl\GSI\bin\Release\MathNet.Numerics.dll
+D:\Code\SystemControl\GSI\bin\Release\Cloo.pdb
+D:\Code\SystemControl\GSI\bin\Release\Cloo.xml
+D:\Code\SystemControl\GSI\bin\Release\lumenera.api.xml
+D:\Code\SystemControl\GSI\bin\Release\MathNet.Numerics.xml
+D:\Code\SystemControl\GSI\obj\Release\GSI.csprojResolveAssemblyReference.cache
+D:\Code\SystemControl\GSI\obj\Release\GSI.dll
+D:\Code\SystemControl\GSI\obj\Release\GSI.pdb

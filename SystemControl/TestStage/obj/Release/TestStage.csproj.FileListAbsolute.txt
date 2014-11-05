@@ -1,0 +1,16 @@
+D:\Code\SystemControl\TestStage\bin\Release\TestForm.exe.config
+D:\Code\SystemControl\TestStage\bin\Release\TestForm.exe
+D:\Code\SystemControl\TestStage\bin\Release\TestForm.pdb
+D:\Code\SystemControl\TestStage\bin\Release\GSI.dll
+D:\Code\SystemControl\TestStage\bin\Release\lumenera.api.dll
+D:\Code\SystemControl\TestStage\bin\Release\Cloo.dll
+D:\Code\SystemControl\TestStage\bin\Release\GSI.pdb
+D:\Code\SystemControl\TestStage\bin\Release\lumenera.api.xml
+D:\Code\SystemControl\TestStage\bin\Release\Cloo.pdb
+D:\Code\SystemControl\TestStage\bin\Release\Cloo.xml
+D:\Code\SystemControl\TestStage\obj\Release\TestStage.csprojResolveAssemblyReference.cache
+D:\Code\SystemControl\TestStage\obj\Release\TestForm.Main.resources
+D:\Code\SystemControl\TestStage\obj\Release\TestForm.Properties.Resources.resources
+D:\Code\SystemControl\TestStage\obj\Release\TestStage.csproj.GenerateResource.Cache
+D:\Code\SystemControl\TestStage\obj\Release\TestForm.exe
+D:\Code\SystemControl\TestStage\obj\Release\TestForm.pdb

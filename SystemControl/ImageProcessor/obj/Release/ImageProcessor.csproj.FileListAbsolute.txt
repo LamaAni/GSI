@@ -1,0 +1,9 @@
+D:\Code\SystemControl\ImageProcessor\bin\Release\ImageProcessor.exe.config
+D:\Code\SystemControl\ImageProcessor\bin\Release\ImageProcessor.exe
+D:\Code\SystemControl\ImageProcessor\bin\Release\ImageProcessor.pdb
+D:\Code\SystemControl\ImageProcessor\obj\Release\ImageProcessor.csprojResolveAssemblyReference.cache
+D:\Code\SystemControl\ImageProcessor\obj\Release\ImageProcessor.Main.resources
+D:\Code\SystemControl\ImageProcessor\obj\Release\ImageProcessor.Properties.Resources.resources
+D:\Code\SystemControl\ImageProcessor\obj\Release\ImageProcessor.csproj.GenerateResource.Cache
+D:\Code\SystemControl\ImageProcessor\obj\Release\ImageProcessor.exe
+D:\Code\SystemControl\ImageProcessor\obj\Release\ImageProcessor.pdb

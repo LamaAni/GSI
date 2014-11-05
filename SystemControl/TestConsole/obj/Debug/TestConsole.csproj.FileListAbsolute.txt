@@ -1,0 +1,11 @@
+F:\ZS\StageControl\StageControl\TestConsole\bin\Debug\TestConsole.exe.config
+F:\ZS\StageControl\StageControl\TestConsole\bin\Debug\TestConsole.exe
+F:\ZS\StageControl\StageControl\TestConsole\bin\Debug\TestConsole.pdb
+F:\ZS\StageControl\StageControl\TestConsole\obj\Debug\TestConsole.csprojResolveAssemblyReference.cache
+F:\ZS\StageControl\StageControl\TestConsole\obj\Debug\TestConsole.exe
+F:\ZS\StageControl\StageControl\TestConsole\obj\Debug\TestConsole.pdb
+D:\Code\SystemControl\TestConsole\bin\Debug\TestConsole.exe.config
+D:\Code\SystemControl\TestConsole\bin\Debug\TestConsole.exe
+D:\Code\SystemControl\TestConsole\bin\Debug\TestConsole.pdb
+D:\Code\SystemControl\TestConsole\obj\Debug\TestConsole.exe
+D:\Code\SystemControl\TestConsole\obj\Debug\TestConsole.pdb

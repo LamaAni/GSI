@@ -1,0 +1,14 @@
+D:\Code\SystemControl\GSIControls\bin\Release\GSIControls.dll
+D:\Code\SystemControl\GSIControls\bin\Release\GSIControls.pdb
+D:\Code\SystemControl\GSIControls\bin\Release\GSI.dll
+D:\Code\SystemControl\GSIControls\bin\Release\lumenera.api.dll
+D:\Code\SystemControl\GSIControls\bin\Release\Cloo.dll
+D:\Code\SystemControl\GSIControls\bin\Release\GSI.pdb
+D:\Code\SystemControl\GSIControls\bin\Release\lumenera.api.xml
+D:\Code\SystemControl\GSIControls\bin\Release\Cloo.pdb
+D:\Code\SystemControl\GSIControls\bin\Release\Cloo.xml
+D:\Code\SystemControl\GSIControls\obj\Release\GSIControls.csprojResolveAssemblyReference.cache
+D:\Code\SystemControl\GSIControls\obj\Release\GSIControls.Camera.Lumenera.SettingsDialog.resources
+D:\Code\SystemControl\GSIControls\obj\Release\GSIControls.csproj.GenerateResource.Cache
+D:\Code\SystemControl\GSIControls\obj\Release\GSIControls.dll
+D:\Code\SystemControl\GSIControls\obj\Release\GSIControls.pdb

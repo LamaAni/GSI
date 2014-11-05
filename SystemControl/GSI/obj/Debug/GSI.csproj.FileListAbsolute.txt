@@ -1,0 +1,14 @@
+D:\Code\SystemControl\GSI\bin\Debug\GSI.dll
+D:\Code\SystemControl\GSI\bin\Debug\GSI.pdb
+D:\Code\SystemControl\GSI\bin\Debug\GSI.dll.CodeAnalysisLog.xml
+D:\Code\SystemControl\GSI\bin\Debug\GSI.dll.lastcodeanalysissucceeded
+D:\Code\SystemControl\GSI\bin\Debug\Cloo.dll
+D:\Code\SystemControl\GSI\bin\Debug\lumenera.api.dll
+D:\Code\SystemControl\GSI\bin\Debug\MathNet.Numerics.dll
+D:\Code\SystemControl\GSI\bin\Debug\Cloo.pdb
+D:\Code\SystemControl\GSI\bin\Debug\Cloo.xml
+D:\Code\SystemControl\GSI\bin\Debug\lumenera.api.xml
+D:\Code\SystemControl\GSI\bin\Debug\MathNet.Numerics.xml
+D:\Code\SystemControl\GSI\obj\Debug\GSI.dll
+D:\Code\SystemControl\GSI\obj\Debug\GSI.pdb
+D:\Code\SystemControl\GSI\obj\Debug\GSI.csprojResolveAssemblyReference.cache
