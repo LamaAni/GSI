@@ -190,7 +190,11 @@ kernel void R2FFT(
 	// Doing appodization of the matrix.
 	if (doMask == 1)
 		ApplayMask(offset, l, real, imag, mask);
-
+	
+	// added code to suppress the running of the FFT
+	// remove the comment and star from the following starred lines.
+	// *if(flase){
+	
 	// bit reorder.
 	R2Reorder(offset, l, real, imag);
 
@@ -203,7 +207,8 @@ kernel void R2FFT(
 			R2Step(offset, l, real, imag, k, levelSize, isign);
 		levelSize *= 2;
 	}
-
+	
+	// *}
 	// finished, calculating magnitude.
 	CalculateMag(offset, l, real, imag, mag);
 }
