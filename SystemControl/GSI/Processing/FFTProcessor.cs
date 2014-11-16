@@ -42,7 +42,7 @@ namespace GSI.Processing
         {
             MemoryMaxSizeInBytes = maxNumberOfBytesInMemory;
             AppodizationMask = appodizationMask;
-            DoSubstractAvarage = DoSubstractAvarage;
+            DoSubstractAvarage = doSubstractAvarage;
             zeroFillTo = source.StackSize > zeroFillTo ? source.StackSize : zeroFillTo;
             FffVectorSize = GSI.OpenCL.FFT.R2FFT.CalculateForierVectorLength(zeroFillTo);
         }

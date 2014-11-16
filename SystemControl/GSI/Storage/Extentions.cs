@@ -13,6 +13,7 @@ namespace GSI.Storage
 {
     public static class Extentions 
     {
+         const long m_maxSetLegnth = 2147483647;
         /// <summary>
         /// Extends the stream to a specific length.
         /// </summary>
@@ -22,7 +23,10 @@ namespace GSI.Storage
         {
             long curpos = strm.Position;
             long lastPos = strm.Length;
-            strm.SetLength(strm.Length + length);
+            long extendTo = lastPos;
+            extendTo += length;
+
+            strm.SetLength(extendTo);
             strm.Flush();
             if (!fillWithZeros)
             {

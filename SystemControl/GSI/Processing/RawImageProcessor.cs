@@ -54,7 +54,7 @@ namespace GSI.Processing
         /// Writes the source for the stacked image.
         /// <param name="image">The image to copy the data into.</param>
         /// </summary>
-        public ImageStream ReadToImage()
+        public ImageStream ReadToImage(Stream imgstream = null)
         {
             // the image data to be transfered into the image.
             //byte[, ,] imaged = new byte[data.Height, data.Width, data.Stride / data.Width];
@@ -69,7 +69,7 @@ namespace GSI.Processing
 
             //byte[] imagedata = new byte[Source.VectorSize * Source.NumberOfLines * Source.LineSize * GSI.OpenCL.FFT.MakeImageData.NumberOfBytesPerPixel];
             ImageStream image = new ImageStream(Source.VectorSize * Source.NumberOfLines,
-                Source.LineSize);
+                Source.LineSize, imgstream);
 
             
             float[] idata = null;

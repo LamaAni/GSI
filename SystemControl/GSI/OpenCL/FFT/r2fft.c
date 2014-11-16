@@ -193,7 +193,7 @@ kernel void R2FFT(
 	
 	// added code to suppress the running of the FFT
 	// remove the comment and star from the following starred lines.
-	// *if(flase){
+	//*if(false){
 	
 	// bit reorder.
 	R2Reorder(offset, l, real, imag);
@@ -208,7 +208,8 @@ kernel void R2FFT(
 		levelSize *= 2;
 	}
 	
-	// *}
+	//*}
+
 	// finished, calculating magnitude.
 	CalculateMag(offset, l, real, imag, mag);
 }
