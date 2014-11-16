@@ -386,11 +386,26 @@ namespace TestRun
                 barProg.Value = e.Compleated;
             };
 
-            ImageStream map = generator.ReadToImage();
+            if (System.IO.File.Exists(filename + ".imgdump.temp"))
+                System.IO.File.Delete(filename + ".imgdump.temp");
+
+            FileStream dumpStream = new FileStream(filename + ".imgdump.temp", FileMode.CreateNew);
+            ImageStream map = generator.ReadToImage(dumpStream);
 
             if (map != null)
                 map.Save(filename + ".rslt.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
 
+            if (dumpStream.CanSeek)
+                try
+                {
+                    dumpStream.Close();
+                }
+                catch
+                {
+
+                }
+            File.Delete(filename + ".imgdump.temp");
+            dumpStream.Dispose();
             reader.Dispose();
         }
 
