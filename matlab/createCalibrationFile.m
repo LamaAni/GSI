@@ -7,10 +7,10 @@ close all
 
 
 clr={'b';'g';'r'};
+fpath='G:\Measurements\';
 
 
 for t=1:3
-    fpath='D:\Measurments\20141027\';
     [fname{t},fpath]=uigetfile([fpath,'*.sdat']);
     wl(t)=str2num(cell2mat(inputdlg('Enter Wavelength [nm]',fname{t})));
     lgnd{t}=[num2str(wl(t)),' nm'];
