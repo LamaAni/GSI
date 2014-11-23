@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.progBar = new System.Windows.Forms.ProgressBar();
             this.btnCancel = new System.Windows.Forms.Button();
             this.lblProgInfo = new System.Windows.Forms.Label();
@@ -42,10 +42,14 @@
             this.btnCreatePreview = new System.Windows.Forms.Button();
             this.btnShowFile = new System.Windows.Forms.Button();
             this.btnDoForier = new System.Windows.Forms.Button();
+            this.btnValidatePreview = new System.Windows.Forms.Button();
+            this.panel4 = new System.Windows.Forms.Panel();
+            this.panel5 = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.chartSpectrum)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
+            this.panel4.SuspendLayout();
             this.SuspendLayout();
             // 
             // progBar
@@ -82,13 +86,11 @@
             // 
             // pannelImageShow
             // 
-            this.pannelImageShow.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.pannelImageShow.AutoSize = true;
-            this.pannelImageShow.Location = new System.Drawing.Point(0, 53);
+            this.pannelImageShow.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pannelImageShow.Location = new System.Drawing.Point(0, 50);
             this.pannelImageShow.Name = "pannelImageShow";
-            this.pannelImageShow.Size = new System.Drawing.Size(634, 418);
+            this.pannelImageShow.Size = new System.Drawing.Size(549, 427);
             this.pannelImageShow.TabIndex = 6;
             this.pannelImageShow.Click += new System.EventHandler(this.pannelImageShow_Click);
             this.pannelImageShow.Paint += new System.Windows.Forms.PaintEventHandler(this.pannelImageShow_Paint);
@@ -96,19 +98,19 @@
             // 
             // chartSpectrum
             // 
-            this.chartSpectrum.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            chartArea1.AxisX.MajorGrid.Enabled = false;
-            chartArea1.AxisY.MajorGrid.Enabled = false;
-            chartArea1.Name = "ChartArea1";
-            this.chartSpectrum.ChartAreas.Add(chartArea1);
-            this.chartSpectrum.Location = new System.Drawing.Point(637, 139);
+            chartArea2.AxisX.MajorGrid.Enabled = false;
+            chartArea2.AxisY.MajorGrid.Enabled = false;
+            chartArea2.Name = "ChartArea1";
+            this.chartSpectrum.ChartAreas.Add(chartArea2);
+            this.chartSpectrum.Dock = System.Windows.Forms.DockStyle.Top;
+            this.chartSpectrum.Location = new System.Drawing.Point(5, 5);
             this.chartSpectrum.Name = "chartSpectrum";
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series1.IsVisibleInLegend = false;
-            series1.Name = "Series1";
-            this.chartSpectrum.Series.Add(series1);
-            this.chartSpectrum.Size = new System.Drawing.Size(198, 220);
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series2.IsVisibleInLegend = false;
+            series2.Name = "Series1";
+            this.chartSpectrum.Series.Add(series2);
+            this.chartSpectrum.Size = new System.Drawing.Size(279, 283);
             this.chartSpectrum.TabIndex = 8;
             this.chartSpectrum.Text = "chart1";
             this.chartSpectrum.Click += new System.EventHandler(this.chartSpectrum_Click);
@@ -136,6 +138,7 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.btnValidatePreview);
             this.panel3.Controls.Add(this.btnStoreSpectrum);
             this.panel3.Controls.Add(this.btnCreatePreview);
             this.panel3.Controls.Add(this.btnShowFile);
@@ -143,12 +146,12 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel3.Location = new System.Drawing.Point(0, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(408, 29);
+            this.panel3.Size = new System.Drawing.Size(519, 29);
             this.panel3.TabIndex = 0;
             // 
             // btnStoreSpectrum
             // 
-            this.btnStoreSpectrum.Location = new System.Drawing.Point(304, 0);
+            this.btnStoreSpectrum.Location = new System.Drawing.Point(257, 0);
             this.btnStoreSpectrum.Name = "btnStoreSpectrum";
             this.btnStoreSpectrum.Size = new System.Drawing.Size(101, 29);
             this.btnStoreSpectrum.TabIndex = 13;
@@ -186,13 +189,42 @@
             this.btnDoForier.UseVisualStyleBackColor = true;
             this.btnDoForier.Click += new System.EventHandler(this.btnDoForier_Click);
             // 
+            // btnValidatePreview
+            // 
+            this.btnValidatePreview.Location = new System.Drawing.Point(415, 0);
+            this.btnValidatePreview.Name = "btnValidatePreview";
+            this.btnValidatePreview.Size = new System.Drawing.Size(101, 29);
+            this.btnValidatePreview.TabIndex = 14;
+            this.btnValidatePreview.Text = "Validate preview";
+            this.btnValidatePreview.UseVisualStyleBackColor = true;
+            this.btnValidatePreview.Click += new System.EventHandler(this.btnValidatePreview_Click);
+            // 
+            // panel4
+            // 
+            this.panel4.Controls.Add(this.panel5);
+            this.panel4.Controls.Add(this.chartSpectrum);
+            this.panel4.Dock = System.Windows.Forms.DockStyle.Right;
+            this.panel4.Location = new System.Drawing.Point(549, 50);
+            this.panel4.Name = "panel4";
+            this.panel4.Padding = new System.Windows.Forms.Padding(5);
+            this.panel4.Size = new System.Drawing.Size(289, 427);
+            this.panel4.TabIndex = 11;
+            // 
+            // panel5
+            // 
+            this.panel5.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel5.Location = new System.Drawing.Point(5, 288);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(279, 79);
+            this.panel5.TabIndex = 9;
+            // 
             // DoForierTransformDlg
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(838, 506);
-            this.Controls.Add(this.chartSpectrum);
             this.Controls.Add(this.pannelImageShow);
+            this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panel2);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -203,6 +235,7 @@
             this.panel1.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
+            this.panel4.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -222,5 +255,8 @@
         private System.Windows.Forms.Button btnCreatePreview;
         private System.Windows.Forms.Button btnShowFile;
         private System.Windows.Forms.Button btnDoForier;
+        private System.Windows.Forms.Button btnValidatePreview;
+        private System.Windows.Forms.Panel panel4;
+        private System.Windows.Forms.Panel panel5;
     }
 }

@@ -537,7 +537,7 @@ namespace GSI.IP
         /// <param name="gwidth"></param>
         /// <param name="gheight"></param>
         public void Draw(Graphics g, int x, int y, int width, int height,
-            int gx, int gy, int gwidth, int gheight)
+            int gx, int gy, int gwidth, int gheight, Action<byte[]> processImageData=null)
         {
             CodeTimer timer = new CodeTimer();
             timer.Start();
@@ -561,7 +561,11 @@ namespace GSI.IP
 
             // marke image data.
             ToImageData(imageData, ref asBinary);
-            timer.Mark("Read data");
+            timer.Mark("Make image data");
+
+            if (processImageData != null)
+                processImageData(asBinary);
+            timer.Mark("Process data");
 
             Bitmap img = new Bitmap(zw, zh, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
             BitmapData dat = img.LockBits(
@@ -631,11 +635,14 @@ namespace GSI.IP
                         maxLinesToRead;
                     ZoomStreams[curLevel - 1].ReadImageData(0, y, ZoomStreams[curLevel - 1].Width, h,
                         ref buffer, ref readbuffer);
-                    // Making the reduced.
-                    ReduceMatrixByZoomValue(buffer, ref reduced,
-                        ZoomStreams[curLevel - 1].Width, ZoomStreams[curLevel - 1].Height,
-                        ZoomStreams[curLevel].Width, ZoomStreams[curLevel].Height, 
+                    // Making the reduced matrix.
+                    // we are going to take into account only the number of lines we read.
+                    ReduceImageMatrixByAvarage(ref buffer, ref reduced,ZoomStreams[curLevel - 1].Width,h,
                         (int)ImageStream.NumberOfColorValuesInPixel);
+                    //ReduceMatrixByZoomValue(buffer, ref reduced,
+                    //    ZoomStreams[curLevel - 1].Width, h,
+                    //    ZoomStreams[curLevel].Width, ZoomStreams[curLevel].Height, 
+                    //    (int)ImageStream.NumberOfColorValuesInPixel);
 
                     // writing to stream.
                     int zh = h / ZoomRatio;
@@ -667,87 +674,207 @@ namespace GSI.IP
             return totalNumberOfLinesNeeded;
         }
 
-        private unsafe void ReduceMatrixByZoomValue(float[] source, ref float[] target,
-             int sWidth, int sHeight, int tWidth, int tHeight, int nPixVals)
+        //private unsafe void ReduceMatrixByZoomValue(float[] source, ref float[] target,
+        //     int sWidth, int sHeight, int tWidth, int tHeight, int nPixVals)
+        //{
+        //    int totalNumberOfValuesInReduced = source.Length / (ZoomRatio * ZoomRatio);
+        //    if (target == null || target.Length != totalNumberOfValuesInReduced)
+        //        target = new float[source.Length / (ZoomRatio * ZoomRatio)];
+
+        //    fixed (float* pSource = source, pTarget = target)
+        //    {
+        //        for (int y = 0; y < tHeight; y++)
+        //        {
+        //            for (int x = 0; x < tWidth; x++)
+        //            {
+        //                int sx = x * ZoomRatio;
+        //                int sy = y * ZoomRatio;
+        //                float av = 0;
+        //                int avcount = 0;
+        //                int colorOffset = 0;
+        //                for (int zx = 0; zx < ZoomRatio; zx++)
+        //                {
+        //                    for (int zy = 0; zy < ZoomRatio; zy++)
+        //                    {
+        //                        // internal zoom locations
+        //                        if (zx + sx > sWidth)
+        //                            continue;
+        //                        if (zy + sy > sHeight)
+        //                            continue;
+        //                        avcount += 1;
+        //                        int sourceIndex = (zy + sy) * sWidth * nPixVals + (zx + sx) * nPixVals;
+        //                        av = av + pSource[sourceIndex + colorOffset];
+        //                    }
+        //                }
+        //                av /= avcount;
+        //                float red = av;
+
+        //                colorOffset += 1;
+        //                avcount = 0;
+        //                av = 0;
+        //                for (int zx = 0; zx < ZoomRatio; zx++)
+        //                {
+        //                    for (int zy = 0; zy < ZoomRatio; zy++)
+        //                    {
+        //                        // internal zoom locations
+        //                        if (zx + sx > sWidth)
+        //                            continue;
+        //                        if (zy + sy > sHeight)
+        //                            continue;
+        //                        avcount += 1;
+        //                        int sourceIndex = (zy + sy) * sWidth * nPixVals + (zx + sx) * nPixVals;
+        //                        av = av + pSource[sourceIndex + colorOffset];
+        //                    }
+        //                }
+        //                av /= avcount;
+        //                float green = av;
+
+        //                colorOffset += 1;
+        //                avcount = 0;
+        //                av = 0;
+        //                for (int zx = 0; zx < ZoomRatio; zx++)
+        //                {
+        //                    for (int zy = 0; zy < ZoomRatio; zy++)
+        //                    {
+        //                        // internal zoom locations
+        //                        if (zx + sx > sWidth)
+        //                            continue;
+        //                        if (zy + sy > sHeight)
+        //                            continue;
+        //                        avcount += 1;
+        //                        int sourceIndex = (zy + sy) * sWidth * nPixVals + (zx + sx) * nPixVals;
+        //                        av = av + pSource[sourceIndex + colorOffset];
+        //                    }
+        //                }
+        //                av /= avcount;
+        //                float blue = av;
+        //                int reducedOffset = y * tWidth * nPixVals + x * nPixVals;
+        //                pTarget[reducedOffset] = red;
+        //                pTarget[reducedOffset + 1] = green;
+        //                pTarget[reducedOffset + 2] = blue;
+        //            }
+        //        }
+        //    }
+        //}
+
+        /// <summary>
+        /// Reduces the image matrix by avaraginng on the x,y axis. This procedure is done for each pixel seperatly.
+        /// </summary>
+        private unsafe void ReduceImageMatrixByAvarage(
+            ref float[] source, ref float[] reduced,
+            int width, int height,
+            int nPixVals)
         {
             int totalNumberOfValuesInReduced = source.Length / (ZoomRatio * ZoomRatio);
-            if (target == null || target.Length != totalNumberOfValuesInReduced)
-                target = new float[source.Length / (ZoomRatio * ZoomRatio)];
+            if (reduced == null || reduced.Length != totalNumberOfValuesInReduced)
+                reduced = new float[totalNumberOfValuesInReduced];
 
-            fixed (float* pSource = source, pTarget = target)
+            // We not go thrugh the lines of the source and apply these to the target. 
+            // note the offsets.
+            fixed (float* pSource = source, pTarget = reduced)
             {
-                for (int y = 0; y < tHeight; y++)
+                for (int y = 0; y < height; y += ZoomRatio)
                 {
-                    for (int x = 0; x < tWidth; x++)
+                    for (int x = 0; x < width; x += ZoomRatio)
                     {
-                        int sx = x * ZoomRatio;
-                        int sy = y * ZoomRatio;
-                        float av = 0;
-                        int avcount = 0;
-                        int colorOffset = 0;
-                        for (int zx = 0; zx < ZoomRatio; zx++)
-                        {
-                            for (int zy = 0; zy < ZoomRatio; zy++)
-                            {
-                                // internal zoom locations
-                                if (zx + sx > sWidth)
-                                    continue;
-                                if (zy + sy > sHeight)
-                                    continue;
-                                avcount += 1;
-                                int sourceIndex = (zy + sy) * sWidth * nPixVals + (zx + sx) * nPixVals;
-                                av = av + pSource[sourceIndex + colorOffset];
-                            }
-                        }
-                        av /= avcount;
-                        float red = av;
+                        // calculating the reduced positions.
+                        int reducedX = x / ZoomRatio;
+                        int reducedY = y / ZoomRatio;
 
-                        colorOffset += 1;
-                        avcount = 0;
-                        av = 0;
-                        for (int zx = 0; zx < ZoomRatio; zx++)
+                        // avaeraging on the correct pixels.
+                        for (int pvindex = 0; pvindex < nPixVals; pvindex++)// for each pixel.
                         {
-                            for (int zy = 0; zy < ZoomRatio; zy++)
+                            // since the zoom ratio set the number of reduced pixels
+                            // I can just scan by jumping over the correct pixels.
+                            float av = 0;
+                            for (int pixn = 0; pixn < ZoomRatio; pixn++)
                             {
-                                // internal zoom locations
-                                if (zx + sx > sWidth)
-                                    continue;
-                                if (zy + sy > sHeight)
-                                    continue;
-                                avcount += 1;
-                                int sourceIndex = (zy + sy) * sWidth * nPixVals + (zx + sx) * nPixVals;
-                                av = av + pSource[sourceIndex + colorOffset];
+                                int sourceIndex = (x + pixn) * nPixVals + pvindex;
+                                av += pSource[sourceIndex];
                             }
-                        }
-                        av /= avcount;
-                        float green = av;
 
-                        colorOffset += 1;
-                        avcount = 0;
-                        av = 0;
-                        for (int zx = 0; zx < ZoomRatio; zx++)
-                        {
-                            for (int zy = 0; zy < ZoomRatio; zy++)
-                            {
-                                // internal zoom locations
-                                if (zx + sx > sWidth)
-                                    continue;
-                                if (zy + sy > sHeight)
-                                    continue;
-                                avcount += 1;
-                                int sourceIndex = (zy + sy) * sWidth * nPixVals + (zx + sx) * nPixVals;
-                                av = av + pSource[sourceIndex + colorOffset];
-                            }
+                            // calculate the avarage and asssign it.
+                            av /= ZoomRatio;
+                            pTarget[reducedX + pvindex] = av;
                         }
-                        av /= avcount;
-                        float blue = av;
-                        int reducedOffset = y * tWidth * nPixVals + x * nPixVals;
-                        pTarget[reducedOffset] = red;
-                        pTarget[reducedOffset + 1] = green;
-                        pTarget[reducedOffset + 2] = blue;
                     }
                 }
             }
+
+            //fixed (float* pSource = source, pTarget = target)
+            //{
+            //    for (int y = 0; y < reducedHeight; y++)
+            //    {
+            //        for (int x = 0; x < reducedWidth; x++)
+            //        {
+            //            int sx = x * ZoomRatio;
+            //            int sy = y * ZoomRatio;
+            //            float av = 0;
+            //            int avcount = 0;
+            //            int colorOffset = 0;
+            //            for (int zx = 0; zx < ZoomRatio; zx++)
+            //            {
+            //                for (int zy = 0; zy < ZoomRatio; zy++)
+            //                {
+            //                    // internal zoom locations
+            //                    if (zx + sx > sWidth)
+            //                        continue;
+            //                    if (zy + sy > sHeight)
+            //                        continue;
+            //                    avcount += 1;
+            //                    int sourceIndex = (zy + sy) * sWidth * nPixVals + (zx + sx) * nPixVals;
+            //                    av = av + pSource[sourceIndex + colorOffset];
+            //                }
+            //            }
+            //            av /= avcount;
+            //            float red = av;
+
+            //            colorOffset += 1;
+            //            avcount = 0;
+            //            av = 0;
+            //            for (int zx = 0; zx < ZoomRatio; zx++)
+            //            {
+            //                for (int zy = 0; zy < ZoomRatio; zy++)
+            //                {
+            //                    // internal zoom locations
+            //                    if (zx + sx > sWidth)
+            //                        continue;
+            //                    if (zy + sy > sHeight)
+            //                        continue;
+            //                    avcount += 1;
+            //                    int sourceIndex = (zy + sy) * sWidth * nPixVals + (zx + sx) * nPixVals;
+            //                    av = av + pSource[sourceIndex + colorOffset];
+            //                }
+            //            }
+            //            av /= avcount;
+            //            float green = av;
+
+            //            colorOffset += 1;
+            //            avcount = 0;
+            //            av = 0;
+            //            for (int zx = 0; zx < ZoomRatio; zx++)
+            //            {
+            //                for (int zy = 0; zy < ZoomRatio; zy++)
+            //                {
+            //                    // internal zoom locations
+            //                    if (zx + sx > sWidth)
+            //                        continue;
+            //                    if (zy + sy > sHeight)
+            //                        continue;
+            //                    avcount += 1;
+            //                    int sourceIndex = (zy + sy) * sWidth * nPixVals + (zx + sx) * nPixVals;
+            //                    av = av + pSource[sourceIndex + colorOffset];
+            //                }
+            //            }
+            //            av /= avcount;
+            //            float blue = av;
+            //            int reducedOffset = y * tWidth * nPixVals + x * nPixVals;
+            //            pTarget[reducedOffset] = red;
+            //            pTarget[reducedOffset + 1] = green;
+            //            pTarget[reducedOffset + 2] = blue;
+            //        }
+            //    }
+            //}
         }
 
         #endregion

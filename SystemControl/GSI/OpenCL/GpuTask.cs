@@ -36,11 +36,11 @@ namespace GSI.OpenCL
             ComputePlatform platform = null,
             IEnumerable<ComputeDevice> devices = null)
         {
-            if(platform==null)
+            if (platform == null)
             {
-                if(ComputePlatform.Platforms.Count==0)
+                if (ComputePlatform.Platforms.Count == 0)
                     throw new Exception("No computation platforms found.");
-                platform=ComputePlatform.Platforms[0];
+                platform = ComputePlatform.Platforms[0];
             }
 
             if(devices==null)

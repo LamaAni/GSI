@@ -1,5 +1,0 @@
-F:\ZS\StageControl\StageControl\StageControl\bin\Debug\StageControl.dll
-F:\ZS\StageControl\StageControl\StageControl\obj\Debug\StageControl.dll
-F:\ZS\StageControl\StageControl\StageControl\obj\Debug\StageControl.pdb
-F:\ZS\StageControl\StageControl\StageControl\bin\Debug\StageControl.pdb
-F:\ZS\StageControl\StageControl\StageControl\obj\Debug\StageControl.csprojResolveAssemblyReference.cache
