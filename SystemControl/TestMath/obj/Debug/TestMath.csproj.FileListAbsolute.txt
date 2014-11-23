@@ -31,3 +31,6 @@ D:\Code\SystemControl\TestMath\obj\Debug\TestMath.csproj.GenerateResource.Cache
 D:\Code\SystemControl\TestMath\obj\Debug\TestMath.exe
 D:\Code\SystemControl\TestMath\obj\Debug\TestMath.pdb
 D:\Code\SystemControl\TestMath\bin\Debug\GSI.pdb
+C:\Users\Zav\Documents\GSI\SystemControl\TestMath\bin\Debug\TestMath.exe.config
+C:\Users\Zav\Documents\GSI\SystemControl\TestMath\obj\Debug\TestMath.exe
+C:\Users\Zav\Documents\GSI\SystemControl\TestMath\obj\Debug\TestMath.pdb

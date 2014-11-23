@@ -34,3 +34,6 @@ D:\Code\SystemControl\TestRun\bin\Debug\tr\ZedGraph.resources.dll
 D:\Code\SystemControl\TestRun\bin\Debug\zh-cn\ZedGraph.resources.dll
 D:\Code\SystemControl\TestRun\bin\Debug\zh-tw\ZedGraph.resources.dll
 D:\Code\SystemControl\TestRun\bin\Debug\GSI.pdb
+C:\Users\Zav\Documents\GSI\SystemControl\TestRun\bin\Debug\TestRun.exe.config
+C:\Users\Zav\Documents\GSI\SystemControl\TestRun\obj\Debug\TestRun.exe
+C:\Users\Zav\Documents\GSI\SystemControl\TestRun\obj\Debug\TestRun.pdb
