@@ -6,6 +6,7 @@ D:\Code\SystemControl\TestCamera\bin\Debug\GSIControls.dll
 D:\Code\SystemControl\TestCamera\bin\Debug\lumenera.api.dll
 D:\Code\SystemControl\TestCamera\bin\Debug\Cloo.dll
 D:\Code\SystemControl\TestCamera\bin\Debug\GSIControls.pdb
+D:\Code\SystemControl\TestCamera\bin\Debug\GSI.pdb
 D:\Code\SystemControl\TestCamera\bin\Debug\lumenera.api.xml
 D:\Code\SystemControl\TestCamera\bin\Debug\Cloo.pdb
 D:\Code\SystemControl\TestCamera\bin\Debug\Cloo.xml
@@ -15,4 +16,3 @@ D:\Code\SystemControl\TestCamera\obj\Debug\CameraTester.Properties.Resources.res
 D:\Code\SystemControl\TestCamera\obj\Debug\TestCamera.csproj.GenerateResource.Cache
 D:\Code\SystemControl\TestCamera\obj\Debug\CameraTester.exe
 D:\Code\SystemControl\TestCamera\obj\Debug\CameraTester.pdb
-D:\Code\SystemControl\TestCamera\bin\Debug\GSI.pdb

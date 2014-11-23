@@ -8,14 +8,14 @@ D:\Code\SystemControl\TestCuda\bin\Debug\Cloo.dll
 D:\Code\SystemControl\TestCuda\bin\Debug\GSI.dll
 D:\Code\SystemControl\TestCuda\bin\Debug\MathNet.Numerics.dll
 D:\Code\SystemControl\TestCuda\bin\Debug\lumenera.api.dll
+D:\Code\SystemControl\TestCuda\bin\Debug\GSI.pdb
 D:\Code\SystemControl\TestCuda\bin\Debug\Cloo.pdb
 D:\Code\SystemControl\TestCuda\bin\Debug\Cloo.xml
 D:\Code\SystemControl\TestCuda\bin\Debug\MathNet.Numerics.xml
 D:\Code\SystemControl\TestCuda\bin\Debug\lumenera.api.xml
+D:\Code\SystemControl\TestCuda\obj\Debug\TestCuda.csprojResolveAssemblyReference.cache
 D:\Code\SystemControl\TestCuda\obj\Debug\CudaTester.Main.resources
 D:\Code\SystemControl\TestCuda\obj\Debug\CudaTester.Properties.Resources.resources
 D:\Code\SystemControl\TestCuda\obj\Debug\TestCuda.csproj.GenerateResource.Cache
 D:\Code\SystemControl\TestCuda\obj\Debug\CudaTester.exe
 D:\Code\SystemControl\TestCuda\obj\Debug\CudaTester.pdb
-D:\Code\SystemControl\TestCuda\bin\Debug\GSI.pdb
-D:\Code\SystemControl\TestCuda\obj\Debug\TestCuda.csprojResolveAssemblyReference.cache

@@ -1,9 +1,9 @@
 D:\Code\SystemControl\ImageProcessor\bin\Debug\ImageProcessor.exe.config
 D:\Code\SystemControl\ImageProcessor\bin\Debug\ImageProcessor.exe
 D:\Code\SystemControl\ImageProcessor\bin\Debug\ImageProcessor.pdb
+D:\Code\SystemControl\ImageProcessor\obj\Debug\ImageProcessor.csprojResolveAssemblyReference.cache
 D:\Code\SystemControl\ImageProcessor\obj\Debug\ImageProcessor.Main.resources
 D:\Code\SystemControl\ImageProcessor\obj\Debug\ImageProcessor.Properties.Resources.resources
 D:\Code\SystemControl\ImageProcessor\obj\Debug\ImageProcessor.csproj.GenerateResource.Cache
 D:\Code\SystemControl\ImageProcessor\obj\Debug\ImageProcessor.exe
 D:\Code\SystemControl\ImageProcessor\obj\Debug\ImageProcessor.pdb
-D:\Code\SystemControl\ImageProcessor\obj\Debug\ImageProcessor.csprojResolveAssemblyReference.cache

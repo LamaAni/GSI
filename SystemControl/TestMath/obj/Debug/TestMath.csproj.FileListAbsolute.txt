@@ -20,6 +20,7 @@ D:\Code\SystemControl\TestMath\bin\Debug\lumenera.api.dll
 D:\Code\SystemControl\TestMath\bin\Debug\MathNet.Numerics.dll
 D:\Code\SystemControl\TestMath\bin\Debug\Cloo.dll
 D:\Code\SystemControl\TestMath\bin\Debug\GSIControls.pdb
+D:\Code\SystemControl\TestMath\bin\Debug\GSI.pdb
 D:\Code\SystemControl\TestMath\bin\Debug\lumenera.api.xml
 D:\Code\SystemControl\TestMath\bin\Debug\MathNet.Numerics.xml
 D:\Code\SystemControl\TestMath\bin\Debug\Cloo.pdb
@@ -30,4 +31,3 @@ D:\Code\SystemControl\TestMath\obj\Debug\TestMath.Properties.Resources.resources
 D:\Code\SystemControl\TestMath\obj\Debug\TestMath.csproj.GenerateResource.Cache
 D:\Code\SystemControl\TestMath\obj\Debug\TestMath.exe
 D:\Code\SystemControl\TestMath\obj\Debug\TestMath.pdb
-D:\Code\SystemControl\TestMath\bin\Debug\GSI.pdb

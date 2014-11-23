@@ -6,6 +6,7 @@ D:\Code\SystemControl\GSILab\bin\Debug\GSIControls.dll
 D:\Code\SystemControl\GSILab\bin\Debug\lumenera.api.dll
 D:\Code\SystemControl\GSILab\bin\Debug\Cloo.dll
 D:\Code\SystemControl\GSILab\bin\Debug\GSIControls.pdb
+D:\Code\SystemControl\GSILab\bin\Debug\GSI.pdb
 D:\Code\SystemControl\GSILab\bin\Debug\lumenera.api.xml
 D:\Code\SystemControl\GSILab\bin\Debug\Cloo.pdb
 D:\Code\SystemControl\GSILab\bin\Debug\Cloo.xml
@@ -17,4 +18,3 @@ D:\Code\SystemControl\GSILab\obj\Debug\GSILab.ToolWndStrip.ToolBoxStrip.resource
 D:\Code\SystemControl\GSILab\obj\Debug\GSILab.csproj.GenerateResource.Cache
 D:\Code\SystemControl\GSILab\obj\Debug\GSILab.exe
 D:\Code\SystemControl\GSILab\obj\Debug\GSILab.pdb
-D:\Code\SystemControl\GSILab\bin\Debug\GSI.pdb

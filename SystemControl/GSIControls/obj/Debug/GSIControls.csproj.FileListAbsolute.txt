@@ -5,12 +5,12 @@ D:\Code\SystemControl\GSIControls\bin\Debug\GSIControls.dll.lastcodeanalysissucc
 D:\Code\SystemControl\GSIControls\bin\Debug\GSI.dll
 D:\Code\SystemControl\GSIControls\bin\Debug\lumenera.api.dll
 D:\Code\SystemControl\GSIControls\bin\Debug\Cloo.dll
+D:\Code\SystemControl\GSIControls\bin\Debug\GSI.pdb
 D:\Code\SystemControl\GSIControls\bin\Debug\lumenera.api.xml
 D:\Code\SystemControl\GSIControls\bin\Debug\Cloo.pdb
 D:\Code\SystemControl\GSIControls\bin\Debug\Cloo.xml
+D:\Code\SystemControl\GSIControls\obj\Debug\GSIControls.csprojResolveAssemblyReference.cache
 D:\Code\SystemControl\GSIControls\obj\Debug\GSIControls.Camera.Lumenera.SettingsDialog.resources
 D:\Code\SystemControl\GSIControls\obj\Debug\GSIControls.csproj.GenerateResource.Cache
 D:\Code\SystemControl\GSIControls\obj\Debug\GSIControls.dll
 D:\Code\SystemControl\GSIControls\obj\Debug\GSIControls.pdb
-D:\Code\SystemControl\GSIControls\bin\Debug\GSI.pdb
-D:\Code\SystemControl\GSIControls\obj\Debug\GSIControls.csprojResolveAssemblyReference.cache

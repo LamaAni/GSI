@@ -117,13 +117,94 @@ namespace TestRun
             g.Clear(Color.Black);
             timer.Mark("Clear");
 
-            
-            img.Draw(g, 0, 0, img.Width, img.Height, gregion.X, gregion.Y, gregion.Width, gregion.Height);
+
+            img.Draw(g, 0, 0, img.Width, img.Height, gregion.X, gregion.Y, gregion.Width, gregion.Height, (data) =>
+            {
+                DoAutoLevel(ref data);
+            });
             timer.Mark("Draw");
             img.Close();
             img.Dispose();
             g.Dispose();
             lblProgInfo.Text = "Load stream: " + timer["Stream"] + ", Clear GC: " + timer["Clear"] + ", Draw: " + timer["Draw"];
+        }
+
+        unsafe void DoAutoLevel(ref byte[] data)
+        {
+            if (data.Length == 0)
+                return;
+            fixed (byte* pdata = data)
+            {
+                byte min = byte.MaxValue;
+                byte max = 0;
+                for (int i = 0; i < data.Length; i++)
+                {
+                    if (pdata[i] > max)
+                        max = pdata[i];
+                    if (pdata[i] < min)
+                        min = pdata[i];
+                }
+                if (min < 0)
+                    min = 0;
+                if (max > 255)
+                    max = 255;
+                double conversion = byte.MaxValue * 1.0 / (max - min);
+                for (int i = 0; i < data.Length; i++)
+                {
+                    double val = (pdata[i] * conversion);
+                    val = val < 0 ? 0 : val;
+                    val = val > 255 ? 255 : val;
+                    pdata[i] = (byte)val;
+                }
+            }
+        }
+
+        void ValidatePreview(string filename, bool async=true)
+        {
+            dataFilename = filename;
+            previewFilename = filename + ".prevdat";
+            if (!File.Exists(previewFilename))
+            {
+                MessageBox.Show("Preview file, " + previewFilename + " not found. Press create preview.");
+                return;
+            }
+
+            PreviewStream img = new PreviewStream(File.Open(previewFilename, FileMode.Open));
+            if (!img.IsPreviewValid)
+            {
+                MessageBox.Show("Preview is invalid. (Validate preview not run)");
+                img.Dispose();
+                return;
+            }
+
+            Action f = () =>
+            {
+                CodeTimer timer = new CodeTimer();
+                timer.Start();
+                DateTime lastUpdated = DateTime.MinValue;
+                int totalCount = img.GetNumberOfPixelsToPreviewValidate();
+                int done = 0;
+                progBar.Maximum = totalCount;
+                img.ValidatePreview((total, read) =>
+                {
+                    done += read;
+                    if ((DateTime.Now - lastUpdated).TotalSeconds >= 1)
+                    {
+                        lastUpdated = DateTime.Now;
+                        double perPoint = timer.Elapsed.TotalSeconds * 1.0 / done;
+                        TimeSpan left = TimeSpan.FromSeconds(perPoint * (totalCount - done));
+                        lblProgInfo.Text = "Creating preview, Eta: " + left.ToShortTimespanString() + " (" + done + "/" + totalCount + ")";
+                    }
+                    progBar.Value = done;
+                });
+
+                img.Close();
+                img.Dispose();
+            };
+
+            if (async)
+                Task.Run(f);
+            else f();
         }
 
         private static int GetPrecentageIndex(IEnumerable<int> hist, int fivepre)
@@ -326,22 +407,37 @@ namespace TestRun
                     new SpectrumPreviewGenerator(
                         new SpectrumStreamProcessor(
                             File.Open(filename, FileMode.Open)), previewStream);
+
                 gen.SkipOnPixelConvert = gen.Processor.Settings.FftDataSize / 20;
                 progBar.Value = 0;
                 progBar.Maximum = 1;
+                CodeTimer timer = new CodeTimer();
+                timer.Start();
+                DateTime lastUpdated = DateTime.MinValue;
                 gen.OnBlockComplete += (s, se) =>
                 {
                     if (progBar.Maximum != se.Total)
                         progBar.Maximum = se.Total;
+                    if ((DateTime.Now - lastUpdated).TotalSeconds >= 1)
+                    {
+                        lastUpdated = DateTime.Now;
+                        double perPoint = timer.Elapsed.TotalSeconds * 1.0 / se.Done;
+                        TimeSpan left = TimeSpan.FromSeconds(perPoint * (se.Total - se.Done));
+                        lblProgInfo.Text = "Creating preview, Eta: " + left.ToShortTimespanString() + " (" + se.Done + "/" + se.Total + ")";
+                    }
                     progBar.Value = se.Done;
+                    
                 };
 
                 gen.OnCompleated += (s, se) =>
                 {
                     gen.Close();
                     gen.Dispose();
+                    timer.Stop();
+                    timer = null;
                 };
 
+                lblProgInfo.Text = "Creating preview";
                 gen.Make(true);
 
                 //GSI.Storage.Spectrum.SpectrumStreamReader reader = SpectrumStreamReader.Open(filename);
@@ -403,6 +499,26 @@ namespace TestRun
             File.WriteAllText(filename, txt);
         }
 
+        private void btnValidatePreview_Click(object sender, EventArgs e)
+        {
+            string filename = "image.rawstack.sdat";
+
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.Filter = "Spectrum|*.sdat";
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                filename = dlg.FileName;
+            }
+            else
+            {
+                return;
+            }
+            Task.Run(() =>
+            {
+                ValidatePreview(filename);
+            });
+        }
+
         private void chartSpectrum_Click(object sender, EventArgs e)
         {
 
@@ -417,5 +533,6 @@ namespace TestRun
         {
 
         }
+
     }
 }
