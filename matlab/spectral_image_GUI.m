@@ -89,7 +89,7 @@ function load_btn_Callback(hObject, eventdata, handles)
 % hObject    handle to load_btn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-handles.fpath='D:\Measurments\20141027\';
+handles.fpath='G:\Measurements\';
 [handles.fname,handles.fpath]=uigetfile([handles.fpath,'*.mat'],'Load spectral image file');
 handles.filename=[handles.fpath,handles.fname];
 set(handles.txt,'string','Loading...')

@@ -8,7 +8,7 @@ f_path='G:\Measurements\';
 def_name=[spec_file(1:find(spec_file=='.',1,'first')),'mat'];
 [f_name,f_path] = uiputfile([f_path,def_name],'Save spectrum');
 
-spec=ReadSpec([f_path,spec_file]);
+spec=ReadSpecROI([f_path,spec_file]);
 calibrationCoefficient=csvread([f_path,cal_file]);
 
 chnls=1:size(spec,3);

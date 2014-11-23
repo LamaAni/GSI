@@ -1,4 +1,4 @@
-function spec=ReadSpec(fname)
+function spec=ReadSpecROI(fname)
 
 gsiasm=NET.addAssembly('D:\Code\SystemControl\GSI\bin\Debug\GSI.dll');
 reader=GSI.Storage.Spectrum.SpectrumStreamReader.Open(fname);
@@ -6,17 +6,22 @@ H=reader.Settings.Height;
 W=reader.Settings.Width;
 k=reader.Settings.FftDataSize;
 
-im_size=double(H*W);
-spec=zeros(W-1,H-1,k);
+ROI=inputdlg({'start at W=?';'lenght:';'start at H=?';'lenght:'},['W=',num2str(W),'  ,  H=',num2str(H)],[1 50;1 50;1 50;1 50],{'1','1000','1','1000'});
+initialW=str2num(ROI{1});
+newW=str2num(ROI{2});
+initialH=str2num(ROI{3});
+newH=str2num(ROI{4});
+im_size=double(newH*newW);
+spec=zeros(newW,newH,k);
 h = waitbar(0,'Loading spectrum') ;
 set(h,'Position', [345 356.25 270 76.25])
 tic
 q=0;
-for i=1:W-1
-    for j=1:H-1
+for i=0:newW-1
+    for j=0:newH-1
         q=q+1;
-        pix_spec=reader.ReadSpectrumPixel(i-1,j-1);
-        spec(i,j,:)=reshape(pix_spec.double,[1 1 k]);
+        pix_spec=reader.ReadSpectrumPixel(initialW+i,initialH+j);
+        spec(i+1,j+1,:)=reshape(pix_spec.double,[1 1 k]);
         
         if (q./100)==ceil(q./100)
             time_left=toc*(1-(q./im_size))./(q./im_size);
