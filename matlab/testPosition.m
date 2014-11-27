@@ -1,8 +1,8 @@
 clear all
 close all
-fpath='D:\Code\SystemControl\TestRun\bin\Debug\';
+fpath='\\132.70.33.111\garini\MOSHE\';
 [fname1,fpath1]=uigetfile([fpath,'\*.bmp'],'1st snapshot');
-[fname2,fpath2]=uigetfile([fpath1,'\*.bmp'],'1st snapshot');
+[fname2,fpath2]=uigetfile([fpath1,'\*.bmp'],'2nd snapshot');
 
 Snap1=double(imread([fpath1,fname1]));
 Snap1=Snap1(:,:,1);
