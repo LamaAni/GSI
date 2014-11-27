@@ -4,10 +4,10 @@
         <name>MatlabNative</name>
     </assembly>
     <members>
-        <member name="T:GSI.MatlabNative.Class1">
+        <member name="T:GSI.MatlabNative.Calibration">
             <summary>
-            The Class1 class provides a CLS compliant, Object (native) interface to the MATLAB
-            functions contained in the files:
+            The Calibration class provides a CLS compliant, Object (native) interface to the
+            MATLAB functions contained in the files:
             <newpara></newpara>
             D:\Code\matlab\FindRotationAndPixelSize.m
             <newpara></newpara>
@@ -16,36 +16,36 @@
             printdlg.m
             </summary>
             <remarks>
-            @Version 4.0
+            @Version 0.0
             </remarks>
         </member>
-        <member name="M:GSI.MatlabNative.Class1.#cctor">
+        <member name="M:GSI.MatlabNative.Calibration.#cctor">
             <summary internal= "true">
             The static constructor instantiates and initializes the MATLAB Compiler Runtime
             instance.
             </summary>
         </member>
-        <member name="M:GSI.MatlabNative.Class1.#ctor">
+        <member name="M:GSI.MatlabNative.Calibration.#ctor">
             <summary>
-            Constructs a new instance of the Class1 class.
+            Constructs a new instance of the Calibration class.
             </summary>
         </member>
-        <member name="M:GSI.MatlabNative.Class1.Finalize">
+        <member name="M:GSI.MatlabNative.Calibration.Finalize">
             <summary internal= "true">
             Class destructor called by the CLR garbage collector.
             </summary>
         </member>
-        <member name="M:GSI.MatlabNative.Class1.Dispose">
+        <member name="M:GSI.MatlabNative.Calibration.Dispose">
             <summary>
             Frees the native resources associated with this object
             </summary>
         </member>
-        <member name="M:GSI.MatlabNative.Class1.Dispose(System.Boolean)">
+        <member name="M:GSI.MatlabNative.Calibration.Dispose(System.Boolean)">
             <summary internal= "true">
             Internal dispose function
             </summary>
         </member>
-        <member name="M:GSI.MatlabNative.Class1.FindRotationAndPixelSize">
+        <member name="M:GSI.MatlabNative.Calibration.FindRotationAndPixelSize">
              <summary>
              Provides a single output, 0-input Objectinterface to the FindRotationAndPixelSize
              MATLAB function.
@@ -57,7 +57,7 @@
              <returns>An Object containing the first output argument.</returns>
             
         </member>
-        <member name="M:GSI.MatlabNative.Class1.FindRotationAndPixelSize(System.Object)">
+        <member name="M:GSI.MatlabNative.Calibration.FindRotationAndPixelSize(System.Object)">
              <summary>
              Provides a single output, 1-input Objectinterface to the FindRotationAndPixelSize
              MATLAB function.
@@ -70,7 +70,7 @@
              <returns>An Object containing the first output argument.</returns>
             
         </member>
-        <member name="M:GSI.MatlabNative.Class1.FindRotationAndPixelSize(System.Object,System.Object)">
+        <member name="M:GSI.MatlabNative.Calibration.FindRotationAndPixelSize(System.Object,System.Object)">
              <summary>
              Provides a single output, 2-input Objectinterface to the FindRotationAndPixelSize
              MATLAB function.
@@ -84,7 +84,7 @@
              <returns>An Object containing the first output argument.</returns>
             
         </member>
-        <member name="M:GSI.MatlabNative.Class1.FindRotationAndPixelSize(System.Object,System.Object,System.Object)">
+        <member name="M:GSI.MatlabNative.Calibration.FindRotationAndPixelSize(System.Object,System.Object,System.Object)">
              <summary>
              Provides a single output, 3-input Objectinterface to the FindRotationAndPixelSize
              MATLAB function.
@@ -99,7 +99,7 @@
              <returns>An Object containing the first output argument.</returns>
             
         </member>
-        <member name="M:GSI.MatlabNative.Class1.FindRotationAndPixelSize(System.Object,System.Object,System.Object,System.Object)">
+        <member name="M:GSI.MatlabNative.Calibration.FindRotationAndPixelSize(System.Object,System.Object,System.Object,System.Object)">
              <summary>
              Provides a single output, 4-input Objectinterface to the FindRotationAndPixelSize
              MATLAB function.
@@ -115,7 +115,7 @@
              <returns>An Object containing the first output argument.</returns>
             
         </member>
-        <member name="M:GSI.MatlabNative.Class1.FindRotationAndPixelSize(System.Object,System.Object,System.Object,System.Object,System.Object)">
+        <member name="M:GSI.MatlabNative.Calibration.FindRotationAndPixelSize(System.Object,System.Object,System.Object,System.Object,System.Object)">
              <summary>
              Provides a single output, 5-input Objectinterface to the FindRotationAndPixelSize
              MATLAB function.
@@ -132,7 +132,7 @@
              <returns>An Object containing the first output argument.</returns>
             
         </member>
-        <member name="M:GSI.MatlabNative.Class1.FindRotationAndPixelSize(System.Int32)">
+        <member name="M:GSI.MatlabNative.Calibration.FindRotationAndPixelSize(System.Int32)">
              <summary>
              Provides the standard 0-input Object interface to the FindRotationAndPixelSize
              MATLAB function.
@@ -146,7 +146,7 @@
              arguments.</returns>
             
         </member>
-        <member name="M:GSI.MatlabNative.Class1.FindRotationAndPixelSize(System.Int32,System.Object)">
+        <member name="M:GSI.MatlabNative.Calibration.FindRotationAndPixelSize(System.Int32,System.Object)">
              <summary>
              Provides the standard 1-input Object interface to the FindRotationAndPixelSize
              MATLAB function.
@@ -161,7 +161,7 @@
              arguments.</returns>
             
         </member>
-        <member name="M:GSI.MatlabNative.Class1.FindRotationAndPixelSize(System.Int32,System.Object,System.Object)">
+        <member name="M:GSI.MatlabNative.Calibration.FindRotationAndPixelSize(System.Int32,System.Object,System.Object)">
              <summary>
              Provides the standard 2-input Object interface to the FindRotationAndPixelSize
              MATLAB function.
@@ -177,7 +177,7 @@
              arguments.</returns>
             
         </member>
-        <member name="M:GSI.MatlabNative.Class1.FindRotationAndPixelSize(System.Int32,System.Object,System.Object,System.Object)">
+        <member name="M:GSI.MatlabNative.Calibration.FindRotationAndPixelSize(System.Int32,System.Object,System.Object,System.Object)">
              <summary>
              Provides the standard 3-input Object interface to the FindRotationAndPixelSize
              MATLAB function.
@@ -194,7 +194,7 @@
              arguments.</returns>
             
         </member>
-        <member name="M:GSI.MatlabNative.Class1.FindRotationAndPixelSize(System.Int32,System.Object,System.Object,System.Object,System.Object)">
+        <member name="M:GSI.MatlabNative.Calibration.FindRotationAndPixelSize(System.Int32,System.Object,System.Object,System.Object,System.Object)">
              <summary>
              Provides the standard 4-input Object interface to the FindRotationAndPixelSize
              MATLAB function.
@@ -212,7 +212,7 @@
              arguments.</returns>
             
         </member>
-        <member name="M:GSI.MatlabNative.Class1.FindRotationAndPixelSize(System.Int32,System.Object,System.Object,System.Object,System.Object,System.Object)">
+        <member name="M:GSI.MatlabNative.Calibration.FindRotationAndPixelSize(System.Int32,System.Object,System.Object,System.Object,System.Object,System.Object)">
              <summary>
              Provides the standard 5-input Object interface to the FindRotationAndPixelSize
              MATLAB function.
@@ -231,7 +231,7 @@
              arguments.</returns>
             
         </member>
-        <member name="M:GSI.MatlabNative.Class1.FindRotationAndPixelSize(System.Int32,System.Object[]@,System.Object[],System.Object[])">
+        <member name="M:GSI.MatlabNative.Calibration.FindRotationAndPixelSize(System.Int32,System.Object[]@,System.Object[],System.Object[])">
              <summary>
              Provides an interface for the FindRotationAndPixelSize function in which the
              input and output
@@ -250,7 +250,7 @@
              arguments</param>
             
         </member>
-        <member name="M:GSI.MatlabNative.Class1.WaitForFiguresToDie">
+        <member name="M:GSI.MatlabNative.Calibration.WaitForFiguresToDie">
              <summary>
              This method will cause a MATLAB figure window to behave as a modal dialog box.
              The method will not return until all the figure windows associated with this

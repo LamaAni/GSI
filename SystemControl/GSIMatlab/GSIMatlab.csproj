@@ -51,8 +51,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Global\MatlabAPI.cs" />
-    <Compile Include="Raw\Calibration.cs" />
     <Compile Include="Calibration\Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

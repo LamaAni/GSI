@@ -15,9 +15,9 @@ r=sqrt(x.^2 + y.^2)
 mag=r*5.5/runl
 pixsize=runl/r
 ang=atan(-y/x)
-ssize=size(Sanp1);
+ssize=size(Snap1);
 
-FindRotationAndPixelSize(Snap1(:),Snap2(:),ssize(2),100,0);
+FindRotationAndPixelSize(Snap1(:),Snap2(:),ssize(2),100,0)
 
 proj=zeros(size(Snap1,1)+abs(y),size(Snap1,2)+abs(x),3);
 

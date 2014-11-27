@@ -23,7 +23,7 @@ namespace TestMatalb
 
             MathWorks.MATLAB.NET.Arrays.MWNumericArray arr =
                 new MathWorks.MATLAB.NET.Arrays.MWNumericArray();
-            GSI.Calibration.Tests.FindRotationAndPixelSize();
+            GSI.Calibration.SpatialRotation.FindRotationAndPixelSize();
         }
     }
 }
