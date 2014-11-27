@@ -34,13 +34,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Cloo">
-      <HintPath>..\..\OpenCL\OpenTK.Cloo\Cloo\bin\Debug\Cloo.dll</HintPath>
+      <HintPath>..\..\Resources\OpenCL\Cloo\Cloo.dll</HintPath>
     </Reference>
     <Reference Include="lumenera.api">
-      <HintPath>..\..\Camera\Dll\lumenera.api.dll</HintPath>
+      <HintPath>..\..\Resources\Camera\Lumenera\lumenera.api.dll</HintPath>
     </Reference>
     <Reference Include="MathNet.Numerics">
-      <HintPath>..\packages\MathNet.Numerics.3.0.2\lib\net40\MathNet.Numerics.dll</HintPath>
+      <HintPath>..\packages\MathNet.Numerics.3.3.0\lib\net40\MathNet.Numerics.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -104,12 +104,11 @@
     <Compile Include="Timing\ITimeKeeper.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="OpenCL\FFT\r2fft.c" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="OpenCL\IP\makeimagedata.c" />
   </ItemGroup>
