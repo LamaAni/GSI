@@ -4,9 +4,9 @@
         <name>Matlab</name>
     </assembly>
     <members>
-        <member name="T:GSI.Matlab.Global">
+        <member name="T:GSI.Matlab.Class1">
             <summary>
-            The Global class provides a CLS compliant, MWArray interface to the MATLAB
+            The Class1 class provides a CLS compliant, MWArray interface to the MATLAB
             functions contained in the files:
             <newpara></newpara>
             D:\Code\matlab\FindRotationAndPixelSize.m
@@ -16,36 +16,36 @@
             printdlg.m
             </summary>
             <remarks>
-            @Version 0.0
+            @Version 4.0
             </remarks>
         </member>
-        <member name="M:GSI.Matlab.Global.#cctor">
+        <member name="M:GSI.Matlab.Class1.#cctor">
             <summary internal= "true">
             The static constructor instantiates and initializes the MATLAB Compiler Runtime
             instance.
             </summary>
         </member>
-        <member name="M:GSI.Matlab.Global.#ctor">
+        <member name="M:GSI.Matlab.Class1.#ctor">
             <summary>
-            Constructs a new instance of the Global class.
+            Constructs a new instance of the Class1 class.
             </summary>
         </member>
-        <member name="M:GSI.Matlab.Global.Finalize">
+        <member name="M:GSI.Matlab.Class1.Finalize">
             <summary internal= "true">
             Class destructor called by the CLR garbage collector.
             </summary>
         </member>
-        <member name="M:GSI.Matlab.Global.Dispose">
+        <member name="M:GSI.Matlab.Class1.Dispose">
             <summary>
             Frees the native resources associated with this object
             </summary>
         </member>
-        <member name="M:GSI.Matlab.Global.Dispose(System.Boolean)">
+        <member name="M:GSI.Matlab.Class1.Dispose(System.Boolean)">
             <summary internal= "true">
             Internal dispose function
             </summary>
         </member>
-        <member name="M:GSI.Matlab.Global.FindRotationAndPixelSize">
+        <member name="M:GSI.Matlab.Class1.FindRotationAndPixelSize">
              <summary>
              Provides a single output, 0-input MWArrayinterface to the
              FindRotationAndPixelSize MATLAB function.
@@ -57,7 +57,7 @@
              <returns>An MWArray containing the first output argument.</returns>
             
         </member>
-        <member name="M:GSI.Matlab.Global.FindRotationAndPixelSize(MathWorks.MATLAB.NET.Arrays.MWArray)">
+        <member name="M:GSI.Matlab.Class1.FindRotationAndPixelSize(MathWorks.MATLAB.NET.Arrays.MWArray)">
              <summary>
              Provides a single output, 1-input MWArrayinterface to the
              FindRotationAndPixelSize MATLAB function.
@@ -70,7 +70,7 @@
              <returns>An MWArray containing the first output argument.</returns>
             
         </member>
-        <member name="M:GSI.Matlab.Global.FindRotationAndPixelSize(MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray)">
+        <member name="M:GSI.Matlab.Class1.FindRotationAndPixelSize(MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray)">
              <summary>
              Provides a single output, 2-input MWArrayinterface to the
              FindRotationAndPixelSize MATLAB function.
@@ -84,7 +84,7 @@
              <returns>An MWArray containing the first output argument.</returns>
             
         </member>
-        <member name="M:GSI.Matlab.Global.FindRotationAndPixelSize(MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray)">
+        <member name="M:GSI.Matlab.Class1.FindRotationAndPixelSize(MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray)">
              <summary>
              Provides a single output, 3-input MWArrayinterface to the
              FindRotationAndPixelSize MATLAB function.
@@ -99,7 +99,7 @@
              <returns>An MWArray containing the first output argument.</returns>
             
         </member>
-        <member name="M:GSI.Matlab.Global.FindRotationAndPixelSize(MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray)">
+        <member name="M:GSI.Matlab.Class1.FindRotationAndPixelSize(MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray)">
              <summary>
              Provides a single output, 4-input MWArrayinterface to the
              FindRotationAndPixelSize MATLAB function.
@@ -115,7 +115,7 @@
              <returns>An MWArray containing the first output argument.</returns>
             
         </member>
-        <member name="M:GSI.Matlab.Global.FindRotationAndPixelSize(MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray)">
+        <member name="M:GSI.Matlab.Class1.FindRotationAndPixelSize(MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray)">
              <summary>
              Provides a single output, 5-input MWArrayinterface to the
              FindRotationAndPixelSize MATLAB function.
@@ -132,7 +132,7 @@
              <returns>An MWArray containing the first output argument.</returns>
             
         </member>
-        <member name="M:GSI.Matlab.Global.FindRotationAndPixelSize(System.Int32)">
+        <member name="M:GSI.Matlab.Class1.FindRotationAndPixelSize(System.Int32)">
              <summary>
              Provides the standard 0-input MWArray interface to the FindRotationAndPixelSize
              MATLAB function.
@@ -146,7 +146,7 @@
              arguments.</returns>
             
         </member>
-        <member name="M:GSI.Matlab.Global.FindRotationAndPixelSize(System.Int32,MathWorks.MATLAB.NET.Arrays.MWArray)">
+        <member name="M:GSI.Matlab.Class1.FindRotationAndPixelSize(System.Int32,MathWorks.MATLAB.NET.Arrays.MWArray)">
              <summary>
              Provides the standard 1-input MWArray interface to the FindRotationAndPixelSize
              MATLAB function.
@@ -161,7 +161,7 @@
              arguments.</returns>
             
         </member>
-        <member name="M:GSI.Matlab.Global.FindRotationAndPixelSize(System.Int32,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray)">
+        <member name="M:GSI.Matlab.Class1.FindRotationAndPixelSize(System.Int32,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray)">
              <summary>
              Provides the standard 2-input MWArray interface to the FindRotationAndPixelSize
              MATLAB function.
@@ -177,7 +177,7 @@
              arguments.</returns>
             
         </member>
-        <member name="M:GSI.Matlab.Global.FindRotationAndPixelSize(System.Int32,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray)">
+        <member name="M:GSI.Matlab.Class1.FindRotationAndPixelSize(System.Int32,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray)">
              <summary>
              Provides the standard 3-input MWArray interface to the FindRotationAndPixelSize
              MATLAB function.
@@ -194,7 +194,7 @@
              arguments.</returns>
             
         </member>
-        <member name="M:GSI.Matlab.Global.FindRotationAndPixelSize(System.Int32,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray)">
+        <member name="M:GSI.Matlab.Class1.FindRotationAndPixelSize(System.Int32,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray)">
              <summary>
              Provides the standard 4-input MWArray interface to the FindRotationAndPixelSize
              MATLAB function.
@@ -212,7 +212,7 @@
              arguments.</returns>
             
         </member>
-        <member name="M:GSI.Matlab.Global.FindRotationAndPixelSize(System.Int32,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray)">
+        <member name="M:GSI.Matlab.Class1.FindRotationAndPixelSize(System.Int32,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray)">
              <summary>
              Provides the standard 5-input MWArray interface to the FindRotationAndPixelSize
              MATLAB function.
@@ -231,7 +231,7 @@
              arguments.</returns>
             
         </member>
-        <member name="M:GSI.Matlab.Global.FindRotationAndPixelSize(System.Int32,MathWorks.MATLAB.NET.Arrays.MWArray[]@,MathWorks.MATLAB.NET.Arrays.MWArray[])">
+        <member name="M:GSI.Matlab.Class1.FindRotationAndPixelSize(System.Int32,MathWorks.MATLAB.NET.Arrays.MWArray[]@,MathWorks.MATLAB.NET.Arrays.MWArray[])">
              <summary>
              Provides an interface for the FindRotationAndPixelSize function in which the
              input and output
@@ -248,7 +248,7 @@
              <param name= "argsIn">Array of MWArray input arguments</param>
             
         </member>
-        <member name="M:GSI.Matlab.Global.WaitForFiguresToDie">
+        <member name="M:GSI.Matlab.Class1.WaitForFiguresToDie">
              <summary>
              This method will cause a MATLAB figure window to behave as a modal dialog box.
              The method will not return until all the figure windows associated with this
