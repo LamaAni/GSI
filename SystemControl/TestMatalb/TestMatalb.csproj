@@ -92,6 +92,10 @@
       <Project>{516f5606-ade9-4964-992c-9ab6cffa55dc}</Project>
       <Name>GSIMatlab</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GSI\GSI.csproj">
+      <Project>{61da3f8e-30c5-4e67-ae8f-c29845807297}</Project>
+      <Name>GSI</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
