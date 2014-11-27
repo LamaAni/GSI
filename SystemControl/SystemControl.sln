@@ -21,6 +21,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageProcessor", "ImageProc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSILab", "GSILab\GSILab.csproj", "{3BC998B5-DCFC-4598-B766-D78B1E24DCA5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSIMatlab", "GSIMatlab\GSIMatlab.csproj", "{516F5606-ADE9-4964-992C-9AB6CFFA55DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestMatalb", "TestMatalb\TestMatalb.csproj", "{943448D4-D600-4E2B-AA68-68712BCED7C0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +67,14 @@ Global
 		{3BC998B5-DCFC-4598-B766-D78B1E24DCA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3BC998B5-DCFC-4598-B766-D78B1E24DCA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3BC998B5-DCFC-4598-B766-D78B1E24DCA5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{516F5606-ADE9-4964-992C-9AB6CFFA55DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{516F5606-ADE9-4964-992C-9AB6CFFA55DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{516F5606-ADE9-4964-992C-9AB6CFFA55DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{516F5606-ADE9-4964-992C-9AB6CFFA55DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{943448D4-D600-4E2B-AA68-68712BCED7C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{943448D4-D600-4E2B-AA68-68712BCED7C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{943448D4-D600-4E2B-AA68-68712BCED7C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{943448D4-D600-4E2B-AA68-68712BCED7C0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
