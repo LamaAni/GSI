@@ -34,6 +34,7 @@ namespace TestRun
         /// The last preview image recived.
         /// </summary>
         public byte[] LastPreviewImage { get; private set; }
+        public DateTime LastPreviewTimeStamp = DateTime.Now;
 
         public Lt255 Camera { get; private set; }
         public ProScan Stage { get; private set; }
@@ -165,6 +166,28 @@ namespace TestRun
                 Camera.StopPreview();
                 btnTogglePreview.BackColor = default(Color);
             }
+        }
+
+        void SetLastPreviewData(byte[] data, DateTime stamp)
+        {
+            LastPreviewImage = data;
+            LastPreviewTimeStamp = stamp;
+        }
+
+        void WaitUntilNextPreview()
+        {
+            DateTime lastStamp = LastPreviewTimeStamp;
+            while (lastStamp >= LastPreviewTimeStamp)
+                System.Threading.Thread.Sleep(10);
+        }
+
+        byte[] CloneLastPreview()
+        {
+            if (LastPreviewImage == null)
+                return null;
+            byte[] data = new byte[LastPreviewImage.Length];
+            Buffer.BlockCopy(LastPreviewImage, 0, data, 0, data.Length);
+            return data;
         }
 
         #endregion
@@ -689,17 +712,10 @@ namespace TestRun
             {
                 filename = dlg.FileName;
             }
-            else
-                return;
+            else return;
+
             Bitmap map = new Bitmap(Camera.Settings.Width, Camera.Settings.Height);
-            for (int y = 0; y < map.Height; y++)
-            {
-                for (int x = 0; x < map.Width; x++)
-                {
-                    byte c = LastPreviewImage[y * map.Width + x];
-                    map.SetPixel(x, y, Color.FromArgb(c, c, c));
-                }
-            }
+            map.SetImageBytes(CloneLastPreview());
             map.Save(filename, System.Drawing.Imaging.ImageFormat.Bmp);
         }
 
@@ -755,6 +771,24 @@ namespace TestRun
         private void numPixelSize_Validated(object sender, EventArgs e)
         {
             UpdatePositionPixels();
+        }
+
+        private void btnCalibImageAndStage_Click(object sender, EventArgs e)
+        {
+            // assuming the current position is 0,0. doing the calibration for 100 um. 
+            Stage.SetPosition(-50, 0, false);
+            WaitUntilNextPreview();
+            byte[] imga = CloneLastPreview();
+            Stage.SetPosition(100, 0, false);
+            WaitUntilNextPreview();
+            byte[] imgb = CloneLastPreview();
+
+            double angle,pixelSize;
+            GSI.Calibration.SpatialRotation.FindRotationAndPixelSize(imga, imgb,
+                Camera.Width, 100, 0, out angle, out pixelSize);
+
+            numPixelSize.Value = pixelSize;
+            numStageAngle.Value = angle;
         }
     }
 }

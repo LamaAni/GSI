@@ -50,9 +50,8 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="lumenera.api, Version=1.1.0.0, Culture=neutral, PublicKeyToken=64c6239f4a229541, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Camera\Dll\lumenera.api.dll</HintPath>
+    <Reference Include="lumenera.api">
+      <HintPath>..\..\Resources\Camera\Lumenera\lumenera.api.dll</HintPath>
     </Reference>
     <Reference Include="MathNet.Numerics">
       <HintPath>..\packages\MathNet.Numerics.3.3.0\lib\net40\MathNet.Numerics.dll</HintPath>
@@ -70,10 +69,7 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="ZedGraph">
-      <HintPath>..\..\ZGraph\zedgraph_dll_v515\zedgraph_dll_v5.1.5\ZedGraph.dll</HintPath>
-    </Reference>
-    <Reference Include="ZedGraph.Web">
-      <HintPath>..\..\ZGraph\zedgraph_dll_v515\zedgraph_dll_v5.1.5\ZedGraph.Web.dll</HintPath>
+      <HintPath>..\..\Resources\ZedGraph\ZedGraph.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -125,6 +121,10 @@
     <ProjectReference Include="..\GSIControls\GSIControls.csproj">
       <Project>{49f62dfd-3089-4c78-b7a5-8f6881a2fd43}</Project>
       <Name>GSIControls</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GSIMatlab\GSIMatlab.csproj">
+      <Project>{516f5606-ade9-4964-992c-9ab6cffa55dc}</Project>
+      <Name>GSIMatlab</Name>
     </ProjectReference>
     <ProjectReference Include="..\GSI\GSI.csproj">
       <Project>{61da3f8e-30c5-4e67-ae8f-c29845807297}</Project>

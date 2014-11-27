@@ -28,5 +28,28 @@ namespace GSI.IP
             img.UnlockBits(data);
             return rslt;
         }
+
+        /// <summary>
+        /// Sets the entire image bytes starting at location 0, until the end of data.
+        /// </summary>
+        /// <param name="img"></param>
+        /// <param name="data"></param>
+        /// <param name="format"></param>
+        public static void SetImageBytes(this Bitmap img, byte[] data, System.Drawing.Imaging.PixelFormat format
+            = System.Drawing.Imaging.PixelFormat.Format8bppIndexed)
+        {
+            BitmapData bits = img.LockBits(new Rectangle(0, 0, img.Width, img.Height), System.Drawing.Imaging.ImageLockMode.ReadWrite,
+                 format);
+
+            if (data.Length > bits.Stride * bits.Height)
+            {
+                img.UnlockBits(bits);
+                throw new Exception("Data length is too large for image.");
+            }
+
+            Marshal.Copy(data, 0, bits.Scan0, data.Length);
+            img.UnlockBits(bits);
+
+        }
     }
 }

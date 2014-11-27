@@ -292,6 +292,9 @@ namespace GSI.Camera.LumeneraControl
         /// </summary>
         public bool IsPreviewing { get; private set; }
 
+        /// <summary>
+        /// The current pending preview captured.
+        /// </summary>
         Tuple<byte[], DateTime> _pendingPreview = null;
 
         public void StartPreview()

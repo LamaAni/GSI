@@ -86,6 +86,7 @@
             this.panel4 = new System.Windows.Forms.Panel();
             this.barProg = new System.Windows.Forms.ProgressBar();
             this.prevPannel = new GSIControls.Camera.PreviewDisplayPannel();
+            this.btnCalibImageAndStage = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.grpCommands.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -108,6 +109,7 @@
             // 
             // grpCommands
             // 
+            this.grpCommands.Controls.Add(this.btnCalibImageAndStage);
             this.grpCommands.Controls.Add(this.btnSaveSettings);
             this.grpCommands.Controls.Add(this.label10);
             this.grpCommands.Controls.Add(this.numScanSpeed);
@@ -136,7 +138,7 @@
             this.grpCommands.Controls.Add(this.btnSettings);
             this.grpCommands.Location = new System.Drawing.Point(12, 94);
             this.grpCommands.Name = "grpCommands";
-            this.grpCommands.Size = new System.Drawing.Size(181, 425);
+            this.grpCommands.Size = new System.Drawing.Size(181, 446);
             this.grpCommands.TabIndex = 1;
             this.grpCommands.TabStop = false;
             this.grpCommands.Text = "Commands";
@@ -778,6 +780,16 @@
             this.prevPannel.TabIndex = 0;
             this.prevPannel.Text = "prevPannel";
             // 
+            // btnCalibImageAndStage
+            // 
+            this.btnCalibImageAndStage.Location = new System.Drawing.Point(6, 417);
+            this.btnCalibImageAndStage.Name = "btnCalibImageAndStage";
+            this.btnCalibImageAndStage.Size = new System.Drawing.Size(168, 23);
+            this.btnCalibImageAndStage.TabIndex = 40;
+            this.btnCalibImageAndStage.Text = "Calibrate Image && Stage";
+            this.btnCalibImageAndStage.UseVisualStyleBackColor = true;
+            this.btnCalibImageAndStage.Click += new System.EventHandler(this.btnCalibImageAndStage_Click);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -864,6 +876,7 @@
         private GSIControls.General.NumericControl numEndXPix;
         private GSIControls.General.NumericControl numStartYPix;
         private GSIControls.General.NumericControl numStartXPix;
+        private System.Windows.Forms.Button btnCalibImageAndStage;
     }
 }
 
