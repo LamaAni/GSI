@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MathWorks.MATLAB.NET.Arrays;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,11 +11,28 @@ namespace GSI.Calibration
     {
         static SpatialRotation()
         {
+            _calib = new Matlab.Calibration();
         }
 
+        static Matlab.Calibration _calib = new Matlab.Calibration();
 
-        public static Tuple<double,double> FindRotationAndPixelSize()
+        /// <summary>
+        /// Returns the angle and pixels size of a set of two images.
+        /// </summary>
+        /// <returns></returns>
+        public static void FindRotationAndPixelSize(float[] imga, float[] imgb, int width, double deltaX,
+            double deltaY, out double angle, out double pixelSize)
         {
+            MWArray[] rslt = _calib.FindRotationAndPixelSize(2,
+                new MWNumericArray(imga), new MWNumericArray(imgb), width, deltaX, deltaY);
+
+            if (rslt.Length != 2)
+                throw new Exception("Not all prameters were returned from matlab");
+            if (rslt.Any(r => !r.IsNumericArray))
+                throw new Exception("All result values must be numeric");
+            angle = ((MWNumericArray)rslt)[0][0].ToScalarDouble();
+            pixelSize = ((MWNumericArray)rslt)[1][0].ToScalarDouble();
         }
+
     }
 }
