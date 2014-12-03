@@ -24,14 +24,15 @@ namespace GSI.Calibration
             double deltaY, out double angle, out double pixelSize)
         {
             MWArray[] rslt = _calib.FindRotationAndPixelSize(2,
-                new MWNumericArray(imga), new MWNumericArray(imgb), width, deltaX, deltaY);
+                new MWNumericArray(imga.Select(v=>(float)v).ToArray()),
+                new MWNumericArray(imgb.Select(v => (float)v).ToArray()), width, deltaX, deltaY);
 
             if (rslt.Length != 2)
                 throw new Exception("Not all prameters were returned from matlab");
             if (rslt.Any(r => !r.IsNumericArray))
                 throw new Exception("All result values must be numeric");
             angle = (double)rslt[0].ToArray().GetValue(0, 0);
-            pixelSize = (double)rslt[0].ToArray().GetValue(0, 0);
+            pixelSize = (double)rslt[1].ToArray().GetValue(0, 0);
         }
 
     }

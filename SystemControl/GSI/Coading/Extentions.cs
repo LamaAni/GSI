@@ -67,4 +67,10 @@ public static class GLOBAL_CODING_EXTEND
             + span.Minutes.ToString("00") + ":" + span.Seconds.ToString("00") + "."
             + (span.Milliseconds / 100).ToString("0");
     }
+
+    public static bool IsPowerOf2(this int x)
+    {
+        return (x != 0) && ((x & (x - 1)) == 0);
+    }
+
 }

@@ -14,12 +14,15 @@ namespace GSI.Storage.Spectrum
     /// </summary>
     public class SpectrumStreamSettings : IJsonObject
     {
-        public SpectrumStreamSettings(int numberOfLines, 
-            int lineSize, 
-            int vectorSize, 
-            int fftSize, 
+        public SpectrumStreamSettings(int numberOfLines,
+            int lineSize,
+            int vectorSize,
+            int fftSize,
+            int fftDataSize,
             double stepSize,
             double pixelSize,
+            double startWavelength = -1,
+            double endWavelength = -1,
             bool isDoublePrecision = false)
         {
             NumberOfLines = numberOfLines;
@@ -29,6 +32,9 @@ namespace GSI.Storage.Spectrum
             LineSize = lineSize;
             StepSizeInPixels = stepSize;
             PixelSize = pixelSize;
+            FftDataSize = fftDataSize;
+            StartWavelength = startWavelength;
+            EndWavelength = endWavelength;
         }
 
         /// <summary>
@@ -36,6 +42,8 @@ namespace GSI.Storage.Spectrum
         /// </summary>
         protected SpectrumStreamSettings()
         {
+            if (FftDataSize == 0)
+                FftDataSize = FftSize / 2;
         }
 
         #region members
@@ -68,10 +76,11 @@ namespace GSI.Storage.Spectrum
         /// </summary>
         public int FftSize { get; private set; }
 
+        [DataMember]
         /// <summary>
-        /// The size of the fft data.
+        /// The number of values in each fft vector.
         /// </summary>
-        public int FftDataSize { get { return FftSize / 2; } }
+        public int FftDataSize { get; private set; }
 
         [DataMember]
         /// <summary>
@@ -96,6 +105,18 @@ namespace GSI.Storage.Spectrum
         /// True if the current stream has double precision info.
         /// </summary>
         public bool IsDoublePrecision { get; private set; }
+
+        /// <summary>
+        /// The start wavelength that applies to the fft.
+        /// </summary>
+        [DataMember]
+        public double StartWavelength { get; set; }
+
+        /// <summary>
+        /// The end wvelength that applies to the fft.
+        /// </summary>
+        [DataMember]
+        public double EndWavelength { get; set; }
 
         /// <summary>
         /// The number of precision bytes in the stream.

@@ -28,35 +28,6 @@ namespace GSI.Storage.Spectrum
             IsAsyncStorage = doAsyncStorage;
             WriteExecuter = new ActionQueueExecuter();
             WriteExecuter.OverflowCount = 10;
-
-            //if (prevMaker == null)
-            //{
-            //    int skipLength = Settings.FftDataSize / 15;
-            //    prevMaker = (writer, count, vectors, preview) =>
-            //    {
-            //        Parallel.For(0, count, (vidx) =>
-            //        {
-            //            float av = 0;
-            //            for (int pidx = 0; pidx < Settings.VectorSize; pidx++)
-            //            {
-            //                // internal position offset.
-            //                int vecOffset = vidx * Settings.VectorSize * Settings.FftDataSize +
-            //                    pidx * Settings.FftDataSize;
-
-            //                for (int i = skipLength; i < Settings.FftDataSize; i++)
-            //                    av += vectors[vecOffset + i];
-            //                av = av / (Settings.FftDataSize - skipLength);
-
-            //                int prevOffset = vidx * Settings.VectorSize + pidx;
-
-            //                preview[prevOffset, 0] = av;
-            //                preview[prevOffset, 1] = av;
-            //                preview[prevOffset, 2] = av;
-            //            }
-            //        });
-            //    };
-            //}
-
         }
 
         #region members
@@ -161,23 +132,20 @@ namespace GSI.Storage.Spectrum
         /// <param name="vectors"></param>
         void StoreVectors(int startIndex, int count, float[] vectors)
         {
-            // getting the vectors.
-            //byte[] vec_bytes = new byte[vectors.Length * Settings.NumberOfPrecisionBytes];
-            //Buffer.BlockCopy(vectors, 0, vec_bytes, 0, vec_bytes.Length);
-
             // writing the data vectors with seek.
             int vecLengthInBytes =
                 Settings.NumberOfPrecisionBytes * Settings.VectorSize * Settings.FftDataSize;
 
             byte[] vec_bytes = new byte[vecLengthInBytes];
             float[] vec_vals=new float[vecLengthInBytes/sizeof(float)];
+
             for (int i = 0; i < count; i++)
             {
                 int x, y;
                 long offset = GetPixelFromVectorIndex(startIndex + i, out x, out y);
                 SeekToPixelPosition(offset);
 
-                // making the data.
+                // converting the data write
                 int vecOffset = i * vecLengthInBytes;
                 Buffer.BlockCopy(vectors,vecOffset,vec_vals,0,vec_bytes.Length);
                 Buffer.BlockCopy(vec_vals,0,vec_bytes,0,vec_bytes.Length);
@@ -189,31 +157,6 @@ namespace GSI.Storage.Spectrum
                 if (WriteProcedures != null && WriteProcedures.Count > 0)
                     WriteProcedures.ForEach(p => p.ProcessVectorData(this, x, y, Settings.VectorSize, vec_vals));
             }
-
-            //float[,] preview = new float[count * Settings.VectorSize, NumberOfColorValuesInPreviewPixel];
-            //PreviewFromVectors(this, count, vectors, preview);
-            //float[] prevVals = new float[preview.Length]; // total preview size.
-            
-            //Buffer.BlockCopy(preview, 0, prevVals, 0,
-            //    (int)(prevVals.Length * ImageStream.NumberOfBytesPerPixelValue));
-
-            //// writing the preview data with seek.
-            //float[] prevVec = new float[(int)(Settings.VectorSize * ImageStream.NumberOfColorValuesInPixel)];
-            //int numberOfBytesPerVector = (int)(prevVec.Length * ImageStream.NumberOfBytesPerPixelValue);
-            
-            //for (int i = 0; i < count; i++)
-            //{
-            //    int x, y;
-            //    GetNPixelOffsetFromVectorIndex(VectorsWritten + i, out x, out y);
-
-            //    int prevValsOffset = i * numberOfBytesPerVector;
-
-            //    // copy to the store vector data.
-            //    Buffer.BlockCopy(prevVals, prevValsOffset, prevVec, 0, numberOfBytesPerVector);
-
-            //    Preview.SetImageData(prevVec, x, y, Settings.VectorSize, 1);
-            //    Preview.Flush();
-            //}
         }
 
         #endregion

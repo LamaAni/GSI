@@ -241,19 +241,42 @@ namespace GSI.OpenCL.FFT
         /// <param name="dataVectorLength">The data vector length</param>
         /// <param name="real"></param>
         /// <param name="imag"></param>
-        public void Populate(int dataVectorLength, ref float[] real, ref float[] imag, ref float[] mag)
+        public  void Populate(int dataVectorLength, int dataVectorStartOffset, ref float[] real, ref float[] imag, ref float[] mag)
         {
-            for (int i = 0; i < NumberOfSamples; i++)
-            {
-                int destIndex = dataVectorLength * i;
-                int sourceIndex =  ForierVectorLength* i;
-                Array.Copy(Real, sourceIndex, real, destIndex, dataVectorLength);
-                Array.Copy(Imag, sourceIndex, imag, destIndex, dataVectorLength);
-                Array.Copy(Mag, sourceIndex, mag, destIndex, dataVectorLength);
-            }
+            PopulateSinge(dataVectorLength, dataVectorStartOffset, Real, ref real);
+            PopulateSinge(dataVectorLength, dataVectorStartOffset, Imag, ref imag);
+            PopulateSinge(dataVectorLength, dataVectorStartOffset, Mag, ref mag);
+
+            //// populating the fft vectors.
+            //for (int i = 0; i < NumberOfSamples; i++)
+            //{
+            //    int destIndex = dataVectorLength * i;
+            //    int sourceIndex =  ForierVectorLength* i;
+            //    Array.Copy(Real, sourceIndex, real, destIndex, dataVectorLength);
+            //    Array.Copy(Imag, sourceIndex, imag, destIndex, dataVectorLength);
+            //    Array.Copy(Mag, sourceIndex, mag, destIndex, dataVectorLength);
+            //}
 
             // copy the avrages. Removed due to memory errror.
             //System.Buffer.BlockCopy(Avarages, 0, avarages, 0, avarages.Length);
+        }
+
+        unsafe void PopulateSinge(int dataVectorLength, int dataVectorStartOffset, float[] source, ref float[] dest)
+        {
+            fixed(float* _source=source)
+            fixed (float* _dest = dest)
+            {
+                // populating the fft vectors.
+                for (int i = 0; i < NumberOfSamples; i++)
+                {
+                    int sourceIndex = ForierVectorLength * i;
+                    int destIndex=dataVectorLength*i;
+                    for (int j = 0; j < dataVectorLength; j++)
+                    {
+                        _dest[destIndex + j] = _source[sourceIndex + dataVectorStartOffset + j];
+                    }
+                }
+            }
         }
 
         #endregion
