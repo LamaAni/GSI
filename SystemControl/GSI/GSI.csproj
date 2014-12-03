@@ -81,8 +81,10 @@
     <Compile Include="OpenCL\IP\MakeStack.cs" />
     <Compile Include="OpenCL\IP\MakeImageData.cs" />
     <Compile Include="Processing\DataProcessesor.cs" />
+    <Compile Include="Storage\CSV\CSVMat.cs" />
     <Compile Include="Storage\Extentions.cs" />
     <Compile Include="Storage\Spectrum\ISpectrumStreamProcedure.cs" />
+    <Compile Include="Storage\Spectrum\SpectrumCalibrationInfo.cs" />
     <Compile Include="Storage\Spectrum\SpectrumStreamProcessor.cs" />
     <Compile Include="Storage\Spectrum\SpectrumStreamReader.cs" />
     <Compile Include="Storage\Spectrum\SpectrumStreamWorker.cs" />
