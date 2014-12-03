@@ -38,18 +38,25 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.btnValidatePreview = new System.Windows.Forms.Button();
             this.btnStoreSpectrum = new System.Windows.Forms.Button();
             this.btnCreatePreview = new System.Windows.Forms.Button();
             this.btnShowFile = new System.Windows.Forms.Button();
             this.btnDoForier = new System.Windows.Forms.Button();
-            this.btnValidatePreview = new System.Windows.Forms.Button();
             this.panel4 = new System.Windows.Forms.Panel();
             this.panel5 = new System.Windows.Forms.Panel();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.ddZeroFilling = new System.Windows.Forms.ComboBox();
+            this.numValidStartIndex = new GSIControls.General.NumericControl();
+            this.numValidEndIndex = new GSIControls.General.NumericControl();
+            this.btnLoadCalibration = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.chartSpectrum)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
+            this.panel5.SuspendLayout();
             this.SuspendLayout();
             // 
             // progBar
@@ -149,6 +156,16 @@
             this.panel3.Size = new System.Drawing.Size(519, 29);
             this.panel3.TabIndex = 0;
             // 
+            // btnValidatePreview
+            // 
+            this.btnValidatePreview.Location = new System.Drawing.Point(415, 0);
+            this.btnValidatePreview.Name = "btnValidatePreview";
+            this.btnValidatePreview.Size = new System.Drawing.Size(101, 29);
+            this.btnValidatePreview.TabIndex = 14;
+            this.btnValidatePreview.Text = "Validate preview";
+            this.btnValidatePreview.UseVisualStyleBackColor = true;
+            this.btnValidatePreview.Click += new System.EventHandler(this.btnValidatePreview_Click);
+            // 
             // btnStoreSpectrum
             // 
             this.btnStoreSpectrum.Location = new System.Drawing.Point(257, 0);
@@ -189,16 +206,6 @@
             this.btnDoForier.UseVisualStyleBackColor = true;
             this.btnDoForier.Click += new System.EventHandler(this.btnDoForier_Click);
             // 
-            // btnValidatePreview
-            // 
-            this.btnValidatePreview.Location = new System.Drawing.Point(415, 0);
-            this.btnValidatePreview.Name = "btnValidatePreview";
-            this.btnValidatePreview.Size = new System.Drawing.Size(101, 29);
-            this.btnValidatePreview.TabIndex = 14;
-            this.btnValidatePreview.Text = "Validate preview";
-            this.btnValidatePreview.UseVisualStyleBackColor = true;
-            this.btnValidatePreview.Click += new System.EventHandler(this.btnValidatePreview_Click);
-            // 
             // panel4
             // 
             this.panel4.Controls.Add(this.panel5);
@@ -212,11 +219,84 @@
             // 
             // panel5
             // 
+            this.panel5.Controls.Add(this.btnLoadCalibration);
+            this.panel5.Controls.Add(this.numValidEndIndex);
+            this.panel5.Controls.Add(this.numValidStartIndex);
+            this.panel5.Controls.Add(this.ddZeroFilling);
+            this.panel5.Controls.Add(this.label2);
+            this.panel5.Controls.Add(this.label1);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel5.Location = new System.Drawing.Point(5, 288);
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(279, 79);
             this.panel5.TabIndex = 9;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(3, 34);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(68, 13);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Valid Indixies";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(3, 6);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(61, 13);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "Zero Filling:";
+            // 
+            // ddZeroFilling
+            // 
+            this.ddZeroFilling.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ddZeroFilling.FormattingEnabled = true;
+            this.ddZeroFilling.Items.AddRange(new object[] {
+            "64",
+            "128",
+            "256",
+            "512"});
+            this.ddZeroFilling.Location = new System.Drawing.Point(81, 3);
+            this.ddZeroFilling.Name = "ddZeroFilling";
+            this.ddZeroFilling.Size = new System.Drawing.Size(74, 21);
+            this.ddZeroFilling.TabIndex = 2;
+            // 
+            // numValidStartIndex
+            // 
+            this.numValidStartIndex.Location = new System.Drawing.Point(81, 31);
+            this.numValidStartIndex.MaxValue = 1.7976931348623157E+308D;
+            this.numValidStartIndex.MinValue = -1.7976931348623157E+308D;
+            this.numValidStartIndex.Name = "numValidStartIndex";
+            this.numValidStartIndex.Size = new System.Drawing.Size(42, 20);
+            this.numValidStartIndex.TabIndex = 3;
+            this.numValidStartIndex.Text = "0";
+            this.numValidStartIndex.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numValidStartIndex.Units = 1D;
+            this.numValidStartIndex.Value = 0D;
+            // 
+            // numValidEndIndex
+            // 
+            this.numValidEndIndex.Location = new System.Drawing.Point(129, 31);
+            this.numValidEndIndex.MaxValue = 1.7976931348623157E+308D;
+            this.numValidEndIndex.MinValue = -1.7976931348623157E+308D;
+            this.numValidEndIndex.Name = "numValidEndIndex";
+            this.numValidEndIndex.Size = new System.Drawing.Size(47, 20);
+            this.numValidEndIndex.TabIndex = 4;
+            this.numValidEndIndex.Text = "256";
+            this.numValidEndIndex.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numValidEndIndex.Units = 1D;
+            this.numValidEndIndex.Value = 256D;
+            // 
+            // btnLoadCalibration
+            // 
+            this.btnLoadCalibration.Location = new System.Drawing.Point(182, 30);
+            this.btnLoadCalibration.Name = "btnLoadCalibration";
+            this.btnLoadCalibration.Size = new System.Drawing.Size(75, 23);
+            this.btnLoadCalibration.TabIndex = 5;
+            this.btnLoadCalibration.Text = "Load Calib";
+            this.btnLoadCalibration.UseVisualStyleBackColor = true;
             // 
             // DoForierTransformDlg
             // 
@@ -236,6 +316,8 @@
             this.panel2.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
             this.panel4.ResumeLayout(false);
+            this.panel5.ResumeLayout(false);
+            this.panel5.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -258,5 +340,11 @@
         private System.Windows.Forms.Button btnValidatePreview;
         private System.Windows.Forms.Panel panel4;
         private System.Windows.Forms.Panel panel5;
+        private System.Windows.Forms.ComboBox ddZeroFilling;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button btnLoadCalibration;
+        private GSIControls.General.NumericControl numValidEndIndex;
+        private GSIControls.General.NumericControl numValidStartIndex;
     }
 }

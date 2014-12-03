@@ -30,6 +30,7 @@
         {
             this.panel1 = new System.Windows.Forms.Panel();
             this.grpCommands = new System.Windows.Forms.GroupBox();
+            this.btnCalibImageAndStage = new System.Windows.Forms.Button();
             this.btnSaveSettings = new System.Windows.Forms.Button();
             this.label10 = new System.Windows.Forms.Label();
             this.numScanSpeed = new GSIControls.General.NumericControl();
@@ -86,7 +87,6 @@
             this.panel4 = new System.Windows.Forms.Panel();
             this.barProg = new System.Windows.Forms.ProgressBar();
             this.prevPannel = new GSIControls.Camera.PreviewDisplayPannel();
-            this.btnCalibImageAndStage = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.grpCommands.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -143,6 +143,16 @@
             this.grpCommands.TabStop = false;
             this.grpCommands.Text = "Commands";
             // 
+            // btnCalibImageAndStage
+            // 
+            this.btnCalibImageAndStage.Location = new System.Drawing.Point(6, 417);
+            this.btnCalibImageAndStage.Name = "btnCalibImageAndStage";
+            this.btnCalibImageAndStage.Size = new System.Drawing.Size(168, 23);
+            this.btnCalibImageAndStage.TabIndex = 40;
+            this.btnCalibImageAndStage.Text = "Calibrate Image && Stage";
+            this.btnCalibImageAndStage.UseVisualStyleBackColor = true;
+            this.btnCalibImageAndStage.Click += new System.EventHandler(this.btnCalibImageAndStage_Click);
+            // 
             // btnSaveSettings
             // 
             this.btnSaveSettings.Location = new System.Drawing.Point(115, 15);
@@ -187,7 +197,7 @@
             this.numStageAngle.Text = "1.55980775811216";
             this.numStageAngle.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.numStageAngle.Units = 1D;
-            this.numStageAngle.Value = 1.559807758112163D;
+            this.numStageAngle.Value = 1.55980775811216D;
             this.numStageAngle.TextChanged += new System.EventHandler(this.numStageAngle_TextChanged);
             this.numStageAngle.Validated += new System.EventHandler(this.numStageAngle_Validated);
             // 
@@ -779,16 +789,6 @@
             this.prevPannel.Size = new System.Drawing.Size(672, 441);
             this.prevPannel.TabIndex = 0;
             this.prevPannel.Text = "prevPannel";
-            // 
-            // btnCalibImageAndStage
-            // 
-            this.btnCalibImageAndStage.Location = new System.Drawing.Point(6, 417);
-            this.btnCalibImageAndStage.Name = "btnCalibImageAndStage";
-            this.btnCalibImageAndStage.Size = new System.Drawing.Size(168, 23);
-            this.btnCalibImageAndStage.TabIndex = 40;
-            this.btnCalibImageAndStage.Text = "Calibrate Image && Stage";
-            this.btnCalibImageAndStage.UseVisualStyleBackColor = true;
-            this.btnCalibImageAndStage.Click += new System.EventHandler(this.btnCalibImageAndStage_Click);
             // 
             // Main
             // 

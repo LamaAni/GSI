@@ -51,7 +51,7 @@ namespace GSI.Stage
         /// <param name="vx"></param>
         /// <param name="vy"></param>
         /// <param name="async"></param>
-        void SetSpeed(double vx, double vy, bool async);
+        void SetSpeed(double vx, double vy);
 
         /// <summary>
         /// Run through the specific path using the specified parameters.

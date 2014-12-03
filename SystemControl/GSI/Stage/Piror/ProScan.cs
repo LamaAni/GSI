@@ -297,7 +297,7 @@ namespace GSI.Stage.Piror
         /// </summary>
         /// <param name="sx">X speed</param>
         /// <param name="sy">Y speed</param>
-        public void SetSpeed(double sx, double sy, bool async = true)
+        public void SetSpeed(double sx, double sy)
         {
             // sending the command and expecting end line.
             Tuple<double, double> rotated = Rotate(sx, sy, Angle, Resolution);
@@ -313,6 +313,8 @@ namespace GSI.Stage.Piror
         {
             Tuple<double, double> rotated = Rotate(x, y, Angle, Resolution);
             Server.AppendCommand("G " + rotated.Item1 / Resolution + "," + rotated.Item2 / Resolution, 0);
+            if (!async)
+                this.WaitUntilPositionByMove(x, y);
         }
 
         /// <summary>

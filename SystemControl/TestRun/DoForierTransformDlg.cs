@@ -24,6 +24,7 @@ namespace TestRun
         public DoForierTransformDlg()
         {
             InitializeComponent();
+            ddZeroFilling.SelectedIndex = 2;
         }
 
         #region methods
@@ -314,6 +315,7 @@ namespace TestRun
                 FileStream source = File.Open(filename, FileMode.Open);
 
                 GSI.Processing.FFTProcessor gen = new GSI.Processing.FFTProcessor(source);
+                gen.SetZeroFilling(int.Parse(ddZeroFilling.SelectedItem.ToString()));
                 _genActive = gen;
                 gen.VectorComplete += (s, e) =>
                 {

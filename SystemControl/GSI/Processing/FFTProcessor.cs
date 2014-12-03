@@ -20,12 +20,14 @@ namespace GSI.Processing
         /// and/or the stacked image.
         /// </summary>
         /// <param name="source">The image source</param>
-        public FFTProcessor(Stream source, 
+        public FFTProcessor(Stream source,
             int maxNumberOfBytesInMemory = _MaxNumberOfMemoryBytesInOpenCLDevice* _MB_,
             int zeroFillTo = _DefaultZeroFillTo,
+            int fftDataOffsetIndex = 0,
+            int fftDataSize = -1,
             AppodizationMaskAlgorithem appodizationMask = AppodizationMaskAlgorithem.BlackmanHarris,
             bool doSubstractAvarage = true)
-            : this(new StackingReader(source), maxNumberOfBytesInMemory, zeroFillTo, appodizationMask, doSubstractAvarage)
+            : this(new StackingReader(source), maxNumberOfBytesInMemory, zeroFillTo, fftDataOffsetIndex, fftDataSize, appodizationMask, doSubstractAvarage)
         {
         }
 
@@ -36,6 +38,8 @@ namespace GSI.Processing
         public FFTProcessor(StackingReader source, 
             int maxNumberOfBytesInMemory = _MaxNumberOfMemoryBytesInOpenCLDevice* _MB_,
             int zeroFillTo = _DefaultZeroFillTo,
+            int fftDataOffsetIndex=0,
+            int fftDataSize=-1,
             AppodizationMaskAlgorithem appodizationMask = AppodizationMaskAlgorithem.BlackmanHarris,
             bool doSubstractAvarage = true)
             : base(source)
@@ -44,7 +48,9 @@ namespace GSI.Processing
             AppodizationMask = appodizationMask;
             DoSubstractAvarage = doSubstractAvarage;
             zeroFillTo = source.StackSize > zeroFillTo ? source.StackSize : zeroFillTo;
-            FffVectorSize = GSI.OpenCL.FFT.R2FFT.CalculateForierVectorLength(zeroFillTo);
+            SetZeroFilling(zeroFillTo);
+            FftDataOffsetIndex = fftDataOffsetIndex;
+            FftDataSize = fftDataSize;
         }
 
         #region members
@@ -52,21 +58,50 @@ namespace GSI.Processing
         /// <summary>
         /// The size of the fft vector with zero filling.
         /// </summary>
-        public int FffVectorSize { get; private set; }
+        public int FffVectorSize { get;  set; }
+
+        /// <summary>
+        /// The size in number of values of the relevant data in the fft.
+        /// </summary>
+        public int FftDataSize { get; set; }
+
+        /// <summary>
+        /// The offset in number of values from the start of the fft data to be stored.
+        /// </summary>
+        public int FftDataOffsetIndex { get; set; }
+
+        /// <summary>
+        /// The start wavelength that fits the first fft data index. ( FftDataOffsetIndex)
+        /// </summary>
+        public double StartWavelength { get; set; }
+
+        /// <summary>
+        /// The end wavelength that fits the last fft data index. ( FftDataOffsetIndex+FftDataSize)
+        /// </summary>
+        public double EndWavelength { get; set; }
 
         /// <summary>
         /// The mask algorithem to use.
         /// </summary>
-        public AppodizationMaskAlgorithem AppodizationMask { get; private set; }
+        public AppodizationMaskAlgorithem AppodizationMask { get; set; }
 
         /// <summary>
         /// Substract the avarage from the current.
         /// </summary>
-        public bool DoSubstractAvarage { get; private set; }
+        public bool DoSubstractAvarage { get; set; }
 
         #endregion
 
         #region methods
+
+        /// <summary>
+        /// Set the zero filling to fill to.
+        /// </summary>
+        /// <param name="fillTo"></param>
+        public void SetZeroFilling(int fillTo)
+        {
+            FffVectorSize = GSI.OpenCL.FFT.R2FFT.CalculateForierVectorLength(fillTo);
+        }
 
         public override int GetMaxNumberOfVectorsToLoad()
         {
@@ -131,13 +166,14 @@ namespace GSI.Processing
             float[] magRslt = null;
             byte[] writeDataBuffer = null;
 
-            int fftForierVectorReadSize = (int)Math.Floor(fft.ForierVectorLength * 1.0 / 2);
-
             CodeTimer timer = new CodeTimer();
+
+            int fftForierDataVectorSize = FftDataSize <= 0 ? (int)Math.Floor(fft.ForierVectorLength * 1.0 / 2) : FftDataSize;
 
             // creating the writer.
             SpectrumStreamSettings settings = new SpectrumStreamSettings(Source.NumberOfLines, Source.LineSize, Source.VectorSize,
-                    fft.ForierVectorLength, Source.StepSize, Source.PixelSize);
+                    fft.ForierVectorLength, fftForierDataVectorSize, Source.StepSize, Source.PixelSize, StartWavelength, EndWavelength);
+
             SpectrumStreamWriter writer = new SpectrumStreamWriter(output, settings);
             if (procedures != null)
                 writer.WriteProcedures.AddRange(procedures);
@@ -148,18 +184,19 @@ namespace GSI.Processing
             DoDataProcessing((startIndex, nread, vectors, dataVector) =>
             {
                 timer.Start();
-                int totalReadDataCount = nread * Source.VectorSize * Source.StackSize;
+                int totalNumberOfFftValues = nread * Source.VectorSize * Source.StackSize;
+                int totalNumberDataValuesToRead = nread * Source.VectorSize * fftForierDataVectorSize;
                 if (realData == null || realData.Length != nread * Source.VectorSize * Source.StackSize)
                 {
                     // the first nread must be the largest that can be.
-                    realData = new float[totalReadDataCount];
-                    imagData = new float[totalReadDataCount];
-                    realRslt = new float[nread * Source.VectorSize * fftForierVectorReadSize];
-                    imagRslt = new float[nread * Source.VectorSize * fftForierVectorReadSize];
-                    magRslt = new float[nread * Source.VectorSize * fftForierVectorReadSize];
-                    zerosVector = new float[nread * Source.VectorSize * Source.StackSize];
+                    realData = new float[totalNumberOfFftValues];
+                    imagData = new float[totalNumberOfFftValues];
+                    realRslt = new float[totalNumberDataValuesToRead];
+                    imagRslt = new float[totalNumberDataValuesToRead];
+                    magRslt = new float[totalNumberDataValuesToRead];
+                    zerosVector = new float[totalNumberOfFftValues];
                     writeDataBuffer = new byte[nread * Source.VectorSize * 
-                        fftForierVectorReadSize * settings.NumberOfPrecisionBytes];
+                        fftForierDataVectorSize * settings.NumberOfPrecisionBytes];
                 }
                 else
                 {
@@ -174,11 +211,7 @@ namespace GSI.Processing
                     return;
 
                 // reading the data into the real vector.
-                ConvertByteToFloat(ref dataVector, ref realData, 0, totalReadDataCount);
-                //Parallel.For(0, realData.Length, (i) =>
-                //{
-                //    realData[i] = (float)dataVector[i];
-                //});
+                ConvertByteToFloat(ref dataVector, ref realData, 0, totalNumberOfFftValues);
 
                 // prepares the data read.
                 timer.Mark("Prepare double data");
@@ -196,7 +229,7 @@ namespace GSI.Processing
 
                 timer.Mark("fft run");
 
-                fft.Populate(fftForierVectorReadSize, ref realRslt, ref imagRslt, ref magRslt);
+                fft.Populate(fftForierDataVectorSize, FftDataOffsetIndex, ref realRslt, ref imagRslt, ref magRslt);
 
                 timer.Mark("populate fft");
 

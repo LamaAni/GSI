@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using GSI.IP;
 
 namespace TestRun
 {
@@ -99,7 +100,7 @@ namespace TestRun
 
                 Camera.PreviewImageRecived += (s, ev) =>
                 {
-                    LastPreviewImage = ev.Data;
+                    SetLastPreviewData(ev.Data, ev.TimeStamp);
                     StringBuilder sb = new StringBuilder();
                     sb.Append(Stage.PositionX.ToString("0000000.0"));
                     sb.Append(",");
@@ -775,20 +776,27 @@ namespace TestRun
 
         private void btnCalibImageAndStage_Click(object sender, EventArgs e)
         {
-            // assuming the current position is 0,0. doing the calibration for 100 um. 
-            Stage.SetPosition(-50, 0, false);
-            WaitUntilNextPreview();
-            byte[] imga = CloneLastPreview();
-            Stage.SetPosition(100, 0, false);
-            WaitUntilNextPreview();
-            byte[] imgb = CloneLastPreview();
+            Task.Run(() =>
+            {
+                double angle, pixelSize;
+                numPixelSize.Value = 0;
+                numStageAngle.Value = 0;
+                // assuming the current position is 0,0. doing the calibration for 100 um. 
+                Stage.SetPosition(-50, 0, false);
+                WaitUntilNextPreview();
+                byte[] imga = CloneLastPreview();
+                Stage.SetPosition(50, 0, false);
+                WaitUntilNextPreview();
+                byte[] imgb = CloneLastPreview();
 
-            double angle,pixelSize;
-            GSI.Calibration.SpatialRotation.FindRotationAndPixelSize(imga, imgb,
-                Camera.Width, 100, 0, out angle, out pixelSize);
 
-            numPixelSize.Value = pixelSize;
-            numStageAngle.Value = angle;
+                GSI.Calibration.SpatialRotation.FindRotationAndPixelSize(imga, imgb,
+                    Camera.Width, 100, 0, out angle, out pixelSize);
+
+                numPixelSize.Value = pixelSize;
+                numStageAngle.Value = angle;
+                Stage.Angle = numStageAngle.Value;
+            });
         }
     }
 }
