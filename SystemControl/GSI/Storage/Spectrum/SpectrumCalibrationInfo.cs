@@ -32,10 +32,10 @@ namespace GSI.Storage.Spectrum
                 if (l.Count <4)
                     continue;
                 double parser;
-                if (l.Take(4).Any(v => !double.TryParse(v, out parser)))
+                if (l.Take(6).Any(v => !double.TryParse(v, out parser)))
                     continue;
-                double[] vals = l.Take(4).Select(v => double.Parse(v)).ToArray();
-                m_calibrationParameters[Convert.ToInt32(vals[0])] = vals.Skip(1).Take(3).ToArray();
+                double[] vals = l.Take(6).Select(v => double.Parse(v)).ToArray();
+                m_calibrationParameters[Convert.ToInt32(vals[0])] = vals.Skip(1).Take(5).ToArray();
             }
         }
 
@@ -55,6 +55,24 @@ namespace GSI.Storage.Spectrum
 
         #region methods
 
+        public Tuple<double, int>[] GetFrequenciesByIndexForZeroFill(int zerofill)
+        {
+            // the calibration coefficients.
+            double[] coef = CalibrationParametersByZeroFill[zerofill];
+
+            Tuple<double, int>[] frequencyByIndex = new Tuple<double, int>[zerofill];
+            double units = coef[1];
+            bool asWavelength=coef[0]==1;
+            for (int i = 0; i < zerofill; i++)
+            {
+                double freq=units * (coef[2] / (i + coef[3]) + coef[4]);
+                if(asWavelength)
+                    freq = 1.0 / freq;
+                frequencyByIndex[i] = new Tuple<double, int>(freq, i);
+            }
+            return frequencyByIndex;
+        }
+
         /// <summary>
         /// Calculates the start and end indices for the forier transform
         /// for the specified wavelengths. Gives the closest possible wavelength 
@@ -64,30 +82,22 @@ namespace GSI.Storage.Spectrum
         /// <param name="endWavelegth">The wavelength to end with</param>
         /// <param name="start">The values of the start index, (wavelength, index)</param>
         /// <param name="end">The values of the end index, (wavelength, index)</param>
-        public void GetWavelengthIndices(int zerofill, double startWavelength, double endWavelegth,
+        public void GetFrequencyIndices(int zerofill, double startFreq, double endFreq,
             out Tuple<double, int> start, out Tuple<double,int> end)
         {
             if (!CalibrationParametersByZeroFill.ContainsKey(zerofill))
                 throw new Exception("Cannot find appropriate zero fill. The zero fill was not defined or CSV did not contain such zero fill.");
 
             // the calibration coefficients.
-            double[] coef = CalibrationParametersByZeroFill[zerofill];
-
-            // creating the calibration map.
-            Tuple<double,int>[] wavelengthByIndex = new Tuple<double,int>[zerofill];
-            for (int i = 0; i < zerofill; i++)
-            {
-                wavelengthByIndex[i] =new Tuple<double,int>(
-                    coef[0] / (i + coef[1]) + coef[2], i);
-            }
+            Tuple<double, int>[] freqByIndex = GetFrequenciesByIndexForZeroFill(zerofill);
 
             // now convert to the closest start wavelength and end wavelengths.
-            if (startWavelength > 0)
-                start = FindClosest(startWavelength, wavelengthByIndex);
+            if (startFreq > 0)
+                start = FindClosest(startFreq, freqByIndex);
             else start = new Tuple<double, int>(0, 0);
-            if (endWavelegth > 0)
-                end = FindClosest(endWavelegth, wavelengthByIndex);
-            else end = wavelengthByIndex.Last();
+            if (endFreq > 0)
+                end = FindClosest(endFreq, freqByIndex);
+            else end = freqByIndex.Last();
         }
 
 
@@ -95,11 +105,11 @@ namespace GSI.Storage.Spectrum
         /// Helps find the closest wavelength to the requested.
         /// </summary>
         /// <param name="startWavelength"></param>
-        /// <param name="wavelengthByIndex"></param>
+        /// <param name="freqByIndex"></param>
         /// <returns></returns>
-        private static Tuple<double, int> FindClosest(double startWavelength, Tuple<double, int>[] wavelengthByIndex)
+        private static Tuple<double, int> FindClosest(double startWavelength, Tuple<double, int>[] freqByIndex)
         {
-            return wavelengthByIndex.Aggregate((a, b) =>
+            return freqByIndex.Aggregate((a, b) =>
                 Math.Abs(a.Item1 - startWavelength) < Math.Abs(b.Item1 - startWavelength) ? a : b);
         }
 
@@ -112,21 +122,20 @@ namespace GSI.Storage.Spectrum
         /// <param name="startWavelength">The start wavelength</param>
         /// <param name="endWavelegth">The end wavelegnth</param>
         public void FillSpectrumStreamSettings(SpectrumStreamSettings settings,
-            int zerofill = -1, double startWavelength = -1, double endWavelegth = -1
-            )
+            int zerofill = -1, double startWavelength = -1, double endWavelegth = -1)
         {
             Tuple<double, int> start, end;
-            GetWavelengthIndices(
+            GetFrequencyIndices(
                 zerofill < 0 ? settings.FftSize : zerofill,
-                startWavelength < 0 ? settings.StartWavelength : startWavelength,
-                endWavelegth < 0 ? settings.EndWavelength : endWavelegth,
+                startWavelength < 0 ? settings.StartFrequency : startWavelength,
+                endWavelegth < 0 ? settings.EndFrequency : endWavelegth,
                 out start, out end);
 
             // now update the settings.
-            settings.FftDataOffsetIndex = end.Item2;
-            settings.FftDataSize = start.Item2 - end.Item2;
-            settings.StartWavelength = start.Item1;
-            settings.EndWavelength = end.Item1;
+            settings.FftDataOffsetIndex = start.Item2;
+            settings.FftDataSize = end.Item2 - start.Item2;
+            settings.StartFrequency = start.Item1;
+            settings.EndFrequency = end.Item1;
         }
 
         /// <summary>

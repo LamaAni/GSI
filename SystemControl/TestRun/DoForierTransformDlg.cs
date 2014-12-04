@@ -272,7 +272,7 @@ namespace TestRun
             _spectrumXPos = (int)Math.Floor(x * previewXRatio);
             _spectrumYPos = (int)Math.Floor(y * previewXRatio);
 
-            double[][] spectrum = GetSpectrumAmplitudeForScreenXY();
+            double[][] spectrum = GetSpectrumForScreenXY();
             if (spectrum == null)
                 return;
 
@@ -280,7 +280,7 @@ namespace TestRun
                 chartSpectrum.Series[0].Points.AddXY(spectrum[i][0], spectrum[i][1]);
         }
 
-        private double[][] GetSpectrumAmplitudeForScreenXY()
+        private double[][] GetSpectrumForScreenXY()
         {
             if (_spectrumXPos < 0 || _spectrumYPos < 0)
                 return null;
@@ -294,7 +294,7 @@ namespace TestRun
 
             double maxValue = 1e10;
             double minValue = 0;
-            double[] spectrumAmp = reader.ReadSpectrumPixel<double>(_spectrumXPos, _spectrumYPos).Skip(10)
+            double[] spectrumAmp = reader.ReadSpectrumPixel<double>(_spectrumXPos, _spectrumYPos)
                 .Select(v =>
                 {
                     if (v > maxValue)
@@ -307,7 +307,8 @@ namespace TestRun
             reader.Close();
 
             // get the location wavelength
-            double[] spectrumWavelength = reader.Settings.GenerateSpectrumWavelengthAxis();
+            double[] spectrumWavelength = reader.Settings.GenerateSpectrumFrequencies()
+                .Select(f => Math.Round(100.0e9 / f) / 100).ToArray();
 
             // get the spectrum.
             double[][] spectrum = new double[spectrumAmp.Length][];
@@ -375,8 +376,7 @@ namespace TestRun
                 int zeroFill = PreferedZeroFill;
                 if(ddZeroFilling.SelectedIndex>0)
                 {
-                    zeroFill=
-                        CurrentCalibration.ElementAt(ddZeroFilling.SelectedIndex-1).Key;
+                    zeroFill = CurrentCalibration.ElementAt(ddZeroFilling.SelectedIndex - 1).Key;
                 }
 
                 GSI.Storage.Spectrum.SpectrumStreamSettings settings =
@@ -391,11 +391,11 @@ namespace TestRun
                         MessageBox.Show("In calibration mode the start wavelength and end wavelength must be value or null.");
                         return;
                     }
-                    
-                    if(numEndWavelegnth.Value>numStartWavelength.Value)
+
+                    if (numEndWavelegnth.Value > numStartWavelength.Value)
                     {
-                        settings.StartWavelength = numStartWavelength.Value;
-                        settings.EndWavelength= numEndWavelegnth.Value;
+                        settings.StartFrequency = 1.0 / (numEndWavelegnth.Value * 1e-9);
+                        settings.EndFrequency = 1.0 / (numStartWavelength.Value * 1e-9);
                     }
                     CurrentCalibration.FillSpectrumStreamSettings(settings);
                 }
@@ -505,6 +505,7 @@ namespace TestRun
                 {
                     if (progBar.Maximum != se.Total)
                         progBar.Maximum = se.Total;
+
                     if ((DateTime.Now - lastUpdated).TotalSeconds >= 1)
                     {
                         lastUpdated = DateTime.Now;
@@ -560,13 +561,12 @@ namespace TestRun
 
         private void btnStoreSpectrum_Click(object sender, EventArgs e)
         {
-            double[][] spectrum = GetSpectrumAmplitudeForScreenXY();
+            double[][] spectrum = GetSpectrumForScreenXY();
             if (spectrum == null)
             {
                 MessageBox.Show("No spectrum data selected.");
                 return;
             }
-
 
             string filename = "data.csv";
             SaveFileDialog dlg = new SaveFileDialog();
