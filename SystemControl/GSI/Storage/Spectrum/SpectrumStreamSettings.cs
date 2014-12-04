@@ -22,8 +22,8 @@ namespace GSI.Storage.Spectrum
             double pixelSize,
             int fftDataSize = -1,
             int fftDataOffsetIndex = -1,
-            double startWavelength = -1,
-            double endWavelength = -1,
+            double startFrequency = -1,
+            double endFrequency = -1,
             bool isDoublePrecision = false)
         {
             NumberOfLines = numberOfLines;
@@ -35,8 +35,8 @@ namespace GSI.Storage.Spectrum
             PixelSize = pixelSize;
             FftDataSize = fftDataSize;
             FftDataOffsetIndex = fftDataOffsetIndex;
-            StartWavelength = startWavelength;
-            EndWavelength = endWavelength;
+            StartFrequency = startFrequency;
+            EndFrequency = endFrequency;
 
             if (FftDataOffsetIndex < 0)
                 FftDataOffsetIndex = 0;
@@ -124,13 +124,13 @@ namespace GSI.Storage.Spectrum
         /// The start wavelength that applies to the fft.
         /// </summary>
         [DataMember]
-        public double StartWavelength { get; set; }
+        public double StartFrequency { get; set; }
 
         /// <summary>
         /// The end wvelength that applies to the fft.
         /// </summary>
         [DataMember]
-        public double EndWavelength { get; set; }
+        public double EndFrequency { get; set; }
 
         /// <summary>
         /// The number of precision bytes in the stream.
@@ -162,13 +162,13 @@ namespace GSI.Storage.Spectrum
         /// Generating the spectrum wavelength axis.
         /// </summary>
         /// <returns></returns>
-        public double[] GenerateSpectrumWavelengthAxis()
+        public double[] GenerateSpectrumFrequencies()
         {
             // generating the step size;
-            double step = (StartWavelength - EndWavelength) / FftDataSize;
+            double step = (EndFrequency - StartFrequency) / FftDataSize;
             double[] vals = new double[FftDataSize];
             for (int i = 0; i < vals.Length; i++)
-                vals[i] = i * step + EndWavelength;
+                vals[i] = i * step + StartFrequency;
             return vals;
         }
 
