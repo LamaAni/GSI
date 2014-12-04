@@ -25,6 +25,7 @@ namespace TestRun
         public DoForierTransformDlg()
         {
             InitializeComponent();
+            LoadCurrentCalibration();
         }
 
         #region methods
@@ -52,7 +53,7 @@ namespace TestRun
 
         private static string GetCalibrationFileName()
         {
-            return System.Reflection.Assembly.GetEntryAssembly().Location + "\\spectralcalib.csv";
+            return Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location) + "\\spectralcalib.csv";
         }
 
         #endregion
@@ -364,6 +365,8 @@ namespace TestRun
                 GSI.Processing.StackingReader reader=
                     new GSI.Processing.StackingReader(source);
 
+                reader.Initialize();
+
                 int zeroFill = PreferedZeroFill;
                 if(ddZeroFilling.SelectedIndex>0)
                 {
@@ -371,9 +374,9 @@ namespace TestRun
                         CurrentCalibration.ElementAt(ddZeroFilling.SelectedIndex-1).Key;
                 }
 
-                GSI.Storage.Spectrum.SpectrumStreamSettings settings=
+                GSI.Storage.Spectrum.SpectrumStreamSettings settings =
                     new SpectrumStreamSettings(reader.NumberOfLines, reader.LineSize, reader.VectorSize,
-                        zeroFill,reader.StepSize, reader.PixelSize);
+                        zeroFill, reader.StepSize, reader.PixelSize);
 
                 // configuring the calibration into the settings in the 
                 if (CurrentCalibration != null)
@@ -618,7 +621,7 @@ namespace TestRun
         {
             // loads a calibration file and stores this calibration file as the last loaded.
             OpenFileDialog dlg=new OpenFileDialog();
-            dlg.Filter = "CSV|.csv";
+            dlg.Filter = "CSV|*.csv";
             if(dlg.ShowDialog()!= System.Windows.Forms.DialogResult.OK)
                 return;
 

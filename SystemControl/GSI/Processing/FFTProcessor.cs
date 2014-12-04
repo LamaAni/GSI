@@ -29,6 +29,7 @@ namespace GSI.Processing
             MemoryMaxSizeInBytes = maxNumberOfBytesInMemory;
             AppodizationMask = appodizationMask;
             DoSubstractAvarage = doSubstractAvarage;
+            Settings = settings;
         }
 
         #region members

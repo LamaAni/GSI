@@ -100,7 +100,7 @@ namespace GSI.Storage.Spectrum
         private static Tuple<double, int> FindClosest(double startWavelength, Tuple<double, int>[] wavelengthByIndex)
         {
             return wavelengthByIndex.Aggregate((a, b) =>
-                Math.Abs(a.Item1 - startWavelength) > Math.Abs(b.Item1 - startWavelength) ? a : b);
+                Math.Abs(a.Item1 - startWavelength) < Math.Abs(b.Item1 - startWavelength) ? a : b);
         }
 
         /// <summary>
@@ -123,8 +123,8 @@ namespace GSI.Storage.Spectrum
                 out start, out end);
 
             // now update the settings.
-            settings.FftDataOffsetIndex = start.Item2;
-            settings.FftDataSize = end.Item2 - end.Item2;
+            settings.FftDataOffsetIndex = end.Item2;
+            settings.FftDataSize = start.Item2 - end.Item2;
             settings.StartWavelength = start.Item1;
             settings.EndWavelength = end.Item1;
         }
