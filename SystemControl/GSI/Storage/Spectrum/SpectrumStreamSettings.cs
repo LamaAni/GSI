@@ -159,6 +159,20 @@ namespace GSI.Storage.Spectrum
         #region methods
 
         /// <summary>
+        /// Generating the spectrum wavelength axis.
+        /// </summary>
+        /// <returns></returns>
+        public double[] GenerateSpectrumWavelengthAxis()
+        {
+            // generating the step size;
+            double step = (StartWavelength - EndWavelength) / FftDataSize;
+            double[] vals = new double[FftDataSize];
+            for (int i = 0; i < vals.Length; i++)
+                vals[i] = i * step + EndWavelength;
+            return vals;
+        }
+
+        /// <summary>
         /// Convert the current object to json
         /// </summary>
         /// <returns></returns>

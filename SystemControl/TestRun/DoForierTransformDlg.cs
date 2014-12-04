@@ -120,6 +120,7 @@ namespace TestRun
                 img.Dispose();
                 return;
             }
+
             timer.Mark("Stream");
             Graphics g = pannelImageShow.CreateGraphics();
             previewXRatio = img.Width * 1.0 / pannelImageShow.Width;
@@ -139,17 +140,6 @@ namespace TestRun
 
             previewXOffset = (int)(Math.Abs(img.Width / previewXRatio - pannelImageShow.Width) / 2);
             previewYOffset = (int)(Math.Abs(img.Height / previewYRatio - pannelImageShow.Height) / 2);
-            //converter.Convert((info, tile) =>
-            //{
-            //    // drawing on graphics.
-            //    Rectangle gregion = new Rectangle(
-            //        previewXOffset + (int)(info.X / previewXRatio),
-            //        previewYOffset + (int)(info.Y / previewYRatio),
-            //        (int)(info.Width / previewXRatio),
-            //        (int)(info.Height / previewYRatio)
-            //        );
-            //    g.DrawImage(tile, gregion);
-            //}, 0, 0, img.Width, img.Height);
 
             // clering..
             Rectangle gregion = new Rectangle(
@@ -158,6 +148,7 @@ namespace TestRun
                 (int)(img.Width / previewXRatio),
                 (int)(img.Height / previewYRatio)
                 );
+
             timer.Mark("Ratios");
             g.Clear(Color.Black);
             timer.Mark("Clear");
@@ -281,15 +272,15 @@ namespace TestRun
             _spectrumXPos = (int)Math.Floor(x * previewXRatio);
             _spectrumYPos = (int)Math.Floor(y * previewXRatio);
 
-            double[] spectrum = GetSpectrumFromCurrentPoint();
+            double[][] spectrum = GetSpectrumAmplitudeForScreenXY();
             if (spectrum == null)
                 return;
 
             for (int i = 0; i < spectrum.Length; i++)
-                chartSpectrum.Series[0].Points.AddXY(i, spectrum[i]);
+                chartSpectrum.Series[0].Points.AddXY(spectrum[i][0], spectrum[i][1]);
         }
 
-        private double[] GetSpectrumFromCurrentPoint()
+        private double[][] GetSpectrumAmplitudeForScreenXY()
         {
             if (_spectrumXPos < 0 || _spectrumYPos < 0)
                 return null;
@@ -303,7 +294,7 @@ namespace TestRun
 
             double maxValue = 1e10;
             double minValue = 0;
-            double[] spectrum = reader.ReadSpectrumPixel<double>(_spectrumXPos, _spectrumYPos).Skip(10)
+            double[] spectrumAmp = reader.ReadSpectrumPixel<double>(_spectrumXPos, _spectrumYPos).Skip(10)
                 .Select(v =>
                 {
                     if (v > maxValue)
@@ -312,7 +303,21 @@ namespace TestRun
                         return minValue;
                     return v;
                 }).ToArray();
+
             reader.Close();
+
+            // get the location wavelength
+            double[] spectrumWavelength = reader.Settings.GenerateSpectrumWavelengthAxis();
+
+            // get the spectrum.
+            double[][] spectrum = new double[spectrumAmp.Length][];
+            for (int i = 0; i < spectrumAmp.Length; i++)
+            {
+                spectrum[i] = new double[2];
+                spectrum[i][0] = spectrumWavelength[i];
+                spectrum[i][1] = spectrumAmp[i];
+            }
+
             return spectrum;
         }
 
@@ -432,7 +437,6 @@ namespace TestRun
 
         private void btnShowFile_Click(object sender, EventArgs e)
         {
-
 
             string filename = "image.rawstack.sdat";
 
@@ -556,7 +560,7 @@ namespace TestRun
 
         private void btnStoreSpectrum_Click(object sender, EventArgs e)
         {
-            double[] spectrum = GetSpectrumFromCurrentPoint();
+            double[][] spectrum = GetSpectrumAmplitudeForScreenXY();
             if (spectrum == null)
             {
                 MessageBox.Show("No spectrum data selected.");
@@ -576,8 +580,9 @@ namespace TestRun
                 return;
             }
             string txt = string.Join("\n",
-                new string[] { _spectrumXPos.ToString(), _spectrumYPos.ToString() }.Concat(
-                spectrum.Select(v => v.ToString())).ToArray());
+                new string[] { _spectrumXPos.ToString(), _spectrumYPos.ToString() }
+                .Concat(spectrum
+                .Select(v => string.Join(",", v.Select(iv => iv.ToString()).ToArray())).ToArray()));
 
             File.WriteAllText(filename, txt);
         }
