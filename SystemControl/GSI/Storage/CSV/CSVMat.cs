@@ -10,7 +10,7 @@ namespace GSI.Storage.CSV
     /// Createds an in memory representation of a csv file.
     /// Dose not require full lines. 
     /// </summary>
-    public class CSVMat
+    public class CSVMat : IEnumerable<List<string>>
     {
         public CSVMat(string source = "")
         {
@@ -51,6 +51,23 @@ namespace GSI.Storage.CSV
                     m_data[row].Add(null);
 
                 m_data[row][col] = value;
+            }
+        }
+
+        /// <summary>
+        /// The row associated with the calibration.
+        /// </summary>
+        /// <param name="row"></param>
+        /// <returns></returns>
+        public List<string> this[int row]
+        {
+            get
+            {
+                if (m_data.Count <= row)
+                {
+                    m_data.Add(new List<string>());
+                }
+                return m_data[row];
             }
         }
 
@@ -96,5 +113,15 @@ namespace GSI.Storage.CSV
             return new CSVMat(source);
         }
         #endregion
+
+        public IEnumerator<List<string>> GetEnumerator()
+        {
+            return m_data.GetEnumerator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
     }
 }

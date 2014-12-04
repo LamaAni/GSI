@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using GSI.Storage;
 using GSI.Storage.Spectrum;
 using GSI.Coding;
+using GSI.Storage.CSV;
 
 namespace TestRun
 {
@@ -24,7 +25,6 @@ namespace TestRun
         public DoForierTransformDlg()
         {
             InitializeComponent();
-            ddZeroFilling.SelectedIndex = 2;
         }
 
         #region methods
@@ -44,6 +44,49 @@ namespace TestRun
                 _genActive = null;
             }
             Hide();
+        }
+
+        #endregion
+
+        #region static methods
+
+        private static string GetCalibrationFileName()
+        {
+            return System.Reflection.Assembly.GetEntryAssembly().Location + "\\spectralcalib.csv";
+        }
+
+        #endregion
+
+        #region calibration
+
+        public GSI.Storage.Spectrum.SpectrumCalibrationInfo CurrentCalibration { get; private set; }
+        public const int PreferedZeroFill = 256;
+        public void LoadCurrentCalibration()
+        {
+            ddZeroFilling.Items.Clear();
+            ddZeroFilling.Items.Add("No Calibration - full spectrum (ignore wavelengths)");
+            // loading teh current calibration.
+            if (!File.Exists(GetCalibrationFileName()))
+            {
+                CurrentCalibration = null;
+                ddZeroFilling.SelectedIndex = 0;
+                return;
+            }
+
+            // getting the current calibration.
+            CurrentCalibration = new SpectrumCalibrationInfo(File.ReadAllText(GetCalibrationFileName()));
+            bool indexSelected=false;
+            foreach (var kvp in CurrentCalibration)
+            {
+                ddZeroFilling.Items.Add("To " + kvp.Key.ToString());
+                if (kvp.Key == PreferedZeroFill)
+                {
+                    indexSelected = true;
+                    ddZeroFilling.SelectedIndex = ddZeroFilling.Items.Count - 1;
+                }
+            }
+            if (!indexSelected && ddZeroFilling.Items.Count > 1)
+                ddZeroFilling.SelectedIndex = 1;
         }
 
         #endregion
@@ -274,6 +317,11 @@ namespace TestRun
 
         #endregion
 
+        /// <summary>
+        /// Run the forier transform.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="ev"></param>
         private void btnDoForier_Click(object sender, EventArgs ev)
         {
             CallDoForier();
@@ -313,9 +361,39 @@ namespace TestRun
                 string targetName = filename + ".forier.sdat";
 
                 FileStream source = File.Open(filename, FileMode.Open);
+                GSI.Processing.StackingReader reader=
+                    new GSI.Processing.StackingReader(source);
 
-                GSI.Processing.FFTProcessor gen = new GSI.Processing.FFTProcessor(source);
-                gen.SetZeroFilling(int.Parse(ddZeroFilling.SelectedItem.ToString()));
+                int zeroFill = PreferedZeroFill;
+                if(ddZeroFilling.SelectedIndex>0)
+                {
+                    zeroFill=
+                        CurrentCalibration.ElementAt(ddZeroFilling.SelectedIndex-1).Key;
+                }
+
+                GSI.Storage.Spectrum.SpectrumStreamSettings settings=
+                    new SpectrumStreamSettings(reader.NumberOfLines, reader.LineSize, reader.VectorSize,
+                        zeroFill,reader.StepSize, reader.PixelSize);
+
+                // configuring the calibration into the settings in the 
+                if (CurrentCalibration != null)
+                {
+                    if(!(numEndWavelegnth.IsValid && numEndWavelegnth.IsValid))
+                    {
+                        MessageBox.Show("In calibration mode the start wavelength and end wavelength must be value or null.");
+                        return;
+                    }
+                    
+                    if(numEndWavelegnth.Value>numStartWavelength.Value)
+                    {
+                        settings.StartWavelength = numStartWavelength.Value;
+                        settings.EndWavelength= numEndWavelegnth.Value;
+                    }
+                    CurrentCalibration.FillSpectrumStreamSettings(settings);
+                }
+
+                GSI.Processing.FFTProcessor gen = new GSI.Processing.FFTProcessor(reader, settings);
+
                 _genActive = gen;
                 gen.VectorComplete += (s, e) =>
                 {
@@ -535,6 +613,30 @@ namespace TestRun
         {
 
         }
+
+        private void btnLoadCalibration_Click(object sender, EventArgs e)
+        {
+            // loads a calibration file and stores this calibration file as the last loaded.
+            OpenFileDialog dlg=new OpenFileDialog();
+            dlg.Filter = "CSV|.csv";
+            if(dlg.ShowDialog()!= System.Windows.Forms.DialogResult.OK)
+                return;
+
+            GSI.Storage.Spectrum.SpectrumCalibrationInfo Calib =
+                new SpectrumCalibrationInfo(File.ReadAllText(dlg.FileName));
+
+            // overwriting calibration.
+            File.WriteAllText(GetCalibrationFileName(), Calib.ToString());
+
+            // loading the current calibration.
+            LoadCurrentCalibration();
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+
 
     }
 }

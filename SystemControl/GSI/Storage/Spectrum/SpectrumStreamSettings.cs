@@ -18,9 +18,10 @@ namespace GSI.Storage.Spectrum
             int lineSize,
             int vectorSize,
             int fftSize,
-            int fftDataSize,
             double stepSize,
             double pixelSize,
+            int fftDataSize = -1,
+            int fftDataOffsetIndex = -1,
             double startWavelength = -1,
             double endWavelength = -1,
             bool isDoublePrecision = false)
@@ -33,8 +34,15 @@ namespace GSI.Storage.Spectrum
             StepSizeInPixels = stepSize;
             PixelSize = pixelSize;
             FftDataSize = fftDataSize;
+            FftDataOffsetIndex = fftDataOffsetIndex;
             StartWavelength = startWavelength;
             EndWavelength = endWavelength;
+
+            if (FftDataOffsetIndex < 0)
+                FftDataOffsetIndex = 0;
+
+            if (FftDataSize < 0)
+                FftDataSize = FftSize / 2;
         }
 
         /// <summary>
@@ -80,7 +88,13 @@ namespace GSI.Storage.Spectrum
         /// <summary>
         /// The number of values in each fft vector.
         /// </summary>
-        public int FftDataSize { get; private set; }
+        public int FftDataSize { get; set; }
+
+        [DataMember]
+        /// <summary>
+        /// The number of values in each fft vector.
+        /// </summary>
+        public int FftDataOffsetIndex { get; set; }
 
         [DataMember]
         /// <summary>
