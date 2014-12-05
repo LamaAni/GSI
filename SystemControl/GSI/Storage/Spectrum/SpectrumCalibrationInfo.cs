@@ -29,7 +29,7 @@ namespace GSI.Storage.Spectrum
         {
             foreach (var l in mat)
             {
-                if (l.Count <4)
+                if (l.Count < 4)
                     continue;
                 double parser;
                 if (l.Take(6).Any(v => !double.TryParse(v, out parser)))

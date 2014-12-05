@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GSI.Context;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,9 +17,11 @@ namespace GSI.Processing
         /// Creates a stacking writer that writes to a stream.
         /// </summary>
         /// <param name="strm"></param>
-        public StackingWriter(Stream strm)
+        /// <param name="async">If true the data will be written asynchronically form the main thread.</param>
+        public StackingWriter(Stream strm, bool async=true)
         {
             Writer = new BinaryWriter(strm);
+            Async = async;
         }
 
         #region Members
@@ -63,6 +66,36 @@ namespace GSI.Processing
         /// </summary>
         public double StepSize { get; private set; }
 
+        /// <summary>
+        /// If true the data storing will be done asynchonically.
+        /// </summary>
+        public bool Async { get; private set; }
+
+        private AsyncPendingEventQueue<byte[]> m_writeCommands;
+
+        /// <summary>
+        /// A collection of the pending write commands that are waiting to be written to disk.
+        /// </summary>
+        public AsyncPendingEventQueue<byte[]> PendingWriteCommands
+        {
+            get
+            {
+                if (m_writeCommands == null)
+                    m_writeCommands = new AsyncPendingEventQueue<byte[]>(_doDataWritingEvent, false);
+                return m_writeCommands;
+            }
+        }
+
+        /// <summary>
+        /// The number of pending writes to wait for.
+        /// </summary>
+        public int NumberOfPendingWrites { get { return PendingWriteCommands.PendingEventCount; } }
+
+        /// <summary>
+        /// If true then waiting for all write events to complete.
+        /// </summary>
+        public bool IsWaitingForWriteEvents { get { return NumberOfPendingWrites > 0; } }
+
         #endregion
 
         #region methods
@@ -90,7 +123,6 @@ namespace GSI.Processing
             Writer.Write(StackSize);
             Writer.Write(StepSize);
             Writer.Write(PixelSize);
-            
 
             this.Initialized = true;
         }
@@ -112,7 +144,19 @@ namespace GSI.Processing
 
             // writes the vector.
             byte[] data = new byte[VectorSize * StackSize];
+
+            // copy the data to a new collection, so to allow async storing.
             System.Buffer.BlockCopy(vector, 0, data, 0, VectorSize * StackSize);
+
+            // sending the event to writing, asynced.
+            if (Async)
+                PendingWriteCommands.PushEvent(data);
+            else _doDataWritingEvent(data);
+        }
+
+        void _doDataWritingEvent(byte[] data)
+        {
+            // writing the data to the underlining device.
             Writer.Write(data);
         }
 

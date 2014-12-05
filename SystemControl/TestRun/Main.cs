@@ -227,13 +227,21 @@ namespace TestRun
                 return;
             }
 
-            //txtCaptureInfo.Text = "";
+            bool sumOverY = IsSummingOverY();
+            double deltaX = numDx.Value;
 
+            GSI.Processing.StackingCollector collector =
+                new GSI.Processing.StackingCollector(Camera.Settings.Width, Camera.Settings.Height,
+                   deltaX, sumOverY, sumOverY);
+
+            // Create the current running context that captures the images
+            // and creates the stack. The captured stack can be stored to the hdd.
             GSI.Context.SpectralWorkContext captureContext = Context.CreateWorkContext();
 
             // updating the frame rate.
             Camera.Settings.FrameRate = numFrameRate.Value;
 
+            // deleting old files.
             foreach (string file in new string[] { "pos.csv", "imageprop.csv", "image.rawstack" })
             {
                 if (File.Exists(file))
@@ -245,22 +253,12 @@ namespace TestRun
             GSI.Processing.StackingWriter stack_wr = new GSI.Processing.StackingWriter(
                 new FileStream("image.rawstack", FileMode.OpenOrCreate));
 
-            bool sumOverY = IsSummingOverY();
-            double deltaX = numDx.Value;
-
-            GSI.Processing.StackingCollector collector =
-                new GSI.Processing.StackingCollector(Camera.Settings.Width, Camera.Settings.Height,
-                   deltaX, sumOverY, sumOverY);
-
-            //txtCaptureInfo.Text += "Np=" + collector.NumberOfImagesPerStack
-            //    + ", " + (sumOverY ? "over y" : "over x") + "\n";
-
             int totalNumberOfReadyVectors = 0;
             barProg.Maximum = 1;
             barProg.Value = 0;
             int image_idx = 0;
 
-
+            // called when an image is captured.
             captureContext.OnImageCaptured += (s, e) =>
             {
                 // write image proprties.
@@ -349,12 +347,11 @@ namespace TestRun
                     // reched end position.
                     captureContext.StopCapture();
 
-                    // waiting for images.
-                    //lblStatus.Text = "Waiting for image writing to completate.";
-                    while (captureContext.IsProcessingPendingImages)
+                    // waiting for processing and writing to complete.
+                    while (captureContext.IsProcessingPendingImages || stack_wr.IsWaitingForWriteEvents)
                     {
-                        lblStatus.Text = "Waiting for image writing to completate ("
-                            + captureContext.PendingImageCount + ")";
+                        lblStatus.Text = "Waiting for image processing and disk writing to complete ("
+                            + captureContext.PendingImageCount + ", " + stack_wr.NumberOfPendingWrites + ")";
                         System.Threading.Thread.Sleep(100);
                     }
 
@@ -369,8 +366,10 @@ namespace TestRun
                     stack_wr.Dispose();
 
                     GC.Collect();
+
                     lblStatus.Text = "Finished, " + totalNumberOfReadyVectors + " vectors, "
                         + image_idx + " images";
+
                     captureContext.Dispose();
                 });
         }

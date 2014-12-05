@@ -19,19 +19,21 @@ namespace GSI.Context
         internal SpectralWorkContext(SpectralContext context)
         {
             Context = context;
+
+            // bining events to the capturing mechanisem. 
             _positionEventHandler = new EventHandler<PositionRecivedEventArgs>(PositionReader_OnRecivedPosition);
             _imageEventHandler = new EventHandler<ImageRecivedEventArgs>(Camera_ImageCaptured);
-
             Context.Camera.ImageCaptured += _imageEventHandler;
             Context.PositionControl.OnRecivedPosition += _positionEventHandler;
 
+            // creating the invocation queue. this queue will store in memory
+            // new invocations if previus invocations have not compleated. 
             ImageInvokeQueue = new AsyncPendingEventQueue<ImageRecivedEventArgs>(
                 (ev) =>
                 {
                     if (OnImageCaptured != null)
                         OnImageCaptured(this, ev);
                 }, false);
-
             PositionInvokeQueue = new AsyncPendingEventQueue<PositionRecivedEventArgs>((ev) =>
                 {
                     if (OnPositionCapture != null)
@@ -49,6 +51,9 @@ namespace GSI.Context
         }
 
         #region members
+
+        EventHandler<PositionRecivedEventArgs> _positionEventHandler;
+        EventHandler<ImageRecivedEventArgs> _imageEventHandler;
 
         /// <summary>
         /// The spctral context associated with work context. (Created it).
@@ -116,10 +121,6 @@ namespace GSI.Context
         /// The image invoke queue.
         /// </summary>
         public AsyncPendingEventQueue<ImageRecivedEventArgs> ImageInvokeQueue { get; private set; }
-
-
-        EventHandler<PositionRecivedEventArgs> _positionEventHandler;
-        EventHandler<ImageRecivedEventArgs> _imageEventHandler;
 
         #endregion
 
