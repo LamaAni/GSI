@@ -91,6 +91,7 @@ namespace GSI.Processing
         /// </summary>
         public int NumberOfPendingWrites { get { return PendingWriteCommands.PendingEventCount; } }
 
+
         /// <summary>
         /// If true then waiting for all write events to complete.
         /// </summary>
