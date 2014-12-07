@@ -384,9 +384,9 @@ namespace TestRun
                         zeroFill, reader.StepSize, reader.PixelSize);
 
                 // configuring the calibration into the settings in the 
-                if (CurrentCalibration != null)
+                if (CurrentCalibration != null && ddZeroFilling.SelectedIndex != 0)
                 {
-                    if(!(numEndWavelegnth.IsValid && numEndWavelegnth.IsValid))
+                    if (!(numEndWavelegnth.IsValid && numEndWavelegnth.IsValid))
                     {
                         MessageBox.Show("In calibration mode the start wavelength and end wavelength must be value or null.");
                         return;
@@ -398,6 +398,10 @@ namespace TestRun
                         settings.EndFrequency = 1.0 / (numStartWavelength.Value * 1e-9);
                     }
                     CurrentCalibration.FillSpectrumStreamSettings(settings);
+                }
+                else
+                {
+                    // use default setting to do zero filling.
                 }
 
                 GSI.Processing.FFTProcessor gen = new GSI.Processing.FFTProcessor(reader, settings);
