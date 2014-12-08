@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{516F5606-ADE9-4964-992C-9AB6CFFA55DC}</ProjectGuid>
+    <ProjectGuid>{3CD9EB99-29AA-42CC-8558-50F4CFDA2E23}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GSI</RootNamespace>
-    <AssemblyName>GSIMatlab</AssemblyName>
+    <RootNamespace>GSIMath</RootNamespace>
+    <AssemblyName>GSIMath</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,10 +30,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Matlab, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\matlab\Compiled\Calibration\Matlab.dll</HintPath>
-    </Reference>
     <Reference Include="MWArray, Version=2.14.0.0, Culture=neutral, PublicKeyToken=e1d84a0da19db86f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files\MATLAB\MATLAB Compiler Runtime\v83\toolbox\dotnetbuilder\bin\win64\v2.0\MWArray.dll</HintPath>
@@ -47,14 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Calibration\SpatialRotation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\GSI\GSI.csproj">
-      <Project>{61da3f8e-30c5-4e67-ae8f-c29845807297}</Project>
-      <Name>GSI</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

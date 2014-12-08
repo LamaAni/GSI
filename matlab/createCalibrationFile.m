@@ -20,40 +20,6 @@ oredered_wl=sort(wl);
 
 for t=1:3
     file_name=[fpath,fname{t}];
-    %     fInfo=dir(file_name);
-    %     fileSize=fInfo.bytes;
-    %
-    %     fid=fopen(file_name,'r');
-    %     if (fid==-1),
-    %         error('file not found');
-    %     end;
-    %     p=fread(fid,3,'int32');
-    %     W=p(1);
-    %     H=p(2);
-    %     Np=p(3);
-    %
-    %     p=fread(fid,2,'double');
-    %     dx=p(1);
-    %     pixelSize=p(2);
-    %
-    %
-    %     data=zeros(H,W,Np,'uint8');
-    %
-    %     for i=1:W
-    %         vec=fread(fid,Np*H,'uint8');
-    %         vec=reshape(vec,Np,H);
-    %         vec=permute(vec,[2,3,1]);
-    %         data(:,i,:)=vec;
-    %     end
-    %
-    %     data=double(data);
-    %     avData=mean(data,3);
-    %     avData=repmat(avData,[1,1,Np]);
-    %     data=data-avData;
-    %     F=abs(fft(data,ZF,3));
-    %     F=F(:,:,1:round(ZF./2));
-    %
-    %     F=reshape(F,H*W,size(F,3));
     F=ReadSpec(file_name);
     F=reshape(F,size(F,1)*size(F,2),size(F,3));
     F(isnan(F))=0;

@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("GSIMatlab")]
+[assembly: AssemblyTitle("GSIMath")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("GSIMatlab")]
+[assembly: AssemblyProduct("GSIMath")]
 [assembly: AssemblyCopyright("Copyright ©  2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("741f6f93-3d3f-4e57-98b4-899f50047b7a")]
+[assembly: Guid("15c90da8-64bd-43d5-8559-5bc532c5ed5e")]
 
 // Version information for an assembly consists of the following four values:
 //
