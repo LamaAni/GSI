@@ -30,7 +30,7 @@ namespace TestMatalb
             string second = dlg.FileName;
             Bitmap imga = (Bitmap)Bitmap.FromFile(first);
             Bitmap imgb = (Bitmap)Bitmap.FromFile(second);
-            double angle=0, pixelSize=0;
+            double angle = 0, pixelSize = 0;
 
             GSI.Calibration.SpatialRotation.FindRotationAndPixelSize(imga.GetImageBytes(),
                 imgb.GetImageBytes(), imga.Width, 0, 100, out angle, out pixelSize);
