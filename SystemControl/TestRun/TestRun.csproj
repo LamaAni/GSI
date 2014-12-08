@@ -122,9 +122,9 @@
       <Project>{49f62dfd-3089-4c78-b7a5-8f6881a2fd43}</Project>
       <Name>GSIControls</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GSIMatlab\GSIMatlab.csproj">
-      <Project>{516f5606-ade9-4964-992c-9ab6cffa55dc}</Project>
-      <Name>GSIMatlab</Name>
+    <ProjectReference Include="..\GSIMath\GSIMath.csproj">
+      <Project>{3cd9eb99-29aa-42cc-8558-50f4cfda2e23}</Project>
+      <Name>GSIMath</Name>
     </ProjectReference>
     <ProjectReference Include="..\GSI\GSI.csproj">
       <Project>{61da3f8e-30c5-4e67-ae8f-c29845807297}</Project>
