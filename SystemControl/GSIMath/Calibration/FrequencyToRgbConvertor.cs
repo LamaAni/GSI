@@ -144,7 +144,7 @@ namespace GSI.Calibration
             float[] rslt;
             fixed (float* x = prs.XCoef, y = prs.YCoef, z = prs.ZCoef)
             {
-                rslt = UnsafeToRGB(prs.Count, x, y, z, amp, prs.ConversionMatrix, normal);
+                rslt = UnsafeToRGB(prs.Count, offset, x, y, z, amp, prs.ConversionMatrix, normal);
             }
             return rslt;
         }
@@ -164,16 +164,20 @@ namespace GSI.Calibration
         /// <param name="cMat"></param>
         /// <returns></returns>
         public static float[] UnsafeToRGB(
-            int n, float* xcoef, float* ycoef, float* zcoef, float* amplitude, float[,] cMat, float[] normal = null)
+            int n, int offset, float* xcoef, float* ycoef, float* zcoef, float* amplitude, float[,] cMat, float[] normal = null)
         {
-            // calculating the integrals. 
+            // calculating the integrals.
+            float med = 0;
             float x = 0, y = 0, z = 0;
-            for (int i = 0; i < n - 1; i++)
+            for (int i = 0; i < n; i++)
             {
-                x += xcoef[i] * amplitude[i];
-                y += ycoef[i] * amplitude[i];
-                z += zcoef[i] * amplitude[i];
+                x += xcoef[i] * amplitude[i+offset];
+                y += ycoef[i] * amplitude[i+offset];
+                z += zcoef[i] * amplitude[i+offset];
+                med += amplitude[i];
             }
+
+            med /= n;
 
             // normalizing for the number of values.
             if (normal != null)
@@ -236,10 +240,10 @@ namespace GSI.Calibration
             switch (m_method)
             {
                 default: // return sRGB
-                    return new float[,] { 
-                    { 3.1338561F, - 1.6168667F ,- 0.4906146F }, 
-                    { -0.9787684F,  1.9161415F,  0.0334540F}, 
-                    { 0.0719453F, -0.2289914F,  1.4052427F, } 
+                    return new float[3,3] { 
+                        { 3.1338561F, - 1.6168667F ,- 0.4906146F }, 
+                        { -0.9787684F,  1.9161415F,  0.0334540F}, 
+                        { 0.0719453F, -0.2289914F,  1.4052427F }
                     };
             }
         }
