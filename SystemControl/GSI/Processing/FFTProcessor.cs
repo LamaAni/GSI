@@ -127,6 +127,7 @@ namespace GSI.Processing
             // reading the data and writing the forier transport 
             DoDataProcessing((startIndex, nread, vectors, dataVector) =>
             {
+                timer.Reset();
                 timer.Start();
                 int totalNumberOfFftValues = nread * Source.VectorSize * Source.StackSize;
                 int totalNumberDataValuesToRead = nread * Source.VectorSize * Settings.FftDataSize;
@@ -223,11 +224,29 @@ namespace GSI.Processing
             {
                 throw new Exception("Out of bounds of target or source array. ");
             }
+
             fixed (byte* pSource = source)
             fixed (float* pTarget = target)
             {
-                for (int i = offset; i < maxL; i++)
-                    pTarget[i] = (float)pSource[i];
+                ConvertHelper helper = new ConvertHelper(pTarget, pSource);
+                Parallel.For(0, maxL, (i) => helper.DoConvert(i));
+            }
+        }
+
+        private unsafe class ConvertHelper
+        {
+            public ConvertHelper(float* target, byte* source)
+            {
+                Target = target;
+                Source = source;
+            }
+
+            public float* Target { get; private set; }
+            public byte* Source { get; private set; }
+
+            public void DoConvert(int i)
+            {
+                Target[i] = (float)Source[i];
             }
         }
 

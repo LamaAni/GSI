@@ -537,7 +537,7 @@ namespace GSI.IP
         /// <param name="gwidth"></param>
         /// <param name="gheight"></param>
         public void Draw(Graphics g, int x, int y, int width, int height,
-            int gx, int gy, int gwidth, int gheight, Action<byte[]> processImageData=null)
+            int gx, int gy, int gwidth, int gheight, Action<float[]> processImageData=null)
         {
             CodeTimer timer = new CodeTimer();
             timer.Start();
@@ -559,13 +559,13 @@ namespace GSI.IP
             float[] imageData = ReadImageData(zoomLevel, x, y, width, height);
             timer.Mark("Read data");
 
+            if (processImageData != null)
+                processImageData(imageData);
+            timer.Mark("Process data");
+
             // marke image data.
             ToImageData(imageData, ref asBinary);
             timer.Mark("Make image data");
-
-            if (processImageData != null)
-                processImageData(asBinary);
-            timer.Mark("Process data");
 
             Bitmap img = new Bitmap(zw, zh, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
             BitmapData dat = img.LockBits(

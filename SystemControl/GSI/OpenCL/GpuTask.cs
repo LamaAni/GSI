@@ -17,13 +17,49 @@ namespace GSI.OpenCL
         /// Creates a new gpu task.
         /// </summary>
         /// <param name="context"></param>
-        protected GpuTask(ComputeContext context, ComputeProgram program)
+        protected GpuTask(ComputeContext context, ComputeProgram program, ComputeDevice device=null)
         {
             Context = context;
             Program = program;
+
+            SelectedDevice = device != null ? device : context.Devices.OrderBy(d => d.MaxComputeUnits).First();
         }
 
         #region static methods
+
+        /// <summary>
+        /// Gets the (maximal) default device memory in bytes.
+        /// </summary>
+        /// <returns></returns>
+        public static long GetDefaultDeviceMemoryInBytes()
+        {
+            return GetDefaultDevice().GlobalMemorySize;
+        }
+
+        /// <summary>
+        /// The maximal memory capped by 32bit parameters.
+        /// </summary>
+        /// <returns></returns>
+        public static long GetDefaultDeviceMaxMemoryFor32BitInBytes()
+        {
+            long maxmem = GetDefaultDeviceMemoryInBytes();
+            if (maxmem > int.MaxValue)
+                return int.MaxValue;
+            return maxmem;
+        }
+
+        /// <summary>
+        /// The default computartion device.
+        /// </summary>
+        /// <returns></returns>
+        public static ComputeDevice GetDefaultDevice()
+        {
+            ComputeDevice device =
+                ComputePlatform.Platforms.SelectMany(p => p.Devices).OrderBy(d => d.MaxComputeUnits).FirstOrDefault();
+            if (device == null)
+                throw new Exception("No computation devices found");
+            return device;
+        }
 
         /// <summary>
         /// Creates a new gpu task, and compiles the code.
@@ -36,16 +72,17 @@ namespace GSI.OpenCL
             ComputePlatform platform = null,
             IEnumerable<ComputeDevice> devices = null)
         {
-            if (platform == null)
+            if (devices == null)
             {
-                if (ComputePlatform.Platforms.Count == 0)
-                    throw new Exception("No computation platforms found.");
-                platform = ComputePlatform.Platforms[0];
-            }
-
-            if(devices==null)
-            {
-                devices = platform.Devices;
+                if (platform != null)
+                {
+                    devices = platform.Devices;
+                }
+                else
+                {
+                    devices = new ComputeDevice[1] { GpuTask.GetDefaultDevice() };
+                    platform = devices.First().Platform;
+                }
             }
 
             ComputeContext context = new ComputeContext(devices.ToArray(),
@@ -76,6 +113,8 @@ namespace GSI.OpenCL
             GpuTask task = GpuTask.Create(kernalCode, true);
             task.RunKernal(kernalName, prepare, complete, count);
             task.Dispose();
+
+           
         }
 
         #endregion
@@ -97,6 +136,11 @@ namespace GSI.OpenCL
         /// </summary>
         public ComputeProgram Program { get; private set; }
 
+        /// <summary>
+        /// The selected computation device.
+        /// </summary>
+        public ComputeDevice SelectedDevice { get; private set; }
+
         #endregion
 
         #region methods
@@ -111,7 +155,8 @@ namespace GSI.OpenCL
             // build the program.
             try
             {
-                Program.Build(Context.Devices, null, null, IntPtr.Zero);
+                ComputeDevice[] devices = new ComputeDevice[1] { SelectedDevice };
+                Program.Build(devices, "", null, IntPtr.Zero);
             }
             catch(Exception ex)
             {

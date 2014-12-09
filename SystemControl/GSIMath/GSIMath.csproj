@@ -48,7 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Calibration\SpatialRotation.cs" />
-    <Compile Include="Calibration\SpectrumTORgb.cs" />
+    <Compile Include="Calibration\FrequencyToRgbConvertor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

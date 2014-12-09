@@ -12,7 +12,7 @@ namespace GSI.IP
     /// Implements a spectra preview generation class that makes a spectra preview from a 
     /// spectra file.
     /// </summary>
-    public class SpectrumPreviewGenerator : IDisposable
+    public unsafe class SpectrumPreviewGenerator : IDisposable
     {
         /// <summary>
         /// Creates a new spectrum preview generator.
@@ -45,6 +45,7 @@ namespace GSI.IP
         {
             Preview = preview;
             Processor = processor;
+            DoRGBConvert = GrayscaleRGBConvert;
         }
 
         #region static methods
@@ -119,24 +120,38 @@ namespace GSI.IP
         public SperctrumGeneratorBlockDoneMode CurrentMode { get; private set; }
 
         /// <summary>
-        /// Red mask to apply to vector data. If null then avarage all values.
-        /// </summary>
-        public float[] RedMask { get; private set; }
-
-        /// <summary>
-        /// Blue mask to apply to vector data. If null then avarage all values.
-        /// </summary>
-        public float[] BlueMask { get; private set; }
-
-        /// <summary>
-        /// Greend mask to apply to vector data. If null then avarage all values.
-        /// </summary>
-        public float[] GreenMask { get; private set; }
-
-        /// <summary>
         /// The number of pixels to skip when converting a pixel value.
         /// </summary>
         public int SkipOnPixelConvert { get; set; }
+
+        /// <summary>
+        /// Converts the amplitudes to the rgb coefficients. (Default is grayscale).
+        /// </summary>
+        public DoRGBConvertDelegate DoRGBConvert { get;  set; }
+
+        #endregion
+
+        #region helpers
+
+        /// <summary>
+        /// A delegate for the conversions.
+        /// </summary>
+        /// <param name="amplitudes"></param>
+        /// <param name="offset"></param>
+        /// <returns></returns>
+        public delegate float[] DoRGBConvertDelegate(float* amplitudes, int offset, int length);
+
+        public float[] GrayscaleRGBConvert(float* amplitudes, int offset, int length)
+        {
+            // creating the avarage.
+            float avrg = 0;
+            for (int i = 0; i < length; i++)
+            {
+                avrg += amplitudes[i + offset];
+            }
+            avrg /= length;
+            return new float[3] { avrg, avrg, avrg };
+        }
 
         #endregion
 
@@ -213,10 +228,7 @@ namespace GSI.IP
         /// <param name="data"></param>
         unsafe void MakePixelValues(float[] values, ref float[] data, int vectorLength)
         {
-            bool hasRedMask = RedMask != null && RedMask.Length >= vectorLength - SkipOnPixelConvert;
-            bool hasBlueMask = BlueMask != null && BlueMask.Length >= vectorLength - SkipOnPixelConvert;
-            bool hasGreenMask = GreenMask != null && GreenMask.Length >= vectorLength - SkipOnPixelConvert;
-            bool requiresAvarage = !hasBlueMask || !hasGreenMask || !hasRedMask;
+            DoRGBConvertDelegate doConvert = DoRGBConvert == null ? GrayscaleRGBConvert : DoRGBConvert;
             int numberOfPixels = values.Length / vectorLength;
             if (data == null)
                 data = new float[numberOfPixels * 3];
@@ -227,64 +239,11 @@ namespace GSI.IP
                 {
                     int startIndex = pi * vectorLength + SkipOnPixelConvert;
                     int endIndex = (pi + 1) * (vectorLength);
-                   
-                    float av = 0;
-                    if (requiresAvarage)
-                    {
-                        for (int vi = startIndex; vi < endIndex; vi++)
-                        {
-                            av += pValues[vi];
-                        }
-                        av /= (endIndex - startIndex);
-                    }
-
+                    float[] asRGB = doConvert(pValues, startIndex, vectorLength);
                     int pixelIndex = pi * 3;
-                    if (!hasRedMask)
-                    {
-                        pData[pixelIndex] = av;
-                    }
-                    else
-                    {
-                        // applying mask and summing.
-                        float total = 0;
-                        for (int vi = 0; vi < endIndex - startIndex; vi++)
-                        {
-                            total += pValues[startIndex + vi] * RedMask[vi];
-                        }
-                        pData[pixelIndex] = total;
-                    }
-
-                    pixelIndex += 1;
-                    if (!hasGreenMask)
-                    {
-                        pData[pixelIndex] = av;
-                    }
-                    else
-                    {
-                        // applying mask and summing.
-                        float total = 0;
-                        for (int vi = 0; vi < endIndex - startIndex; vi++)
-                        {
-                            total += pValues[startIndex + vi] * GreenMask[vi];
-                        }
-                        pData[pixelIndex] = total;
-                    }
-
-                    pixelIndex += 1;
-                    if (!hasBlueMask)
-                    {
-                        pData[pixelIndex] = av;
-                    }
-                    else
-                    {
-                        // applying mask and summing.
-                        float total = 0;
-                        for (int vi = 0; vi < endIndex - startIndex; vi++)
-                        {
-                            total += pValues[startIndex + vi] * BlueMask[vi];
-                        }
-                        pData[pixelIndex] = total;
-                    }
+                    pData[pixelIndex] = asRGB[0];
+                    pData[pixelIndex + 1] = asRGB[1];
+                    pData[pixelIndex + 2] = asRGB[2];
                 }
             }
         }

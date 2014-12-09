@@ -153,7 +153,6 @@ namespace TestRun
             g.Clear(Color.Black);
             timer.Mark("Clear");
 
-
             img.Draw(g, 0, 0, img.Width, img.Height, gregion.X, gregion.Y, gregion.Width, gregion.Height, (data) =>
             {
                 DoAutoLevel(ref data);
@@ -165,14 +164,14 @@ namespace TestRun
             lblProgInfo.Text = "Load stream: " + timer["Stream"] + ", Clear GC: " + timer["Clear"] + ", Draw: " + timer["Draw"];
         }
 
-        unsafe void DoAutoLevel(ref byte[] data)
+        unsafe void DoAutoLevel(ref float[] data)
         {
             if (data.Length == 0)
                 return;
-            fixed (byte* pdata = data)
+            fixed (float* pdata = data)
             {
-                byte min = byte.MaxValue;
-                byte max = 0;
+                float min = byte.MaxValue;
+                float max = 0;
                 for (int i = 0; i < data.Length; i++)
                 {
                     if (pdata[i] > max)
@@ -180,17 +179,14 @@ namespace TestRun
                     if (pdata[i] < min)
                         min = pdata[i];
                 }
-                if (min < 0)
-                    min = 0;
-                if (max > 255)
-                    max = 255;
-                double conversion = byte.MaxValue * 1.0 / (max - min);
+                // doing the conversion to 256 values.
+                float conversion = byte.MaxValue * 1.0F / (max - min);
                 for (int i = 0; i < data.Length; i++)
                 {
-                    double val = (pdata[i] * conversion);
+                    float val = (pdata[i] * conversion);
                     val = val < 0 ? 0 : val;
                     val = val > 255 ? 255 : val;
-                    pdata[i] = (byte)val;
+                    pdata[i] = val;
                 }
             }
         }
@@ -404,7 +400,9 @@ namespace TestRun
                     // use default setting to do zero filling.
                 }
 
-                GSI.Processing.FFTProcessor gen = new GSI.Processing.FFTProcessor(reader, settings);
+                // getting the memory of the best device (the one that will be used in the forier).
+                int maxMemory = (int)Math.Floor(GSI.OpenCL.GpuTask.GetDefaultDeviceMaxMemoryFor32BitInBytes() * 0.9);
+                GSI.Processing.FFTProcessor gen = new GSI.Processing.FFTProcessor(reader, settings, maxMemory);
 
                 _genActive = gen;
                 gen.VectorComplete += (s, e) =>
@@ -475,7 +473,7 @@ namespace TestRun
             ShowPreviewSpectrum(e.X, e.Y);
         }
 
-        private void btnCreatePreview_Click(object sender, EventArgs e)
+        private unsafe void btnCreatePreview_Click(object sender, EventArgs e)
         {
             string filename = "image.rawstack";
 
@@ -499,6 +497,22 @@ namespace TestRun
                         new SpectrumStreamProcessor(
                             File.Open(filename, FileMode.Open)), previewStream);
 
+                GSI.Calibration.FrequencyToRgbConvertor convertor = null;
+                float[] xCoef = null, yCoef = null, zCoef = null;
+                if (gen.Processor.Settings.StartFrequency >= 0)
+                {
+                    float[] frequencies = gen.Processor.Settings.GenerateSpectrumFrequencies()
+                        .Select(v => (float)v).ToArray();
+
+                    convertor =
+                        new GSI.Calibration.FrequencyToRgbConvertor(frequencies);
+
+                    xCoef = convertor.XCoef;
+                    yCoef = convertor.YCoef;
+                    zCoef = convertor.ZCoef;
+                }
+
+
                 gen.SkipOnPixelConvert = gen.Processor.Settings.FftDataSize / 20;
                 progBar.Value = 0;
                 progBar.Maximum = 1;
@@ -518,7 +532,7 @@ namespace TestRun
                         lblProgInfo.Text = "Creating preview, Eta: " + left.ToShortTimespanString() + " (" + se.Done + "/" + se.Total + ")";
                     }
                     progBar.Value = se.Done;
-                    
+
                 };
 
                 gen.OnCompleated += (s, se) =>
@@ -530,15 +544,26 @@ namespace TestRun
                 };
 
                 lblProgInfo.Text = "Creating preview";
+                if (convertor == null)
+                    gen.DoRGBConvert = null;
+                else
+                {
+                    GSI.Calibration.FrequencyToRgbConvertor.ConversionParmas prs =
+                        new GSI.Calibration.FrequencyToRgbConvertor.ConversionParmas(convertor.Frequencies.Length,
+                            xCoef, yCoef, zCoef, convertor.ConversionMatrix);
+
+                    // finding the normalization factor.
+                    float[] maxpower = new float[prs.Count].Select(v => 255F).ToArray();
+                    float normal = 1.0F / convertor.ToRGB(maxpower, prs).Max();
+                    float[] normals = new float[3] { normal, normal, normal };
+
+                    gen.DoRGBConvert = (amp, offset, length) =>
+                    {
+                        return convertor.ToRGB(amp, offset, prs, normals);
+                    };
+                }
                 gen.Make(true);
 
-                //GSI.Storage.Spectrum.SpectrumStreamReader reader = SpectrumStreamReader.Open(filename);
-                //PreviewStream img = reader.Preview;
-                //if (img.IsPreviewValid)
-                //{
-                //    MessageBox.Show("Already validated.");
-                //}
-                //DoValidatePreview(img);
             });
 
         }
