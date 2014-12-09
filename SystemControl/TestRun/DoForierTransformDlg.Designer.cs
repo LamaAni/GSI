@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.progBar = new System.Windows.Forms.ProgressBar();
             this.btnCancel = new System.Windows.Forms.Button();
             this.lblProgInfo = new System.Windows.Forms.Label();
@@ -45,13 +45,14 @@
             this.btnDoForier = new System.Windows.Forms.Button();
             this.panel4 = new System.Windows.Forms.Panel();
             this.panel5 = new System.Windows.Forms.Panel();
+            this.label3 = new System.Windows.Forms.Label();
             this.btnLoadCalibration = new System.Windows.Forms.Button();
             this.numEndWavelegnth = new GSIControls.General.NumericControl();
             this.numStartWavelength = new GSIControls.General.NumericControl();
             this.ddZeroFilling = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
+            this.chkDoRgbPreview = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.chartSpectrum)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -110,19 +111,19 @@
             // 
             // chartSpectrum
             // 
-            chartArea1.AxisX.MajorGrid.Enabled = false;
-            chartArea1.AxisY.MajorGrid.Enabled = false;
-            chartArea1.Name = "ChartArea1";
-            this.chartSpectrum.ChartAreas.Add(chartArea1);
+            chartArea2.AxisX.MajorGrid.Enabled = false;
+            chartArea2.AxisY.MajorGrid.Enabled = false;
+            chartArea2.Name = "ChartArea1";
+            this.chartSpectrum.ChartAreas.Add(chartArea2);
             this.chartSpectrum.Dock = System.Windows.Forms.DockStyle.Top;
             this.chartSpectrum.Location = new System.Drawing.Point(8, 8);
             this.chartSpectrum.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.chartSpectrum.Name = "chartSpectrum";
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series1.IsVisibleInLegend = false;
-            series1.Name = "Series1";
-            this.chartSpectrum.Series.Add(series1);
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series2.IsVisibleInLegend = false;
+            series2.Name = "Series1";
+            this.chartSpectrum.Series.Add(series2);
             this.chartSpectrum.Size = new System.Drawing.Size(418, 435);
             this.chartSpectrum.TabIndex = 8;
             this.chartSpectrum.Text = "chart1";
@@ -228,12 +229,13 @@
             this.panel4.Location = new System.Drawing.Point(823, 77);
             this.panel4.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.panel4.Name = "panel4";
-            this.panel4.Padding = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.panel4.Padding = new System.Windows.Forms.Padding(8);
             this.panel4.Size = new System.Drawing.Size(434, 656);
             this.panel4.TabIndex = 11;
             // 
             // panel5
             // 
+            this.panel5.Controls.Add(this.chkDoRgbPreview);
             this.panel5.Controls.Add(this.label3);
             this.panel5.Controls.Add(this.btnLoadCalibration);
             this.panel5.Controls.Add(this.numEndWavelegnth);
@@ -247,6 +249,16 @@
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(418, 122);
             this.panel5.TabIndex = 9;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(190, 52);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(14, 20);
+            this.label3.TabIndex = 6;
+            this.label3.Text = "-";
+            this.label3.Click += new System.EventHandler(this.label3_Click);
             // 
             // btnLoadCalibration
             // 
@@ -317,15 +329,17 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Wavelengths";
             // 
-            // label3
+            // chkDoRgbPreview
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(190, 52);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(14, 20);
-            this.label3.TabIndex = 6;
-            this.label3.Text = "-";
-            this.label3.Click += new System.EventHandler(this.label3_Click);
+            this.chkDoRgbPreview.AutoSize = true;
+            this.chkDoRgbPreview.Checked = true;
+            this.chkDoRgbPreview.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkDoRgbPreview.Location = new System.Drawing.Point(8, 86);
+            this.chkDoRgbPreview.Name = "chkDoRgbPreview";
+            this.chkDoRgbPreview.Size = new System.Drawing.Size(145, 24);
+            this.chkDoRgbPreview.TabIndex = 7;
+            this.chkDoRgbPreview.Text = "Preview in RGB";
+            this.chkDoRgbPreview.UseVisualStyleBackColor = true;
             // 
             // DoForierTransformDlg
             // 
@@ -377,5 +391,6 @@
         private GSIControls.General.NumericControl numEndWavelegnth;
         private GSIControls.General.NumericControl numStartWavelength;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.CheckBox chkDoRgbPreview;
     }
 }

@@ -499,7 +499,7 @@ namespace TestRun
 
                 GSI.Calibration.FrequencyToRgbConvertor convertor = null;
                 float[] xCoef = null, yCoef = null, zCoef = null;
-                if (gen.Processor.Settings.StartFrequency >= 0)
+                if (chkDoRgbPreview.Checked &&  gen.Processor.Settings.StartFrequency >= 0)
                 {
                     float[] frequencies = gen.Processor.Settings.GenerateSpectrumFrequencies()
                         .Select(v => (float)v).ToArray();
