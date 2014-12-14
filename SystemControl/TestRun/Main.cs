@@ -191,6 +191,24 @@ namespace TestRun
             return data;
         }
 
+        unsafe byte[] CloneLastPreviewAsRGB()
+        {
+            if (LastPreviewImage == null)
+                return null;
+
+            byte[] singleclone = CloneLastPreview();
+            byte[] data = new byte[singleclone.Length * 3];
+            fixed (byte* _source = singleclone, _target = data)
+            {
+                for (int i = 0; i < singleclone.Length; i++)
+                {
+                    int tidx = i * 3;
+                    _target[tidx] = _target[tidx + 1] = _target[tidx + 2] = _source[i];
+                }
+            }
+            return data;
+        }
+
         #endregion
 
         #region Capture methods
@@ -715,7 +733,7 @@ namespace TestRun
             else return;
 
             Bitmap map = new Bitmap(Camera.Settings.Width, Camera.Settings.Height);
-            map.SetImageBytes(CloneLastPreview());
+            map.SetImageBytes(CloneLastPreviewAsRGB());
             map.Save(filename, System.Drawing.Imaging.ImageFormat.Bmp);
         }
 

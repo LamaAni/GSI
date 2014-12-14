@@ -36,7 +36,7 @@ namespace GSI.IP
         /// <param name="data"></param>
         /// <param name="format"></param>
         public static void SetImageBytes(this Bitmap img, byte[] data, System.Drawing.Imaging.PixelFormat format
-            = System.Drawing.Imaging.PixelFormat.Format8bppIndexed)
+            = System.Drawing.Imaging.PixelFormat.Format24bppRgb)
         {
             BitmapData bits = img.LockBits(new Rectangle(0, 0, img.Width, img.Height), System.Drawing.Imaging.ImageLockMode.ReadWrite,
                  format);
@@ -49,7 +49,6 @@ namespace GSI.IP
 
             Marshal.Copy(data, 0, bits.Scan0, data.Length);
             img.UnlockBits(bits);
-
         }
     }
 }
