@@ -26,7 +26,7 @@ namespace GSI.Processing
             bool doSubstractAvarage = true)
             : base(source)
         {
-            MemoryMaxSizeInBytes = maxNumberOfBytesInMemory;
+            MemoryMaxSizeInBytes = maxNumberOfBytesInMemory / 4; // there are at least 2 vectors, read and write.
             AppodizationMask = appodizationMask;
             DoSubstractAvarage = doSubstractAvarage;
             Settings = settings;

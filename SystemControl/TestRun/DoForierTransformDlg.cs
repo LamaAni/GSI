@@ -401,7 +401,8 @@ namespace TestRun
                 }
 
                 // getting the memory of the best device (the one that will be used in the forier).
-                int maxMemory = (int)Math.Floor(GSI.OpenCL.GpuTask.GetDefaultDeviceMaxMemoryFor32BitInBytes() * 0.9);
+                int maxMemory = (int)Math.Floor(GSI.OpenCL.GpuTask.GetDefaultDeviceMaxMemoryFor32BitInBytes() * 0.6);
+                maxMemory = 60 * GSI.Processing.FFTProcessor._MB_;
                 GSI.Processing.FFTProcessor gen = new GSI.Processing.FFTProcessor(reader, settings, maxMemory);
 
                 _genActive = gen;
