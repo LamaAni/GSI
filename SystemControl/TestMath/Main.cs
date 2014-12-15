@@ -384,5 +384,51 @@ namespace TestMath
                 image.Dispose();
             }
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            lblTestStacking.Text = "Tesing the stacking by running external thread..";
+            
+            int w=2000,h=1000;
+            GSI.Processing.StackingCollector collector =
+                new StackingCollector(w, h, 10, false, false);
+            int totalNumberOfVectors = 0;
+            int maxNumberOfVectors = 10000;
+
+            DateTime started = DateTime.Now;
+
+            Random rnd=new Random();
+            byte[] data = new byte[w * h * 3];
+            rnd.NextBytes(data);
+
+            DateTime lastVectorTime = started;
+            collector.VectorReady += (s, ev) =>
+            {
+                totalNumberOfVectors += 1;
+                lastVectorTime = ev.InstigatingImage.TimeStamp;
+            };
+
+            bool isRunning = true;
+
+            Task.Run(() =>
+            {
+                while (isRunning)
+                {
+                    TimeSpan total = lastVectorTime - started;
+                    lblTestStacking.Text = "Vectors per second: " + (totalNumberOfVectors * 1.0 / total.TotalSeconds);
+                    System.Threading.Thread.Sleep(100);
+                }
+            });
+
+            // doing the stacking.
+            Task.Run(() =>
+            {
+                for (int i = 0; i < maxNumberOfVectors; i++)
+                {
+                    collector.PushImage(data, i, DateTime.Now);
+                }
+                isRunning = false;
+            });
+        }
     }
 }

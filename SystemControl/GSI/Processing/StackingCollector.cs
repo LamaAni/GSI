@@ -301,47 +301,47 @@ namespace GSI.Processing
             /// <summary>
             /// The position of the last pixel in the frame.
             /// </summary>
-            public int LastPixelInFrame { get; private set; }
+            public int LastPixelInFrame;
 
             /// <summary>
             /// The step size of the window between frames.
             /// </summary>
-            public int WindowStepSize { get; private set; }
+            public int WindowStepSize;
 
             /// <summary>
             /// The size of the scanning window in pixel index, (the image width).
             /// </summary>
-            public int WindowWidth { get; private set; }
+            public int WindowWidth;
 
             /// <summary>
             /// he number of values in a stack
             /// </summary>
-            public int NumberOfValuesInAStack { get; private set; }
+            public int NumberOfValuesInAStack;
 
             /// <summary>
             /// he number of stacks in a vector
             /// </summary>
-            public int NumberOfStacksInAVector { get; set; }
+            public int NumberOfStacksInAVector;
 
             /// <summary>
             /// he number of values in a vector
             /// </summary>
-            public int NumberOfValuesInAVector { get; private set; }
+            public int NumberOfValuesInAVector;
 
             /// <summary>
             /// The calling stacking collector
             /// </summary>
-            public StackingCollector  Collector { get; private set; }
+            public StackingCollector Collector;
 
             /// <summary>
             /// The data vectors (the pixel values) of the resulting stacks.
             /// </summary>
-            public byte* Vectors { get; private set; }
+            public byte* Vectors;
 
             /// <summary>
             /// The pixel position offset where to start storing the data?
             /// </summary>
-            public int PixelIndexOffset { get; private set; }
+            public int PixelIndexOffset;
 
             /// <summary>
             /// Executes the stacking collection of data.
@@ -350,13 +350,20 @@ namespace GSI.Processing
             public unsafe void Run(int stackIndex)
             {
                 ImageData img = Collector.ImageStack[stackIndex];
+
+                // local params for faster implementation.
+                int constantAxisSize = Collector.ConstantAxisSize;
+                bool seriesReversed = Collector.SeriesReversed;
+                bool sumVertical = Collector.SumVertical;
+                int movingAxisSize = Collector.MovingAxisSize;
+
                 fixed (byte* pdata = img.Data)
                 {
                     // the position of the pixel in the image.
                     int pixelPos = Collector.GetPixelPosition(img.Index);
 
                     // running through all the stacks in the vector.
-                    for (int vi = 0; vi < Collector.ConstantAxisSize; vi++) // the perpandicular to the scan direction.
+                    for (int vi = 0; vi < constantAxisSize; vi++) // the perpandicular to the scan direction.
                     {
                         // assigning the values in the stack by running through all
                         // the appropriate pixel indexis. (by the step size).
@@ -370,11 +377,11 @@ namespace GSI.Processing
 
                             // if reversed then need to go to the oppoxite index for the image.
                             // the end of the row/column.
-                            if (Collector.SeriesReversed)
-                                pixelIndex = Collector.MovingAxisSize - pixelIndex;
+                            if (seriesReversed)
+                                pixelIndex = movingAxisSize - pixelIndex;
 
                             // moving to the correct image location.
-                            if (Collector.SumVertical)
+                            if (sumVertical)
                             {
                                 imageIndex = WindowWidth * (pixelIndex) + vi;
                             }
