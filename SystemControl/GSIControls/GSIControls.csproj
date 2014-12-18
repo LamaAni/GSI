@@ -68,6 +68,24 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Stage\ScanImageParameters.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Stage\ScanImageParameters.Designer.cs">
+      <DependentUpon>ScanImageParameters.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Stage\ScanRangeBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Stage\ScanRangeBox.Designer.cs">
+      <DependentUpon>ScanRangeBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Stage\StageControlBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Stage\StageControlBox.Designer.cs">
+      <DependentUpon>StageControlBox.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GSI\GSI.csproj">
@@ -78,6 +96,15 @@
   <ItemGroup>
     <EmbeddedResource Include="Camera\Lumenera\SettingsDialog.resx">
       <DependentUpon>SettingsDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stage\ScanImageParameters.resx">
+      <DependentUpon>ScanImageParameters.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stage\ScanRangeBox.resx">
+      <DependentUpon>ScanRangeBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stage\StageControlBox.resx">
+      <DependentUpon>StageControlBox.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

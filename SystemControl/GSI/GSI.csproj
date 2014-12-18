@@ -81,6 +81,7 @@
     <Compile Include="OpenCL\IP\MakeStack.cs" />
     <Compile Include="OpenCL\IP\MakeImageData.cs" />
     <Compile Include="Processing\DataProcessesor.cs" />
+    <Compile Include="Processing\ScanInfo.cs" />
     <Compile Include="Storage\CSV\CSVMat.cs" />
     <Compile Include="Storage\Extentions.cs" />
     <Compile Include="Storage\Spectrum\ISpectrumStreamProcedure.cs" />

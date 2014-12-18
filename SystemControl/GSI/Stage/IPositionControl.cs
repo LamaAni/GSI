@@ -73,6 +73,11 @@ namespace GSI.Stage
         /// stage.
         /// </summary>
         double Angle { get; set; }
+
+        /// <summary>
+        /// Sets the current position as the home position;
+        /// </summary>
+        void SetAsHome();
     }
 
     public class PositionRecivedEventArgs : EventArgs

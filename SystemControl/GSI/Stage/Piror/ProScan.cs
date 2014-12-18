@@ -449,6 +449,12 @@ namespace GSI.Stage.Piror
 
         #region IPositionReader Members
 
+
+        public void SetAsHome()
+        {
+            this.SendCommand("PS 0,0");
+        }
+
         void readPosition(double x, double y)
         {
             AbsolutePositionX = x * Resolution;
@@ -645,6 +651,7 @@ namespace GSI.Stage.Piror
         }
 
         #endregion
+
 
     }
 

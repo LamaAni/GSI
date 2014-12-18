@@ -151,7 +151,6 @@ namespace GSI.Camera.LumeneraControl
 
             Action applySettings = () =>
             {
-
                 api.SetProperty(Handle, dll.LucamProperty.EXPOSURE,
                     Settings.Exposure);
                 api.SetProperty(Handle, dll.LucamProperty.GAIN,

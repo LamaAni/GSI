@@ -24,10 +24,8 @@ namespace TestRun
             InitializeComponent();
             grpCommands.Enabled = false;
             btnTogglePreview.BackColor = connectEndabledColor;
-            ddScanOver.SelectedIndex = 0;
-            UpdatePositionPixels();
-        }
 
+        }
 
         #region members
 
@@ -40,6 +38,8 @@ namespace TestRun
         public Lt255 Camera { get; private set; }
         public ProScan Stage { get; private set; }
 
+        public GSI.Processing.ScanInfo ScanInfo { get; private set; } 
+
         /// <summary>
         /// The spectral context.
         /// </summary>
@@ -49,9 +49,46 @@ namespace TestRun
 
         #region Initialization
 
+        /// <summary>
+        /// Returns true if this is a new scan info.
+        /// </summary>
+        /// <returns></returns>
+        public bool LoadScanInfo()
+        {
+            string path = GetScanInfoFileName();
+            bool isNew = false;
+            if (!File.Exists(path))
+            {
+                // default scan info.
+                ScanInfo = new GSI.Processing.ScanInfo(
+                    0, 0, 0, 0, Camera.Settings.Exposure, 1, 1, 1, 1e-6);
+                isNew = true;
+            }
+            else
+            {
+                // read from file.
+                ScanInfo = GSI.Processing.ScanInfo.FromJson(File.ReadAllText(path));
+            }
+
+            return isNew;
+        }
+
+        private static string GetScanInfoFileName()
+        {
+            string path =
+                Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) +
+                Path.PathSeparator + "scaninfo.json";
+            return path;
+        }
+
+        public void StoreScanInfo()
+        {
+            string path = GetScanInfoFileName();
+            File.WriteAllText(path, ScanInfo.ToString());
+        }
+
         static Color connectEndabledColor = Color.LightGreen;
         
-
         private void btnConnect_Click(object sender, EventArgs e)
         {
             if (btnConnect.BackColor == connectEndabledColor)
@@ -90,8 +127,6 @@ namespace TestRun
                 Context = new GSI.Context.SpectralContext(Stage, Camera);
                 Camera.Connect(File.Exists("cam_settings.json") ? File.ReadAllText("cam_settings.json") : null);
 
-                Stage.Angle = numStageAngle.Value;
-
                 Stage.StartServer();
                 Stage.SetPosition(0, 0);
 
@@ -118,18 +153,42 @@ namespace TestRun
                 Camera.Settings.SettingsChanged += Settings_SettingsChanged;
                 SetPreview(btnTogglePreview.BackColor == connectEndabledColor);
                 grpCommands.Enabled = true;
-                
 
-                // set the exposure.
-                ignore_NumExp_validate = true;
-                numExp.Text = Camera.Settings.Exposure.ToString();
-                ignore_NumExp_validate = false;
+                if (LoadScanInfo())
+                {
+                    ScanInfo.ExposureTime = Camera.Settings.Exposure;
+                }
+
+                stageControl.BindBositionControl(Stage);
+                scanRange.BindToPositionControl(Stage);
+
+                StoreScanInfo();
+                UpdateControlsToScanInfo();
+                
             }
+        }
+
+        private void UpdateControlsToScanInfo()
+        {
+            // updating modifications
+            Stage.Angle = ScanInfo.StageAngle;
+            Camera.Settings.FrameRate = ScanInfo.FrameRate;
+            Camera.Settings.Exposure = ScanInfo.ExposureTime;
+            ScanInfo.ExposureTime = Camera.Settings.Exposure;
+
+            // just in case/should be always 
+            ScanInfo.CalculateScanParams();
+
+            // updating controls.
+            scanRange.LoadScanInfo(ScanInfo);
+            scanParameters.LoadScanInfo(ScanInfo);
+            stageControl.LoadScanInfo(ScanInfo);
         }
 
         void Settings_SettingsChanged(object sender, SettingsChangedEventArgs e)
         {
-            numExp.Text = Camera.Settings.Exposure.ToString();
+            ScanInfo.ExposureTime = Camera.Settings.Exposure;
+            UpdateControlsToScanInfo();
         }
 
         #endregion
@@ -228,182 +287,6 @@ namespace TestRun
             return true;
         }
 
-        void DoCapture()
-        {
-            CalculateScan();
-
-            if (!CalculateScan())
-            {
-                MessageBox.Show("Scan calculation is invalid.");
-                return;
-            }
-
-            if (new GSIControls.General.NumericControl[]{
-                numX0,numX1,numY0,numY1,numDx}.Any(b => !b.IsValid))
-            {
-                MessageBox.Show("Input values are not valid.");
-                return;
-            }
-
-            bool sumOverY = IsSummingOverY();
-            double deltaX = numDx.Value;
-
-            GSI.Processing.StackingCollector collector =
-                new GSI.Processing.StackingCollector(Camera.Settings.Width, Camera.Settings.Height,
-                   deltaX, sumOverY, sumOverY);
-
-            // Create the current running context that captures the images
-            // and creates the stack. The captured stack can be stored to the hdd.
-            GSI.Context.SpectralWorkContext captureContext = Context.CreateWorkContext();
-
-            // updating the frame rate.
-            Camera.Settings.FrameRate = numFrameRate.Value;
-
-            // deleting old files.
-            foreach (string file in new string[] { "pos.csv", "imageprop.csv", "image.rawstack" })
-            {
-                if (File.Exists(file))
-                    File.Delete(file);
-            }
-
-            StreamWriter pos_wr = new StreamWriter("pos.csv");
-            StreamWriter imageprop_wr = new StreamWriter("imageprop.csv");
-            GSI.Processing.StackingWriter stack_wr = new GSI.Processing.StackingWriter(
-                new FileStream("image.rawstack", FileMode.OpenOrCreate));
-
-            int totalNumberOfReadyVectors = 0;
-            barProg.Maximum = 1;
-            barProg.Value = 0;
-            int image_idx = 0;
-
-            // called when an image is captured.
-            captureContext.OnImageCaptured += (s, e) =>
-            {
-                // write image proprties.
-                imageprop_wr.WriteLine(
-                    string.Join(",",
-                    new object[] { 
-                        e.Elapsed.TotalSeconds.ToString(),
-                        e.Width,
-                        e.Height,
-                        e.Data.Length,
-                        e.NumOfBytes,
-                    }.Select(o => o.ToString())));
-
-                if (captureContext.IsRecodringData)
-                    lblStatus.Text = "Reading images (Current pending captured: "
-                                + captureContext.PendingImageCount + "/" + image_idx + ")";
-
-                // write image data.
-                collector.PushImage(e.Data, image_idx, e.TimeStamp);
-                image_idx++;
-                barProg.Maximum = Camera.PendingImagesCount + image_idx;
-                barProg.Value = image_idx;
-            };
-
-            captureContext.OnPositionCapture += (s, e) =>
-            {
-                if (!captureContext.IsRecodringData)
-                    return;
-                pos_wr.WriteLine(e.Elapsed.TotalSeconds.ToString() + "," + e.X + "," + e.Y);
-            };
-
-            double x0 = numX0.Value,
-                x1 = numX1.Value,
-                y1 = numY1.Value,
-                y0 = numY0.Value;
-
-            // calculating begin offset for images.
-            double offset = collector.NumberOfImagesPerStack * deltaX * numPixelSize.Value;
-            int scanSizeInPixels = 0;
-            if (IsScanOverY())
-            {
-                if (y0 > y1)
-                    y0 = y0 + offset;
-                else y0 = y0 - offset;
-                //txtCaptureInfo.Text += "StartX: " + y0 + ", EndX:" + y1;
-                scanSizeInPixels = (int)Math.Floor(Math.Abs(y0 - y1) * 1.0 / numPixelSize.Value);
-            }
-            else
-            {
-                if (x0 > x1)
-                    x0 = x0 + offset;
-                else x0 = x0 - offset;
-                //txtCaptureInfo.Text += "StartX: " + x0 + ", EndX:" + x1;
-                scanSizeInPixels = (int)Math.Floor(Math.Abs(x0 - x1) * 1.0 / numPixelSize.Value);
-            }
-
-            scanSizeInPixels = scanSizeInPixels - (int)(collector.NumberOfImagesPerStack * deltaX) + 1;
-
-            double vx = IsScanOverY() ? 0 : numScanSpeed.Value;
-            double vy = !IsScanOverY() ? 0 : numScanSpeed.Value;
-
-            stack_wr.WriteInitialize(scanSizeInPixels,
-                Camera.Height,
-                collector.NumberOfValuesPerPiexl,
-                collector.StepSize,
-                numPixelSize.Value );
-
-            collector.VectorReady += (s, e) =>
-            {
-                if (totalNumberOfReadyVectors >= scanSizeInPixels)
-                    return;
-                stack_wr.WriteVector(e.Vector);
-                totalNumberOfReadyVectors++;
-            };
-
-            Stage.DoPath(x0, y0, x1, y1,
-                vx, vy, true, chkDoSpeedOffset.Checked,
-                () =>
-                {
-                    // reached start pos.
-                    lblStatus.Text = "Started";
-                    captureContext.StartCapture();
-                },
-                () =>
-                {
-                    // reched end position.
-                    captureContext.StopCapture();
-
-                    // waiting for processing and writing to complete.
-                    while (captureContext.IsProcessingPendingImages || stack_wr.IsWaitingForWriteEvents)
-                    {
-                        lblStatus.Text = "Waiting for image processing and disk writing to complete ("
-                            + captureContext.PendingImageCount + ", " + stack_wr.NumberOfPendingWrites + ")";
-                        System.Threading.Thread.Sleep(100);
-                    }
-
-                    pos_wr.Flush();
-                    pos_wr.Close();
-                    pos_wr.Dispose();
-
-                    imageprop_wr.Flush();
-                    imageprop_wr.Close();
-                    imageprop_wr.Dispose();
-
-                    stack_wr.Dispose();
-
-                    GC.Collect();
-
-                    lblStatus.Text = "Finished, " + totalNumberOfReadyVectors + " vectors, "
-                        + image_idx + " images";
-
-                    captureContext.Dispose();
-                });
-        }
-
-        private bool IsScanOverY()
-        {
-            return ddScanOver.Text == "Y";
-        }
-
-        private bool IsSummingOverY()
-        {
-            bool sumOverY = (IsScanOverY() && !chkInvertedImage.Checked)
-                || (!IsScanOverY() && chkInvertedImage.Checked);
-            return sumOverY;
-        }
-
         #endregion
 
         #region Image reconstruct
@@ -472,16 +355,21 @@ namespace TestRun
         public void DoSpectralScan()
         {
             btnCapture.Enabled = false;
-            if (!CalculateScan())
+            if (!scanParameters.IsValid())
             {
-                MessageBox.Show("Scan calculation is invalid.");
+                MessageBox.Show("Scan parameters (exp, dx ... ) parameters are invalid.");
                 return;
             }
 
-            if(new GSIControls.General.NumericControl[]{
-                numX0,numX1,numY0,numY1,numDx}.Any(b=>!b.IsValid))
+            if(!scanRange.IsRangeValid())
             {
-                MessageBox.Show("Input values are not valid.");
+                MessageBox.Show("The scan range is invalid.");
+                return;
+            }
+
+            if (!stageControl.IsValid())
+            {
+                MessageBox.Show("The stage angle is not valid.");
                 return;
             }
 
@@ -501,29 +389,22 @@ namespace TestRun
                 }
             }
 
-            // set the frame rate to the correct value.
-            Camera.Settings.FrameRate = numFrameRate.Value;
+            // Updating the camera parameters to the correct values.
+            // storing the old camera steeing to be restored after the process is compleated.
+            string oldSettings = Camera.Settings.ToJson();
 
             GSI.Context.SpectralWorkContext context = Context.CreateWorkContext();
 
-            // scanning region.
-            GSI.Context.SpectralScanRectangle rect=
-                new GSI.Context.SpectralScanRectangle(
-                    numX0.Value>numX1.Value ? numX1.Value : numX0.Value,
-                    numY0.Value>numY1.Value ? numY1.Value : numY0.Value,
-                    Math.Abs(numX0.Value-  numX1.Value),
-                    Math.Abs(numY0.Value-  numY1.Value),
-                    numPixelSize.Value,
-                    IsSummingOverY(),
-                    IsScanOverY());
+            // Scan region.
+            GSI.Context.SpectralScanRectangle rect = ScanInfo.ToSpectralScanRectangle();
 
             FileStream strm = new FileStream(filename, FileMode.Create);
 
             GSI.Context.SpectralScan scan = new GSI.Context.SpectralScan(
                 context, rect,
-                numDx.Value,
-                numScanSpeed.Value,
-                chkDoSpeedOffset.Checked);
+                ScanInfo.DeltaXInPixels,
+                ScanInfo.ScanSpeed,
+                ScanInfo.DoSpeedup);
 
             // updates the current text.
             barProg.Maximum = scan.LineSize;
@@ -584,50 +465,6 @@ namespace TestRun
 
         #endregion
 
-        #region Scan calculations
-
-        private bool CalculateScan()
-        {
-            if (!numPixelSize.IsValid ||
-                !numMaxFrameRate.IsValid ||
-                !numExp.IsValid ||
-                !numDx.IsValid ||
-                !numStageAngle.IsValid)
-            {
-                return false;
-            }
-
-            // all below in um.
-            double sizeOfPixel = numPixelSize.Value; // in um.
-            double deltaXInUm = numDx.Value * sizeOfPixel; // in um.
-
-            double maxSpeedExpsure = Math.Floor(0.25 * sizeOfPixel / (Camera.Settings.Exposure * 1E-3));
-            double maxSpeedFrameRate = Math.Floor(deltaXInUm * numMaxFrameRate.Value);
-
-            double maxSpeed = maxSpeedExpsure < maxSpeedFrameRate ? maxSpeedExpsure : maxSpeedFrameRate;
-
-            numFrameRate.Text = Math.Ceiling(maxSpeed / deltaXInUm).ToString();
-            bool overY = IsSummingOverY();
-
-            // taking scan angle into account.
-            numScanSpeed.Text = maxSpeed.ToString();
-            UpdatePositionPixels();
-
-            return true;
-        }
-
-        private void UpdatePositionPixels()
-        {
-            double sizeOfPixel = numPixelSize.Value;
-            numStartXPix.Value = numX0.Value / sizeOfPixel;
-            numStartYPix.Value = numY0.Value / sizeOfPixel;
-
-            numEndXPix.Value = numX1.Value / sizeOfPixel;
-            numEndYPix.Value = numX1.Value / sizeOfPixel;
-        }
-
-        #endregion
-
         private void btnSettings_Click(object sender, EventArgs e)
         {
             GSIControls.Camera.Lumenera.SettingsDialog dlg =
@@ -645,19 +482,7 @@ namespace TestRun
             Stage.SendCommand("PS 0,0");
         }
 
-        private void btnCur0_Click(object sender, EventArgs e)
-        {
-            numX0.Text = Stage.PositionX.ToString();
-            numY0.Text = Stage.PositionY.ToString();
-        }
-
-        private void btnCur1_Click(object sender, EventArgs e)
-        {
-            numX1.Text = Stage.PositionX.ToString();
-            numY1.Text = Stage.PositionY.ToString();
-        }
-
-        private void button1_Click(object sender, EventArgs e)
+        private void btnCapture_Click(object sender, EventArgs e)
         {
             DoSpectralScan();
         }
@@ -666,23 +491,6 @@ namespace TestRun
         {
             Stage.SetPosition(0, 0);
         }
-
-        private void btnGoto_Click(object sender, EventArgs e)
-        {
-            if (!numGotoXPos.IsValid || !numGotoYPos.IsValid)
-            {
-                MessageBox.Show("x or y are not valid.");
-            }
-
-            Stage.SetPosition(numGotoXPos.Value, numGotoYPos.Value);
-        }
-
-        private void btnCalcBest_Click(object sender, EventArgs e)
-        {
-            CalculateScan();
-        }
-
-
 
         private void btnCheck_Click(object sender, EventArgs e)
         {
@@ -742,25 +550,6 @@ namespace TestRun
             DoForierTransform();
         }
 
-        bool ignore_NumExp_validate = false;
-        private void numExp_Validated(object sender, EventArgs e)
-        {
-            if (ignore_NumExp_validate)
-                return;
-            ignore_NumExp_validate = true;
-            Camera.Settings.Exposure = numExp.Value;
-            ignore_NumExp_validate = false;
-        }
-
-        private void numStageAngle_TextChanged(object sender, EventArgs e)
-        {
-        }
-
-        private void numStageAngle_Validated(object sender, EventArgs e)
-        {
-            Stage.Angle = numStageAngle.Value;
-        }
-
         private void btnSaveSettings_Click(object sender, EventArgs e)
         {
             File.WriteAllText("cam_settings.json", Camera.Settings.ToJson());
@@ -768,17 +557,14 @@ namespace TestRun
 
         private void numX0_Validated(object sender, EventArgs e)
         {
-            UpdatePositionPixels();
         }
 
         private void numY0_Validated(object sender, EventArgs e)
         {
-            UpdatePositionPixels();
         }
 
         private void numX1_Validated(object sender, EventArgs e)
         {
-            UpdatePositionPixels();
         }
 
         private void numPixelSize_TextChanged(object sender, EventArgs e)
@@ -788,7 +574,6 @@ namespace TestRun
 
         private void numPixelSize_Validated(object sender, EventArgs e)
         {
-            UpdatePositionPixels();
         }
 
         private void btnCalibImageAndStage_Click(object sender, EventArgs e)
@@ -796,8 +581,10 @@ namespace TestRun
             Task.Run(() =>
             {
                 double angle, pixelSize;
-                numPixelSize.Value = 0;
-                numStageAngle.Value = 0;
+                ScanInfo.PixelSize = 1;
+                ScanInfo.StageAngle = 0;
+                UpdateControlsToScanInfo();
+
                 // assuming the current position is 0,0. doing the calibration for 100 um. 
                 Stage.SetPosition(-50, 0, false);
                 WaitUntilNextPreview();
@@ -806,14 +593,35 @@ namespace TestRun
                 WaitUntilNextPreview();
                 byte[] imgb = CloneLastPreview();
 
-
                 GSI.Calibration.SpatialRotation.FindRotationAndPixelSize(imga, imgb,
                     Camera.Width, 100, 0, out angle, out pixelSize);
 
-                numPixelSize.Value = pixelSize;
-                numStageAngle.Value = angle;
-                Stage.Angle = numStageAngle.Value;
+                ScanInfo.StageAngle = angle;
+                ScanInfo.PixelSize = pixelSize;
+                UpdateControlsToScanInfo();
             });
+        }
+
+        private void scanRange_DataChanged(object sender, EventArgs e)
+        {
+            // update and populate.
+            scanRange.PopulateScanInfo(ScanInfo);
+            StoreScanInfo();
+        }
+
+        private void stageControl_DataChanged(object sender, EventArgs e)
+        {
+            stageControl.PopulateScanInfo(ScanInfo);
+            StoreScanInfo();
+        }
+
+        private void scanImageParameters1_DataChanged(object sender, EventArgs e)
+        {
+            scanParameters.PopulateScanInfo(ScanInfo);
+            // checking for the exposure.
+
+            UpdateControlsToScanInfo();
+            StoreScanInfo();
         }
     }
 }
