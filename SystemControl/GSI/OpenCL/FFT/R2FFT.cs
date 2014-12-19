@@ -263,14 +263,18 @@ namespace GSI.OpenCL.FFT
 
         unsafe void PopulateSinge(int dataVectorLength, int dataVectorStartOffset, float[] source, ref float[] dest)
         {
+            // chaning properties to local parameters for faster unsafe processing.
+            int forierVectorLength = ForierVectorLength;
+            int numberOfSamples = NumberOfSamples;
+
             fixed(float* _source=source)
             fixed (float* _dest = dest)
             {
                 // populating the fft vectors.
-                for (int i = 0; i < NumberOfSamples; i++)
+                for (int i = 0; i < numberOfSamples; i++)
                 {
-                    int sourceIndex = ForierVectorLength * i;
-                    int destIndex=dataVectorLength*i;
+                    int sourceIndex = forierVectorLength * i;
+                    int destIndex = dataVectorLength * i;
                     for (int j = 0; j < dataVectorLength; j++)
                     {
                         _dest[destIndex + j] = _source[sourceIndex + dataVectorStartOffset + j];
