@@ -233,11 +233,14 @@ namespace GSI.IP
             if (data == null)
                 data = new float[numberOfPixels * 3];
             
+            // local parameters to make unsafe code faster.
+            int skipOnPixelConvert = SkipOnPixelConvert;
+
             fixed (float* pValues = values, pData = data)
             {
                 for (int pi = 0; pi < numberOfPixels; pi++)
                 {
-                    int startIndex = pi * vectorLength + SkipOnPixelConvert;
+                    int startIndex = pi * vectorLength + skipOnPixelConvert;
                     int endIndex = (pi + 1) * (vectorLength);
                     float[] asRGB = doConvert(pValues, startIndex, vectorLength);
                     int pixelIndex = pi * 3;

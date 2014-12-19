@@ -771,15 +771,19 @@ namespace GSI.IP
 
             // We not go thrugh the lines of the source and apply these to the target. 
             // note the offsets.
+            
+            // local paramters to make unsafe code run faster.
+            int zoomRatio = ZoomRatio;
+
             fixed (float* pSource = source, pTarget = reduced)
             {
-                for (int y = 0; y < height; y += ZoomRatio)
+                for (int y = 0; y < height; y += zoomRatio)
                 {
-                    for (int x = 0; x < width; x += ZoomRatio)
+                    for (int x = 0; x < width; x += zoomRatio)
                     {
                         // calculating the reduced positions.
-                        int reducedX = x / ZoomRatio;
-                        int reducedY = y / ZoomRatio;
+                        int reducedX = x / zoomRatio;
+                        int reducedY = y / zoomRatio;
 
                         // avaeraging on the correct pixels.
                         for (int pvindex = 0; pvindex < nPixVals; pvindex++)// for each pixel.
@@ -787,14 +791,14 @@ namespace GSI.IP
                             // since the zoom ratio set the number of reduced pixels
                             // I can just scan by jumping over the correct pixels.
                             float av = 0;
-                            for (int pixn = 0; pixn < ZoomRatio; pixn++)
+                            for (int pixn = 0; pixn < zoomRatio; pixn++)
                             {
                                 int sourceIndex = (x + pixn) * nPixVals + pvindex;
                                 av += pSource[sourceIndex];
                             }
 
                             // calculate the avarage and asssign it.
-                            av /= ZoomRatio;
+                            av /= zoomRatio;
                             pTarget[reducedX + pvindex] = av;
                         }
                     }

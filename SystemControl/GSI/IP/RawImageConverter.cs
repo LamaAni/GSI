@@ -195,7 +195,7 @@ namespace GSI.IP
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
-        private unsafe byte[] ReadTileBytes(RawImageTileInfo info, ref byte[] buffer)
+        private byte[] ReadTileBytes(RawImageTileInfo info, ref byte[] buffer)
         {
             long totalNumberOfBytes = info.Width * info.Height * ImageStream.NumberOfBytesPerPixel;
             int numberOfLineBytes = (int)(info.Width * ImageStream.NumberOfBytesPerPixel);
