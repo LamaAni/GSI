@@ -62,11 +62,11 @@ namespace GSI.Storage.Spectrum
 
             Tuple<double, int>[] frequencyByIndex = new Tuple<double, int>[zerofill];
             double units = coef[1];
-            bool asWavelength=coef[0]==1;
+            bool asWavelength = coef[0] == 1;
             for (int i = 0; i < zerofill; i++)
             {
-                double freq=units * (coef[2] / (i + coef[3]) - coef[4]);
-                if(asWavelength)
+                double freq = units * (coef[2] / (i + coef[3]) - coef[4]);
+                if (asWavelength)
                     freq = 1.0 / freq;
                 frequencyByIndex[i] = new Tuple<double, int>(freq, i);
             }

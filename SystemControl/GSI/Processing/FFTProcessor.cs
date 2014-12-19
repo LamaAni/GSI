@@ -241,8 +241,8 @@ namespace GSI.Processing
                 Source = source;
             }
 
-            public float* Target { get; private set; }
-            public byte* Source { get; private set; }
+            public float* Target;
+            public byte* Source;
 
             public void DoConvert(int i)
             {
