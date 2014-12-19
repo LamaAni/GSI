@@ -70,24 +70,79 @@ namespace TestRun
             if (!File.Exists(GetCalibrationFileName()))
             {
                 CurrentCalibration = null;
-                ddZeroFilling.SelectedIndex = 0;
+                SelectCalibration(0);
                 return;
             }
 
             // getting the current calibration.
             CurrentCalibration = new SpectrumCalibrationInfo(File.ReadAllText(GetCalibrationFileName()));
-            bool indexSelected=false;
+            bool indexSelected = false;
             foreach (var kvp in CurrentCalibration)
             {
                 ddZeroFilling.Items.Add("To " + kvp.Key.ToString());
                 if (kvp.Key == PreferedZeroFill)
                 {
                     indexSelected = true;
-                    ddZeroFilling.SelectedIndex = ddZeroFilling.Items.Count - 1;
+                    SelectCalibration(ddZeroFilling.Items.Count - 1);
                 }
             }
-            if (!indexSelected && ddZeroFilling.Items.Count > 1)
-                ddZeroFilling.SelectedIndex = 1;
+
+            if (!indexSelected)
+                SelectCalibration(0);
+        }
+
+        /// <summary>
+        /// The selected zero fill.
+        /// </summary>
+        public int SelectedZeroFill { get; private set; }
+
+        void SelectCalibration(int idx)
+        {
+            if (ddZeroFilling.SelectedIndex != idx)
+                ddZeroFilling.SelectedIndex = idx;
+
+            if (idx == 0)
+            {
+                // no calibration.
+                SelectedZeroFill = PreferedZeroFill;
+            }
+            else
+            {
+                // the selected zero fill.
+                SelectedZeroFill = CurrentCalibration.ElementAt(idx-1).Key;
+            }
+
+            int startIndex = 0;
+            int fftDataSize = GetSelectedFFTDataSize(out startIndex, idx == 0);
+
+            lblSelectedCalib.Text = (idx == 0 ? "No Calibration" : "Fill to " + SelectedZeroFill) +
+                ", Start index: "+startIndex+", FftDataSize: " + fftDataSize + (fftDataSize <= 0 ? "!!ERROR!!" : "");
+        }
+
+        int GetSelectedFFTDataSize(out int startIndex, bool? useDefault = null)
+        {
+            if (useDefault == null)
+                useDefault = ddZeroFilling.SelectedIndex == 0;
+            if (useDefault == true)
+            {
+                // no calibration.
+                startIndex = 0;
+                return SelectedZeroFill / 2;
+            }
+            else
+            {
+                // the selected zero fill.
+                Tuple<int,int> rslt=CurrentCalibration.CalculateZeroFillDataSize(SelectedZeroFill,
+                    1.0 / (numEndWavelegnth.Value * 1e-9), 1.0 / (numStartWavelength.Value * 1e-9));
+                startIndex = rslt.Item1;
+                return rslt.Item2;
+            }
+        }
+
+        int GetSelectedFFTDataSize(bool? useDefault=null)
+        {
+            int sidx = 0;
+            return GetSelectedFFTDataSize(out sidx);
         }
 
         #endregion
@@ -345,8 +400,16 @@ namespace TestRun
                 return;
             }
 
+            // validating the current fft data size.
+            if (GetSelectedFFTDataSize() <= 0)
+            {
+                MessageBox.Show("The current selected wavelenth range and configuration will result in a zero FFT data size, or an error.");
+                return;
+            }
+
             Task.Run(() =>
             {
+                
                 btnDoForier.Enabled = false;
                 GSI.Coding.CodeTimer timer = new GSI.Coding.CodeTimer();
                 timer.Start();
@@ -369,15 +432,9 @@ namespace TestRun
 
                 reader.Initialize();
 
-                int zeroFill = PreferedZeroFill;
-                if(ddZeroFilling.SelectedIndex>0)
-                {
-                    zeroFill = CurrentCalibration.ElementAt(ddZeroFilling.SelectedIndex - 1).Key;
-                }
-
                 GSI.Storage.Spectrum.SpectrumStreamSettings settings =
                     new SpectrumStreamSettings(reader.NumberOfLines, reader.LineSize, reader.VectorSize,
-                        zeroFill, reader.StepSize, reader.PixelSize);
+                        SelectedZeroFill, reader.StepSize, reader.PixelSize);
 
                 // configuring the calibration into the settings in the 
                 if (CurrentCalibration != null && ddZeroFilling.SelectedIndex != 0)
@@ -673,6 +730,11 @@ namespace TestRun
         private void label3_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void ddZeroFilling_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SelectCalibration(ddZeroFilling.SelectedIndex);
         }
 
 

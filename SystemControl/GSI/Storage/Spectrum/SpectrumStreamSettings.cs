@@ -50,7 +50,7 @@ namespace GSI.Storage.Spectrum
         /// </summary>
         protected SpectrumStreamSettings()
         {
-            if (FftDataSize == 0)
+            if (FftDataSize <= 0)
                 FftDataSize = FftSize / 2;
         }
 

@@ -78,10 +78,10 @@ namespace GSI.Storage.Spectrum
         /// for the specified wavelengths. Gives the closest possible wavelength 
         /// binned to the spectrum index.
         /// </summary>
-        /// <param name="startWavelength">The wavelength to start from.</param>
-        /// <param name="endWavelegth">The wavelength to end with</param>
-        /// <param name="start">The values of the start index, (wavelength, index)</param>
-        /// <param name="end">The values of the end index, (wavelength, index)</param>
+        /// <param name="startWavelength">The freq to start from.</param>
+        /// <param name="endWavelegth">The freq to end with</param>
+        /// <param name="start">The values of the start index, (freq, index)</param>
+        /// <param name="end">The values of the end index, (freq, index)</param>
         public void GetFrequencyIndices(int zerofill, double startFreq, double endFreq,
             out Tuple<double, int> start, out Tuple<double,int> end)
         {
@@ -119,23 +119,44 @@ namespace GSI.Storage.Spectrum
         /// </summary>
         /// <param name="settings">The settings to fill</param>
         /// <param name="zerofill">The zero filling</param>
-        /// <param name="startWavelength">The start wavelength</param>
-        /// <param name="endWavelegth">The end wavelegnth</param>
+        /// <param name="startFreq">The start wavelength</param>
+        /// <param name="endFreq">The end wavelegnth</param>
         public void FillSpectrumStreamSettings(SpectrumStreamSettings settings,
-            int zerofill = -1, double startWavelength = -1, double endWavelegth = -1)
+            int zerofill = -1, double startFreq = -1, double endFreq = -1)
         {
             Tuple<double, int> start, end;
             GetFrequencyIndices(
                 zerofill < 0 ? settings.FftSize : zerofill,
-                startWavelength < 0 ? settings.StartFrequency : startWavelength,
-                endWavelegth < 0 ? settings.EndFrequency : endWavelegth,
+                startFreq < 0 ? settings.StartFrequency : startFreq,
+                endFreq < 0 ? settings.EndFrequency : endFreq,
                 out start, out end);
 
             // now update the settings.
             settings.FftDataOffsetIndex = start.Item2;
             settings.FftDataSize = end.Item2 - start.Item2;
+            if (settings.FftDataSize < 0)
+                settings.FftDataSize = 0; // zero out the fft data size, since it was negative.
             settings.StartFrequency = start.Item1;
             settings.EndFrequency = end.Item1;
+        }
+
+        /// <summary>
+        /// Calculates the fft data size for the specified frequencies.
+        /// </summary>
+        /// <param name="zeroFill"></param>
+        /// <param name="startFreq"></param>
+        /// <param name="endFreq"></param>
+        /// <returns>The start index, The fill size</returns>
+        public Tuple<int,int> CalculateZeroFillDataSize(int zeroFill, double startFreq, double endFreq)
+        {
+            Tuple<double, int> start, end;
+            GetFrequencyIndices(
+                zeroFill,
+                startFreq,
+                endFreq,
+                out start, out end);
+
+            return new Tuple<int, int>(start.Item2, end.Item2 - start.Item2);
         }
 
         /// <summary>
