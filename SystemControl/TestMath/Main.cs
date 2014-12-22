@@ -421,11 +421,16 @@ namespace TestMath
             });
 
             // doing the stacking.
+            GSI.Coading.ActionQueueExecuter executer =
+                new GSI.Coading.ActionQueueExecuter();
             Task.Run(() =>
             {
                 for (int i = 0; i < maxNumberOfVectors; i++)
                 {
-                    collector.PushImage(data, i, DateTime.Now);
+                    executer.AddAction(() =>
+                    {
+                        collector.PushImage(data, i, DateTime.Now);
+                    });
                 }
                 isRunning = false;
             });
