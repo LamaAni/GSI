@@ -141,6 +141,8 @@ namespace GSIControls.Stage
             info.OffsetY = numYOffset.Value;
             info.Direction = ddScanOver.SelectedIndex == 0 ? ScanInfo_ScanDirection.X :
                 ScanInfo_ScanDirection.Y;
+
+            DoValidation(false);
         }
 
         /// <summary>
@@ -150,12 +152,15 @@ namespace GSIControls.Stage
         public void LoadScanInfo(ScanInfo info)
         {
             chkDoSpeedup.Checked = info.DoSpeedup;
+            PixelSize = info.PixelSize;
             numStartX.Value = info.StartX;
             numStartY.Value = info.StartY;
             numXOffset.Value = info.OffsetX;
             numYOffset.Value = info.OffsetY;
             ddScanOver.SelectedIndex =
                 info.Direction == ScanInfo_ScanDirection.X ? 0 : 1;
+
+            
         }
 
         #endregion

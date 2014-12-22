@@ -397,10 +397,6 @@ namespace TestRun
                 }
             }
 
-            // Updating the camera parameters to the correct values.
-            // storing the old camera steeing to be restored after the process is compleated.
-            string oldSettings = Camera.Settings.ToJson();
-
             GSI.Context.SpectralWorkContext context = Context.CreateWorkContext();
 
             // Scan region.
@@ -422,7 +418,7 @@ namespace TestRun
             Action updateText = () =>
             {
                 TimeSpan offset = DateTime.Now - lastUpdated;
-                if (offset.TotalMilliseconds < 20)
+                if (scan.CurrentVectorIndex != scan.LineSize && offset.TotalMilliseconds < 100)
                     return;
                 double pixTime = offset.TotalMilliseconds / scan.TotalNumberOfPixelsRead;
                 TimeSpan eta = TimeSpan.FromMilliseconds((scan.NumberOfPixelsInImage - scan.TotalNumberOfPixelsRead) * pixTime);
@@ -509,7 +505,6 @@ namespace TestRun
 
         private void btnDoReconstructImage_Click(object sender, EventArgs e)
         {
-
             string filename = "image.rawstack";
             if (chkAskWhereToCapture.Checked)
             {
