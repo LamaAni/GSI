@@ -45,14 +45,19 @@
             this.btnDoForier = new System.Windows.Forms.Button();
             this.panel4 = new System.Windows.Forms.Panel();
             this.panel5 = new System.Windows.Forms.Panel();
+            this.lblSelectedCalib = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             this.chkDoRgbPreview = new System.Windows.Forms.CheckBox();
             this.label3 = new System.Windows.Forms.Label();
             this.btnLoadCalibration = new System.Windows.Forms.Button();
             this.ddZeroFilling = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.lblSelectedCalib = new System.Windows.Forms.Label();
+            this.panel6 = new System.Windows.Forms.Panel();
+            this.label5 = new System.Windows.Forms.Label();
+            this.ddCardSelect = new System.Windows.Forms.ComboBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.numTotalMemoryInMB = new GSIControls.General.NumericControl();
             this.numEndWavelegnth = new GSIControls.General.NumericControl();
             this.numStartWavelength = new GSIControls.General.NumericControl();
             ((System.ComponentModel.ISupportInitialize)(this.chartSpectrum)).BeginInit();
@@ -61,6 +66,7 @@
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
+            this.panel6.SuspendLayout();
             this.SuspendLayout();
             // 
             // progBar
@@ -126,7 +132,7 @@
             series2.IsVisibleInLegend = false;
             series2.Name = "Series1";
             this.chartSpectrum.Series.Add(series2);
-            this.chartSpectrum.Size = new System.Drawing.Size(418, 435);
+            this.chartSpectrum.Size = new System.Drawing.Size(418, 344);
             this.chartSpectrum.TabIndex = 8;
             this.chartSpectrum.Text = "chart1";
             this.chartSpectrum.Click += new System.EventHandler(this.chartSpectrum_Click);
@@ -225,13 +231,14 @@
             // 
             // panel4
             // 
+            this.panel4.Controls.Add(this.panel6);
             this.panel4.Controls.Add(this.panel5);
             this.panel4.Controls.Add(this.chartSpectrum);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Right;
             this.panel4.Location = new System.Drawing.Point(827, 77);
             this.panel4.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.panel4.Name = "panel4";
-            this.panel4.Padding = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.panel4.Padding = new System.Windows.Forms.Padding(8);
             this.panel4.Size = new System.Drawing.Size(434, 672);
             this.panel4.TabIndex = 11;
             // 
@@ -248,11 +255,29 @@
             this.panel5.Controls.Add(this.label2);
             this.panel5.Controls.Add(this.label1);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel5.Location = new System.Drawing.Point(8, 443);
+            this.panel5.Location = new System.Drawing.Point(8, 352);
             this.panel5.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(418, 219);
             this.panel5.TabIndex = 9;
+            // 
+            // lblSelectedCalib
+            // 
+            this.lblSelectedCalib.ForeColor = System.Drawing.Color.Crimson;
+            this.lblSelectedCalib.Location = new System.Drawing.Point(8, 152);
+            this.lblSelectedCalib.Name = "lblSelectedCalib";
+            this.lblSelectedCalib.Size = new System.Drawing.Size(395, 39);
+            this.lblSelectedCalib.TabIndex = 9;
+            this.lblSelectedCalib.Text = "[calibration data]";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(4, 123);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(152, 20);
+            this.label4.TabIndex = 8;
+            this.label4.Text = "Selected calibration:";
             // 
             // chkDoRgbPreview
             // 
@@ -318,23 +343,59 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Wavelengths";
             // 
-            // label4
+            // panel6
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(4, 123);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(152, 20);
-            this.label4.TabIndex = 8;
-            this.label4.Text = "Selected calibration:";
+            this.panel6.Controls.Add(this.label6);
+            this.panel6.Controls.Add(this.ddCardSelect);
+            this.panel6.Controls.Add(this.label5);
+            this.panel6.Controls.Add(this.numTotalMemoryInMB);
+            this.panel6.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel6.Location = new System.Drawing.Point(8, 571);
+            this.panel6.Name = "panel6";
+            this.panel6.Size = new System.Drawing.Size(418, 90);
+            this.panel6.TabIndex = 10;
             // 
-            // lblSelectedCalib
+            // label5
             // 
-            this.lblSelectedCalib.ForeColor = System.Drawing.Color.Crimson;
-            this.lblSelectedCalib.Location = new System.Drawing.Point(8, 152);
-            this.lblSelectedCalib.Name = "lblSelectedCalib";
-            this.lblSelectedCalib.Size = new System.Drawing.Size(395, 39);
-            this.lblSelectedCalib.TabIndex = 9;
-            this.lblSelectedCalib.Text = "[calibration data]";
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(9, 51);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(65, 20);
+            this.label5.TabIndex = 9;
+            this.label5.Text = "Memory";
+            // 
+            // ddCardSelect
+            // 
+            this.ddCardSelect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ddCardSelect.FormattingEnabled = true;
+            this.ddCardSelect.Location = new System.Drawing.Point(53, 10);
+            this.ddCardSelect.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.ddCardSelect.Name = "ddCardSelect";
+            this.ddCardSelect.Size = new System.Drawing.Size(350, 28);
+            this.ddCardSelect.TabIndex = 10;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(8, 13);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(38, 20);
+            this.label6.TabIndex = 11;
+            this.label6.Text = "Use";
+            // 
+            // numTotalMemoryInMB
+            // 
+            this.numTotalMemoryInMB.Location = new System.Drawing.Point(81, 48);
+            this.numTotalMemoryInMB.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.numTotalMemoryInMB.MaxValue = 1.7976931348623157E+308D;
+            this.numTotalMemoryInMB.MinValue = -1.7976931348623157E+308D;
+            this.numTotalMemoryInMB.Name = "numTotalMemoryInMB";
+            this.numTotalMemoryInMB.Size = new System.Drawing.Size(63, 26);
+            this.numTotalMemoryInMB.TabIndex = 4;
+            this.numTotalMemoryInMB.Text = "60";
+            this.numTotalMemoryInMB.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numTotalMemoryInMB.Units = 1D;
+            this.numTotalMemoryInMB.Value = 60D;
             // 
             // numEndWavelegnth
             // 
@@ -384,6 +445,8 @@
             this.panel4.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
             this.panel5.PerformLayout();
+            this.panel6.ResumeLayout(false);
+            this.panel6.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -416,5 +479,10 @@
         private System.Windows.Forms.CheckBox chkDoRgbPreview;
         private System.Windows.Forms.Label lblSelectedCalib;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Panel panel6;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.ComboBox ddCardSelect;
+        private System.Windows.Forms.Label label5;
+        private GSIControls.General.NumericControl numTotalMemoryInMB;
     }
 }
