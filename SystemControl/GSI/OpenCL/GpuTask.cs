@@ -13,17 +13,35 @@ namespace GSI.OpenCL
     /// </summary>
     public class GpuTask : IDisposable
     {
+
         /// <summary>
         /// Creates a new gpu task.
         /// </summary>
         /// <param name="context"></param>
-        protected GpuTask(ComputeContext context, ComputeProgram program, ComputeDevice device=null)
+        protected GpuTask(ComputeContext context, ComputeProgram program, GpuTaskDeviceInfo di=null)
         {
             Context = context;
             Program = program;
 
-            SelectedDevice = device != null ? device : context.Devices.OrderBy(d => d.MaxComputeUnits).First();
+            SelectedDevice = di != null ? di.Device : context.Devices[0];
         }
+
+        #region device lookup
+
+        public static GpuTaskDeviceInfo[] GetDevices()
+        {
+            try
+            {
+                return Cloo.ComputePlatform.Platforms.SelectMany(p => p.Devices)
+                    .Select(d => new GpuTaskDeviceInfo(d)).ToArray();
+            }
+            catch(Exception ex)
+            {
+                return new GpuTaskDeviceInfo[0];
+            }
+        }
+
+        #endregion
 
         #region static methods
 
@@ -68,9 +86,9 @@ namespace GSI.OpenCL
         /// <param name="platform">The platform to run on (Nvidia Cuda for example), if default takes the first available.</param>
         /// <param name="devices">The devices to run on. If null assumes all devices.</param>
         /// <returns></returns>
-        public static GpuTask Create(string kernalCode, bool autobuild = true,
-            ComputePlatform platform = null,
-            IEnumerable<ComputeDevice> devices = null)
+        public static GpuTask Create(string kernalCode,
+            IEnumerable<ComputeDevice> devices = null, bool autobuild = true,
+            ComputePlatform platform = null)
         {
             if (devices == null)
             {
@@ -81,15 +99,17 @@ namespace GSI.OpenCL
                 else
                 {
                     devices = new ComputeDevice[1] { GpuTask.GetDefaultDevice() };
-                    platform = devices.First().Platform;
                 }
             }
+            
+            if(platform==null)
+                platform = devices.First().Platform;
 
             ComputeContext context = new ComputeContext(devices.ToArray(),
                 new ComputeContextPropertyList(platform), null, IntPtr.Zero);
 
             ComputeProgram program = new ComputeProgram(context, kernalCode);
-            GpuTask task=new GpuTask(context, new ComputeProgram(context, kernalCode));
+            GpuTask task = new GpuTask(context, new ComputeProgram(context, kernalCode));
 
             // compile if needed.
             if (autobuild)
@@ -110,7 +130,7 @@ namespace GSI.OpenCL
         public static void Run(string kernalCode, string kernalName,
             Action<ExecutingKernal> prepare, Action<ExecutingKernal> complete, int count)
         {
-            GpuTask task = GpuTask.Create(kernalCode, true);
+            GpuTask task = GpuTask.Create(kernalCode, null, true);
             task.RunKernal(kernalName, prepare, complete, count);
             task.Dispose();
 

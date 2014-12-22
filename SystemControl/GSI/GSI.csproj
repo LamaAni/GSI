@@ -78,6 +78,7 @@
     <Compile Include="OpenCL\ExecutingKernal.cs" />
     <Compile Include="OpenCL\GpuTask.cs" />
     <Compile Include="OpenCL\FFT\R2FFT.cs" />
+    <Compile Include="OpenCL\GpuTaskDeviceInfo.cs" />
     <Compile Include="OpenCL\IP\MakeStack.cs" />
     <Compile Include="OpenCL\IP\MakeImageData.cs" />
     <Compile Include="Processing\DataProcessesor.cs" />

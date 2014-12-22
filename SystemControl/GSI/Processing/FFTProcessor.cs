@@ -1,4 +1,5 @@
 ﻿using GSI.Coding;
+using GSI.OpenCL;
 using GSI.Storage.Spectrum;
 using System;
 using System.Collections.Generic;
@@ -30,9 +31,15 @@ namespace GSI.Processing
             AppodizationMask = appodizationMask;
             DoSubstractAvarage = doSubstractAvarage;
             Settings = settings;
+            Devices = new List<GpuTaskDeviceInfo>();
         }
 
         #region members
+
+        /// <summary>
+        /// The device info associated wit the current.
+        /// </summary>
+        public List<GpuTaskDeviceInfo> Devices { get; private set; }
 
         /// <summary>
         /// The mask algorithem to use.
@@ -117,6 +124,7 @@ namespace GSI.Processing
             byte[] writeDataBuffer = null;
 
             CodeTimer timer = new CodeTimer();
+            GpuTaskDeviceInfo runningDevice = Devices.Count == 0 ? null : Devices[0];
 
             SpectrumStreamWriter writer = new SpectrumStreamWriter(output, Settings);
 
@@ -170,7 +178,7 @@ namespace GSI.Processing
                     return;
 
                 // run the fft.
-                fft.Run(true);
+                fft.Run(true, runningDevice);
 
                 timer.Mark("fft run");
 

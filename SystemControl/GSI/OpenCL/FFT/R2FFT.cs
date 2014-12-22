@@ -209,11 +209,12 @@ namespace GSI.OpenCL.FFT
         /// <summary>
         /// Run the fft.
         /// </summary>
-        public void Run(bool isForward)
+        public void Run(bool isForward, GpuTaskDeviceInfo di=null)
         {
             if (m_runTask == null)
             {
-                m_runTask = GpuTask.Create(KernelCode);
+                m_runTask = GpuTask.Create(KernelCode, di == null ? null :
+                    new Cloo.ComputeDevice[1] { di.Device });
             }
 
             m_runTask.RunKernal("R2FFT", (k) =>

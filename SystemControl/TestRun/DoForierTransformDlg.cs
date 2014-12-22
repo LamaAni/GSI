@@ -26,6 +26,7 @@ namespace TestRun
         {
             InitializeComponent();
             LoadCurrentCalibration();
+            LoadCardSelection();
         }
 
         #region methods
@@ -54,6 +55,26 @@ namespace TestRun
         private static string GetCalibrationFileName()
         {
             return Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location) + "\\spectralcalib.csv";
+        }
+
+        #endregion
+
+        #region card selection
+
+        public void LoadCardSelection()
+        {
+            ddCardSelect.Items.Clear();
+            try
+            {
+                
+                foreach (GSI.OpenCL.GpuTaskDeviceInfo di in GSI.OpenCL.GpuTask.GetDevices())
+                    ddCardSelect.Items.Add(di);
+                if (ddCardSelect.Items.Count > 0)
+                    ddCardSelect.SelectedIndex = 0;
+            }
+            catch (Exception ex)
+            {
+            }
         }
 
         #endregion
@@ -407,6 +428,12 @@ namespace TestRun
                 return;
             }
 
+            if (ddCardSelect.Items.Count == 0)
+            {
+                MessageBox.Show("There are not avilable cards to select from. Forier aborted.");
+                return;
+            }
+
             Task.Run(() =>
             {
                 
@@ -458,9 +485,11 @@ namespace TestRun
                 }
 
                 // getting the memory of the best device (the one that will be used in the forier).
-                int maxMemory = (int)Math.Floor(GSI.OpenCL.GpuTask.GetDefaultDeviceMaxMemoryFor32BitInBytes() * 0.6);
-                maxMemory = 60 * GSI.Processing.FFTProcessor._MB_;
+                int maxMemory = (numTotalMemoryInMB.IsValid ? (int)numTotalMemoryInMB.Value : 60) * 
+                    GSI.Processing.FFTProcessor._MB_;
                 GSI.Processing.FFTProcessor gen = new GSI.Processing.FFTProcessor(reader, settings, maxMemory);
+
+                gen.Devices.Add((GSI.OpenCL.GpuTaskDeviceInfo)ddCardSelect.SelectedItem);
 
                 _genActive = gen;
                 gen.VectorComplete += (s, e) =>
