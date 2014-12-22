@@ -168,8 +168,13 @@ namespace TestRun
             }
         }
 
+        bool _isUpdatingControls = false;
+
         private void UpdateControlsToScanInfo()
         {
+            if (_isUpdatingControls)
+                return;
+            _isUpdatingControls = true;
             // updating modifications
             Stage.Angle = ScanInfo.StageAngle;
             Camera.Settings.FrameRate = ScanInfo.FrameRate;
@@ -183,6 +188,7 @@ namespace TestRun
             scanRange.LoadScanInfo(ScanInfo);
             scanParameters.LoadScanInfo(ScanInfo);
             stageControl.LoadScanInfo(ScanInfo);
+            _isUpdatingControls = false;
         }
 
         void Settings_SettingsChanged(object sender, SettingsChangedEventArgs e)
