@@ -145,6 +145,7 @@ namespace GSI.Processing
             set { m_NativeSpatialUnitsToMeters = value; CalculateScanParams(); }
         }
 
+        [DataMember]
         private double m_NativeTimeUnitsToSeconds;
 
         /// <summary>
@@ -279,5 +280,10 @@ namespace GSI.Processing
         #endregion
     }
 
-    public enum ScanInfo_ScanDirection { X, Y};
+    [Flags]
+    public enum ScanInfo_ScanDirection 
+    { 
+        X=1, 
+        Y=2
+    };
 }

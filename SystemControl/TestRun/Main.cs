@@ -77,7 +77,7 @@ namespace TestRun
         {
             string path =
                 Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) +
-                Path.PathSeparator + "scaninfo.json";
+                Path.DirectorySeparatorChar + "scaninfo.json";
             return path;
         }
 
@@ -175,19 +175,21 @@ namespace TestRun
             if (_isUpdatingControls)
                 return;
             _isUpdatingControls = true;
-            // updating modifications
+
+            // updating controls.
             Stage.Angle = ScanInfo.StageAngle;
-            Camera.Settings.FrameRate = ScanInfo.FrameRate;
-            Camera.Settings.Exposure = ScanInfo.ExposureTime;
-            ScanInfo.ExposureTime = Camera.Settings.Exposure;
+            scanRange.LoadScanInfo(ScanInfo);
+            scanParameters.LoadScanInfo(ScanInfo);
+            stageControl.LoadScanInfo(ScanInfo);
 
             // just in case/should be always 
             ScanInfo.CalculateScanParams();
 
-            // updating controls.
-            scanRange.LoadScanInfo(ScanInfo);
-            scanParameters.LoadScanInfo(ScanInfo);
-            stageControl.LoadScanInfo(ScanInfo);
+            // setting calculated.
+            Camera.Settings.Exposure = ScanInfo.ExposureTime;
+            ScanInfo.ExposureTime = Camera.Settings.Exposure;
+            Camera.Settings.FrameRate = ScanInfo.FrameRate;
+
             _isUpdatingControls = false;
         }
 

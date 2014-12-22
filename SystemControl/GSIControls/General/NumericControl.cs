@@ -45,7 +45,7 @@ namespace GSIControls.General
             get { return m_value; }
             set
             {
-                this.Text = m_value.ToString();
+                this.Text = value.ToString();
                 //m_value = value;
             }
         }
