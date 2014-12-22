@@ -415,23 +415,24 @@ namespace TestRun
             barProg.Value = 0;
             DateTime started = DateTime.Now;
             DateTime lastUpdated = DateTime.Now;
+            string lastText = "[Preparing to scan...]";
+            int lastPosition = 0;
             Action updateText = () =>
             {
                 TimeSpan offset = DateTime.Now - lastUpdated;
-                if (scan.CurrentVectorIndex != scan.LineSize && offset.TotalMilliseconds < 100)
-                    return;
-                double pixTime = offset.TotalMilliseconds / scan.TotalNumberOfPixelsRead;
+                
+                double pixTime = scan.TotalNumberOfPixelsRead < 1 ? 0 : offset.TotalMilliseconds / scan.TotalNumberOfPixelsRead;
                 TimeSpan eta = TimeSpan.FromMilliseconds((scan.NumberOfPixelsInImage - scan.TotalNumberOfPixelsRead) * pixTime);
-                lblStatus.Text = string.Join(", ", new string[]{
-                    "ETA [mins]: "+eta.ToString()+"",
-                    "Elapsed: "+offset.TotalSeconds.ToString("000.00"),
-                    "Line: "+(scan.CurrentLineIndex+1).ToString(),
-                    "Vectors: "+scan.CapturedVectors.ToString(),
-                    "Pixels: "+scan.TotalNumberOfPixelsRead.ToString(),
-                    "Cur Vec Idx: "+(scan.CurrentVectorIndex).ToString()+"/"+scan.LineSize,
-                    "Img. in mem: "+scan.ImagesInMemory
-                });
-                barProg.Value = scan.CurrentVectorIndex;
+                lastText = string.Join(", ", new string[]{
+                        "ETA [mins]: "+eta.ToString()+"",
+                        "Elapsed: "+offset.TotalSeconds.ToString("000.00"),
+                        "Line: "+(scan.CurrentLineIndex+1).ToString(),
+                        "Vectors: "+scan.CapturedVectors.ToString(),
+                        "Pixels: "+scan.TotalNumberOfPixelsRead.ToString(),
+                        "Cur Vec Idx: "+(scan.CurrentVectorIndex).ToString()+"/"+scan.LineSize,
+                        "Img. in mem: "+scan.ImagesInMemory});
+                lastPosition= scan.CurrentVectorIndex;
+                lastUpdated = DateTime.Now;
             };
 
             scan.LineCompleated += (s, e) => { updateText(); };
@@ -440,6 +441,7 @@ namespace TestRun
             StreamWriter posWriter = new StreamWriter("pos.csv");
             context.OnPositionCapture += (s, e) =>
                 {
+                    return;
                     posWriter.WriteLine(string.Join(",", new string[]{
                         (DateTime.Now - started).TotalMilliseconds.ToString(),
                         Stage.PositionX.ToString(),
@@ -452,11 +454,26 @@ namespace TestRun
             StreamWriter imagetsWriter = new StreamWriter("imagedt.csv");
             scan.VectorWritten += (s, e) =>
             {
+                return;
                 imagetsWriter.WriteLine((e.InstigatingImage.TimeStamp - started).TotalMilliseconds.ToString());
             };
 
+            bool doUpdateCurrentValues = true;
+
+            Task.Run(() =>
+            {
+                while (doUpdateCurrentValues)
+                {
+                    lblStatus.Text = lastText;
+                    barProg.Value = lastPosition;
+                    System.Threading.Thread.Sleep(10);
+                }
+            });
+
             scan.Scan(strm, () =>
             {
+                System.Threading.Thread.Sleep(50);
+                doUpdateCurrentValues = false;
                 strm.Close();
                 strm.Dispose();
                 btnCapture.Enabled = true;
@@ -464,6 +481,8 @@ namespace TestRun
                 posWriter.Dispose();
                 imagetsWriter.Close();
                 imagetsWriter.Dispose();
+                TimeSpan totalTime = DateTime.Now - started;
+                MessageBox.Show("Finished in " + totalTime);
             });
         }
 

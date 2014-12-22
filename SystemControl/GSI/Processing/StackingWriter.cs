@@ -18,7 +18,7 @@ namespace GSI.Processing
         /// </summary>
         /// <param name="strm"></param>
         /// <param name="async">If true the data will be written asynchronically form the main thread.</param>
-        public StackingWriter(Stream strm, bool async=true)
+        public StackingWriter(Stream strm, bool async=false)
         {
             Writer = new BinaryWriter(strm);
             Async = async;
@@ -71,25 +71,17 @@ namespace GSI.Processing
         /// </summary>
         public bool Async { get; private set; }
 
-        private AsyncPendingEventQueue<byte[]> m_writeCommands;
+        GSI.Coading.ActionQueueExecuter m_pendingWriteCommands = new Coading.ActionQueueExecuter();
 
-        /// <summary>
-        /// A collection of the pending write commands that are waiting to be written to disk.
-        /// </summary>
-        public AsyncPendingEventQueue<byte[]> PendingWriteCommands
+        public GSI.Coading.ActionQueueExecuter PendingWriteCommands
         {
-            get
-            {
-                if (m_writeCommands == null)
-                    m_writeCommands = new AsyncPendingEventQueue<byte[]>(_doDataWritingEvent, false);
-                return m_writeCommands;
-            }
+            get { return m_pendingWriteCommands; }
         }
 
         /// <summary>
         /// The number of pending writes to wait for.
         /// </summary>
-        public int NumberOfPendingWrites { get { return PendingWriteCommands.PendingEventCount; } }
+        public int NumberOfPendingWrites { get { return PendingWriteCommands.PendingCount; } }
 
         /// <summary>
         /// If true then waiting for all write events to complete.
@@ -150,7 +142,7 @@ namespace GSI.Processing
 
             // sending the event to writing, asynced.
             if (Async)
-                PendingWriteCommands.PushEvent(data);
+                PendingWriteCommands.AddAction(() => _doDataWritingEvent(data));
             else _doDataWritingEvent(data);
         }
 
