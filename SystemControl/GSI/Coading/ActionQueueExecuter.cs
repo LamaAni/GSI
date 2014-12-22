@@ -52,6 +52,11 @@ namespace GSI.Coading
             get { return OverflowCount < PendingCount; }
         }
 
+        /// <summary>
+        /// The number of times the execution thread has restarted.
+        /// </summary>
+        public int TotalNumberOfThreadRestarts { get; private set; }
+
         #endregion
 
         #region threading
@@ -66,9 +71,15 @@ namespace GSI.Coading
             IsThreadRunning = true;
             Task.Run(() =>
             {
-                while (this.PendingCount > 0)
+                TotalNumberOfThreadRestarts += 1;
+                while (true)
                 {
                     this.ActionsQueue.Dequeue()();
+                    if (this.PendingCount == 0)
+                    {
+                        // try to sleep for a bit and wait for more.
+                        break;
+                    }
                 }
                 IsThreadRunning = false;
             });
