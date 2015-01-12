@@ -176,5 +176,16 @@ namespace GSIControls.Stage
             numStartY.Value = PositionControl.PositionY;
         }
 
+        private void btnOffsetToCurrent_Click(object sender, EventArgs e)
+        {
+            if (PositionControl == null)
+            {
+                MessageBox.Show("No position control (stage) found.");
+                return;
+            }
+            numXOffset.Value = PositionControl.PositionX - numStartX.Value;
+            numYOffset.Value = PositionControl.PositionY - numStartY.Value;
+        }
+
     }
 }

@@ -44,6 +44,7 @@
             this.ddScanOver = new System.Windows.Forms.ComboBox();
             this.label15 = new System.Windows.Forms.Label();
             this.btnTakeCurrentPosition = new System.Windows.Forms.Button();
+            this.btnOffsetToCurrent = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -186,7 +187,7 @@
             // 
             this.chkDoSpeedup.Checked = true;
             this.chkDoSpeedup.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkDoSpeedup.Location = new System.Drawing.Point(213, 107);
+            this.chkDoSpeedup.Location = new System.Drawing.Point(508, 74);
             this.chkDoSpeedup.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.chkDoSpeedup.Name = "chkDoSpeedup";
             this.chkDoSpeedup.Size = new System.Drawing.Size(127, 38);
@@ -202,7 +203,7 @@
             this.ddScanOver.Items.AddRange(new object[] {
             "X",
             "Y"});
-            this.ddScanOver.Location = new System.Drawing.Point(438, 113);
+            this.ddScanOver.Location = new System.Drawing.Point(588, 44);
             this.ddScanOver.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ddScanOver.Name = "ddScanOver";
             this.ddScanOver.Size = new System.Drawing.Size(59, 28);
@@ -212,7 +213,7 @@
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(354, 116);
+            this.label15.Location = new System.Drawing.Point(504, 47);
             this.label15.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(80, 20);
@@ -229,10 +230,21 @@
             this.btnTakeCurrentPosition.UseVisualStyleBackColor = true;
             this.btnTakeCurrentPosition.Click += new System.EventHandler(this.btnTakeCurrentPosition_Click);
             // 
+            // btnOffsetToCurrent
+            // 
+            this.btnOffsetToCurrent.Location = new System.Drawing.Point(213, 111);
+            this.btnOffsetToCurrent.Name = "btnOffsetToCurrent";
+            this.btnOffsetToCurrent.Size = new System.Drawing.Size(139, 29);
+            this.btnOffsetToCurrent.TabIndex = 28;
+            this.btnOffsetToCurrent.Text = "Off. To Current";
+            this.btnOffsetToCurrent.UseVisualStyleBackColor = true;
+            this.btnOffsetToCurrent.Click += new System.EventHandler(this.btnOffsetToCurrent_Click);
+            // 
             // ScanRangeBox
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.btnOffsetToCurrent);
             this.Controls.Add(this.btnTakeCurrentPosition);
             this.Controls.Add(this.chkDoSpeedup);
             this.Controls.Add(this.ddScanOver);
@@ -250,7 +262,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.label2);
             this.Name = "ScanRangeBox";
-            this.Size = new System.Drawing.Size(519, 165);
+            this.Size = new System.Drawing.Size(666, 165);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -274,5 +286,6 @@
         public System.Windows.Forms.CheckBox chkDoSpeedup;
         public System.Windows.Forms.ComboBox ddScanOver;
         private System.Windows.Forms.Button btnTakeCurrentPosition;
+        private System.Windows.Forms.Button btnOffsetToCurrent;
     }
 }

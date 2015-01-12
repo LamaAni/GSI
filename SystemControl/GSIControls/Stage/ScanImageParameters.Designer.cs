@@ -54,9 +54,9 @@
             this.label10.Location = new System.Drawing.Point(8, 232);
             this.label10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(94, 20);
+            this.label10.Size = new System.Drawing.Size(131, 20);
             this.label10.TabIndex = 50;
-            this.label10.Text = "Scan speed";
+            this.label10.Text = "Scan speed[su/s]";
             // 
             // label8
             // 
@@ -64,9 +64,9 @@
             this.label8.Location = new System.Drawing.Point(8, 160);
             this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(76, 20);
+            this.label8.Size = new System.Drawing.Size(102, 20);
             this.label8.TabIndex = 48;
-            this.label8.Text = "Exposure";
+            this.label8.Text = "Exposure [tu]";
             // 
             // label14
             // 
@@ -74,9 +74,9 @@
             this.label14.Location = new System.Drawing.Point(8, 88);
             this.label14.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(83, 20);
+            this.label14.Size = new System.Drawing.Size(116, 20);
             this.label14.TabIndex = 46;
-            this.label14.Text = "Max f. rate";
+            this.label14.Text = "Max f. rate [#/s]";
             // 
             // label13
             // 
@@ -84,9 +84,9 @@
             this.label13.Location = new System.Drawing.Point(8, 196);
             this.label13.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(87, 20);
+            this.label13.Size = new System.Drawing.Size(116, 20);
             this.label13.TabIndex = 44;
-            this.label13.Text = "Frame rate";
+            this.label13.Text = "Frame rate[#/s]";
             // 
             // label12
             // 
@@ -94,9 +94,9 @@
             this.label12.Location = new System.Drawing.Point(8, 48);
             this.label12.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(58, 20);
+            this.label12.Size = new System.Drawing.Size(109, 20);
             this.label12.TabIndex = 42;
-            this.label12.Text = "DeltaX";
+            this.label12.Text = "DeltaX [pixels]";
             // 
             // label9
             // 
@@ -104,9 +104,9 @@
             this.label9.Location = new System.Drawing.Point(8, 12);
             this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(64, 20);
+            this.label9.Size = new System.Drawing.Size(102, 20);
             this.label9.TabIndex = 40;
-            this.label9.Text = "Img. Pix";
+            this.label9.Text = "Pixel size [su]";
             // 
             // label1
             // 
@@ -114,9 +114,9 @@
             this.label1.Location = new System.Drawing.Point(8, 268);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(99, 20);
+            this.label1.Size = new System.Drawing.Size(124, 20);
             this.label1.TabIndex = 51;
-            this.label1.Text = "Spatial Units";
+            this.label1.Text = "Spatial Units[su]";
             // 
             // label2
             // 
@@ -124,9 +124,9 @@
             this.label2.Location = new System.Drawing.Point(8, 304);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(81, 20);
+            this.label2.Size = new System.Drawing.Size(103, 20);
             this.label2.TabIndex = 53;
-            this.label2.Text = "Time units";
+            this.label2.Text = "Time units[tu]";
             // 
             // label3
             // 
@@ -134,18 +134,18 @@
             this.label3.Location = new System.Drawing.Point(8, 124);
             this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(109, 20);
+            this.label3.Size = new System.Drawing.Size(123, 20);
             this.label3.TabIndex = 56;
-            this.label3.Text = "Max. S. speed";
+            this.label3.Text = "Max speed[su/s]";
             // 
             // numMaxScanSpeed
             // 
-            this.numMaxScanSpeed.Location = new System.Drawing.Point(126, 121);
+            this.numMaxScanSpeed.Location = new System.Drawing.Point(153, 121);
             this.numMaxScanSpeed.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.numMaxScanSpeed.MaxValue = 1.7976931348623157E+308D;
             this.numMaxScanSpeed.MinValue = -1.7976931348623157E+308D;
             this.numMaxScanSpeed.Name = "numMaxScanSpeed";
-            this.numMaxScanSpeed.Size = new System.Drawing.Size(138, 26);
+            this.numMaxScanSpeed.Size = new System.Drawing.Size(111, 26);
             this.numMaxScanSpeed.TabIndex = 55;
             this.numMaxScanSpeed.Text = "-1";
             this.numMaxScanSpeed.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -154,12 +154,12 @@
             // 
             // numTimeUnits
             // 
-            this.numTimeUnits.Location = new System.Drawing.Point(126, 301);
+            this.numTimeUnits.Location = new System.Drawing.Point(153, 301);
             this.numTimeUnits.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.numTimeUnits.MaxValue = 1.7976931348623157E+308D;
             this.numTimeUnits.MinValue = -1.7976931348623157E+308D;
             this.numTimeUnits.Name = "numTimeUnits";
-            this.numTimeUnits.Size = new System.Drawing.Size(138, 26);
+            this.numTimeUnits.Size = new System.Drawing.Size(111, 26);
             this.numTimeUnits.TabIndex = 54;
             this.numTimeUnits.Text = "0.001";
             this.numTimeUnits.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -169,12 +169,12 @@
             // 
             // numSpatialUnits
             // 
-            this.numSpatialUnits.Location = new System.Drawing.Point(126, 265);
+            this.numSpatialUnits.Location = new System.Drawing.Point(153, 265);
             this.numSpatialUnits.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.numSpatialUnits.MaxValue = 1.7976931348623157E+308D;
             this.numSpatialUnits.MinValue = -1.7976931348623157E+308D;
             this.numSpatialUnits.Name = "numSpatialUnits";
-            this.numSpatialUnits.Size = new System.Drawing.Size(138, 26);
+            this.numSpatialUnits.Size = new System.Drawing.Size(111, 26);
             this.numSpatialUnits.TabIndex = 52;
             this.numSpatialUnits.Text = "1E-06";
             this.numSpatialUnits.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -185,13 +185,13 @@
             // numScanSpeed
             // 
             this.numScanSpeed.Enabled = false;
-            this.numScanSpeed.Location = new System.Drawing.Point(126, 229);
+            this.numScanSpeed.Location = new System.Drawing.Point(153, 229);
             this.numScanSpeed.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.numScanSpeed.MaxValue = 1.7976931348623157E+308D;
             this.numScanSpeed.MinValue = -1.7976931348623157E+308D;
             this.numScanSpeed.Name = "numScanSpeed";
             this.numScanSpeed.ReadOnly = true;
-            this.numScanSpeed.Size = new System.Drawing.Size(138, 26);
+            this.numScanSpeed.Size = new System.Drawing.Size(111, 26);
             this.numScanSpeed.TabIndex = 49;
             this.numScanSpeed.Text = "0";
             this.numScanSpeed.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -201,12 +201,12 @@
             // 
             // numExp
             // 
-            this.numExp.Location = new System.Drawing.Point(126, 157);
+            this.numExp.Location = new System.Drawing.Point(153, 157);
             this.numExp.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.numExp.MaxValue = 1.7976931348623157E+308D;
             this.numExp.MinValue = -1.7976931348623157E+308D;
             this.numExp.Name = "numExp";
-            this.numExp.Size = new System.Drawing.Size(138, 26);
+            this.numExp.Size = new System.Drawing.Size(111, 26);
             this.numExp.TabIndex = 47;
             this.numExp.Text = "1";
             this.numExp.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -216,12 +216,12 @@
             // 
             // numMaxFrameRate
             // 
-            this.numMaxFrameRate.Location = new System.Drawing.Point(126, 85);
+            this.numMaxFrameRate.Location = new System.Drawing.Point(153, 85);
             this.numMaxFrameRate.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.numMaxFrameRate.MaxValue = 1.7976931348623157E+308D;
             this.numMaxFrameRate.MinValue = -1.7976931348623157E+308D;
             this.numMaxFrameRate.Name = "numMaxFrameRate";
-            this.numMaxFrameRate.Size = new System.Drawing.Size(138, 26);
+            this.numMaxFrameRate.Size = new System.Drawing.Size(111, 26);
             this.numMaxFrameRate.TabIndex = 45;
             this.numMaxFrameRate.Text = "-1";
             this.numMaxFrameRate.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -232,13 +232,13 @@
             // numFrameRate
             // 
             this.numFrameRate.Enabled = false;
-            this.numFrameRate.Location = new System.Drawing.Point(126, 193);
+            this.numFrameRate.Location = new System.Drawing.Point(153, 193);
             this.numFrameRate.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.numFrameRate.MaxValue = 1.7976931348623157E+308D;
             this.numFrameRate.MinValue = -1.7976931348623157E+308D;
             this.numFrameRate.Name = "numFrameRate";
             this.numFrameRate.ReadOnly = true;
-            this.numFrameRate.Size = new System.Drawing.Size(138, 26);
+            this.numFrameRate.Size = new System.Drawing.Size(111, 26);
             this.numFrameRate.TabIndex = 43;
             this.numFrameRate.Text = "0";
             this.numFrameRate.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -248,12 +248,12 @@
             // 
             // numDx
             // 
-            this.numDx.Location = new System.Drawing.Point(126, 45);
+            this.numDx.Location = new System.Drawing.Point(153, 45);
             this.numDx.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.numDx.MaxValue = 100000D;
             this.numDx.MinValue = 1D;
             this.numDx.Name = "numDx";
-            this.numDx.Size = new System.Drawing.Size(138, 26);
+            this.numDx.Size = new System.Drawing.Size(111, 26);
             this.numDx.TabIndex = 1;
             this.numDx.Text = "1";
             this.numDx.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -263,12 +263,12 @@
             // 
             // numPixelSize
             // 
-            this.numPixelSize.Location = new System.Drawing.Point(126, 9);
+            this.numPixelSize.Location = new System.Drawing.Point(153, 9);
             this.numPixelSize.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.numPixelSize.MaxValue = 1.7976931348623157E+308D;
             this.numPixelSize.MinValue = -1.7976931348623157E+308D;
             this.numPixelSize.Name = "numPixelSize";
-            this.numPixelSize.Size = new System.Drawing.Size(138, 26);
+            this.numPixelSize.Size = new System.Drawing.Size(111, 26);
             this.numPixelSize.TabIndex = 39;
             this.numPixelSize.Text = "1";
             this.numPixelSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;

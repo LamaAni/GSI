@@ -19,14 +19,14 @@ namespace GSI.Processing
     {
         public ScanInfo(double startX, double startY,
             double offsetX, double offsetY,
-            double exposureTime, double pixelSize, double deltaX, double timeUnits,
+            double exposureTime, double pixelSize, double deltaXInPixels, double timeUnits,
             double spaceUnits)
         {
             StartX = startX;
             StartY = startY;
             ExposureTime = exposureTime;
             PixelSize = pixelSize;
-            DeltaX = deltaX;
+            DeltaXInPixels = deltaXInPixels;
             OffsetX = offsetX;
             OffsetY = offsetY;
             NativeTimeUnitsToSeconds = timeUnits;
@@ -159,18 +159,6 @@ namespace GSI.Processing
 
 
         [DataMember]
-        private double m_DeltaX;
-
-        /// <summary>
-        /// The delta x between images in native units.
-        /// </summary>
-        public double DeltaX
-        {
-            get { return m_DeltaX; }
-            set { m_DeltaX = value; CalculateScanParams(); }
-        }
-
-        [DataMember]
         private double m_MaxFrameRate = -1;
 
         /// <summary>
@@ -208,10 +196,22 @@ namespace GSI.Processing
         /// </summary>
         public double ScanSpeed { get; private set; }
 
+        [DataMember]
+        private double m_DeltaXInPixels;
+
+        /// <summary>
+        /// The delta x between images in native units.
+        /// </summary>
+        public double DeltaXInPixels
+        {
+            get { return m_DeltaXInPixels; }
+            set { m_DeltaXInPixels = value; CalculateScanParams(); }
+        }
+
         /// <summary>
         /// The delta between images in pixels.
         /// </summary>
-        public double DeltaXInPixels { get; private set; }
+        public double DeltaX { get { return m_DeltaXInPixels * PixelSize; } }
 
         #endregion
 
@@ -222,9 +222,6 @@ namespace GSI.Processing
         /// </summary>
         public void CalculateScanParams()
         {
-            // Updating parameters.
-            DeltaXInPixels = DeltaX / PixelSize;
-
             // finding the fastest possible speed.
             double maxSpeedExpsure = Math.Floor(0.25 * PixelSize / (ExposureTime * NativeTimeUnitsToSeconds));
             double maxSpeedFrameRate = Math.Floor(DeltaX * MaxFrameRate);

@@ -65,7 +65,7 @@ namespace GSIControls.Stage
 
         public void PopulateScanInfo(ScanInfo info)
         {
-            info.DeltaX = numDx.Value;
+            info.DeltaXInPixels = numDx.Value;
             info.PixelSize = numPixelSize.Value;
             info.ExposureTime = info.ExposureTime;
             info.MaxFrameRate = numMaxFrameRate.Value;

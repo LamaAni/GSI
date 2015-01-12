@@ -23,6 +23,7 @@ namespace TestRun
             Form.CheckForIllegalCrossThreadCalls = false;
             InitializeComponent();
             grpCommands.Enabled = false;
+            pnlScanControl.Enabled = false;
             btnTogglePreview.BackColor = connectEndabledColor;
 
         }
@@ -153,7 +154,7 @@ namespace TestRun
                 Camera.Settings.SettingsChanged += Settings_SettingsChanged;
                 SetPreview(btnTogglePreview.BackColor == connectEndabledColor);
                 grpCommands.Enabled = true;
-
+                pnlScanControl.Enabled = true;
                 if (LoadScanInfo())
                 {
                     ScanInfo.ExposureTime = Camera.Settings.Exposure;
