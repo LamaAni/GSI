@@ -44,7 +44,7 @@
             this.numExp = new GSIControls.General.NumericControl();
             this.numMaxFrameRate = new GSIControls.General.NumericControl();
             this.numFrameRate = new GSIControls.General.NumericControl();
-            this.numDx = new GSIControls.General.NumericControl();
+            this.numDxInPixels = new GSIControls.General.NumericControl();
             this.numPixelSize = new GSIControls.General.NumericControl();
             this.SuspendLayout();
             // 
@@ -248,18 +248,18 @@
             // 
             // numDx
             // 
-            this.numDx.Location = new System.Drawing.Point(153, 45);
-            this.numDx.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.numDx.MaxValue = 100000D;
-            this.numDx.MinValue = 1D;
-            this.numDx.Name = "numDx";
-            this.numDx.Size = new System.Drawing.Size(111, 26);
-            this.numDx.TabIndex = 1;
-            this.numDx.Text = "1";
-            this.numDx.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.numDx.Units = 1D;
-            this.numDx.Value = 1D;
-            this.numDx.Validated += new System.EventHandler(this.numericValueValidated);
+            this.numDxInPixels.Location = new System.Drawing.Point(153, 45);
+            this.numDxInPixels.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.numDxInPixels.MaxValue = 100000D;
+            this.numDxInPixels.MinValue = 1D;
+            this.numDxInPixels.Name = "numDx";
+            this.numDxInPixels.Size = new System.Drawing.Size(111, 26);
+            this.numDxInPixels.TabIndex = 1;
+            this.numDxInPixels.Text = "1";
+            this.numDxInPixels.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numDxInPixels.Units = 1D;
+            this.numDxInPixels.Value = 1D;
+            this.numDxInPixels.Validated += new System.EventHandler(this.numericValueValidated);
             // 
             // numPixelSize
             // 
@@ -295,7 +295,7 @@
             this.Controls.Add(this.label13);
             this.Controls.Add(this.numFrameRate);
             this.Controls.Add(this.label12);
-            this.Controls.Add(this.numDx);
+            this.Controls.Add(this.numDxInPixels);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.numPixelSize);
             this.Name = "ScanImageParameters";
@@ -316,7 +316,7 @@
         private System.Windows.Forms.Label label13;
         private General.NumericControl numFrameRate;
         private System.Windows.Forms.Label label12;
-        private General.NumericControl numDx;
+        private General.NumericControl numDxInPixels;
         private System.Windows.Forms.Label label9;
         private General.NumericControl numPixelSize;
         private System.Windows.Forms.Label label1;
