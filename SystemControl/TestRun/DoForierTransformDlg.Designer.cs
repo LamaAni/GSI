@@ -44,29 +44,31 @@
             this.btnShowFile = new System.Windows.Forms.Button();
             this.btnDoForier = new System.Windows.Forms.Button();
             this.panel4 = new System.Windows.Forms.Panel();
+            this.panel6 = new System.Windows.Forms.Panel();
+            this.label6 = new System.Windows.Forms.Label();
+            this.ddCardSelect = new System.Windows.Forms.ComboBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.numTotalMemoryInMB = new GSIControls.General.NumericControl();
             this.panel5 = new System.Windows.Forms.Panel();
             this.lblSelectedCalib = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.chkDoRgbPreview = new System.Windows.Forms.CheckBox();
             this.label3 = new System.Windows.Forms.Label();
             this.btnLoadCalibration = new System.Windows.Forms.Button();
+            this.numEndWavelegnth = new GSIControls.General.NumericControl();
+            this.numStartWavelength = new GSIControls.General.NumericControl();
             this.ddZeroFilling = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.panel6 = new System.Windows.Forms.Panel();
-            this.label5 = new System.Windows.Forms.Label();
-            this.ddCardSelect = new System.Windows.Forms.ComboBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.numTotalMemoryInMB = new GSIControls.General.NumericControl();
-            this.numEndWavelegnth = new GSIControls.General.NumericControl();
-            this.numStartWavelength = new GSIControls.General.NumericControl();
+            this.btnLoadLightSpectra = new System.Windows.Forms.Button();
+            this.btnCreateLightsourceSpectra = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.chartSpectrum)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
-            this.panel5.SuspendLayout();
             this.panel6.SuspendLayout();
+            this.panel5.SuspendLayout();
             this.SuspendLayout();
             // 
             // progBar
@@ -162,6 +164,7 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.btnCreateLightsourceSpectra);
             this.panel3.Controls.Add(this.btnValidatePreview);
             this.panel3.Controls.Add(this.btnStoreSpectrum);
             this.panel3.Controls.Add(this.btnCreatePreview);
@@ -171,12 +174,12 @@
             this.panel3.Location = new System.Drawing.Point(0, 0);
             this.panel3.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(778, 45);
+            this.panel3.Size = new System.Drawing.Size(951, 45);
             this.panel3.TabIndex = 0;
             // 
             // btnValidatePreview
             // 
-            this.btnValidatePreview.Location = new System.Drawing.Point(622, 0);
+            this.btnValidatePreview.Location = new System.Drawing.Point(546, 0);
             this.btnValidatePreview.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnValidatePreview.Name = "btnValidatePreview";
             this.btnValidatePreview.Size = new System.Drawing.Size(152, 45);
@@ -242,8 +245,63 @@
             this.panel4.Size = new System.Drawing.Size(434, 672);
             this.panel4.TabIndex = 11;
             // 
+            // panel6
+            // 
+            this.panel6.Controls.Add(this.label6);
+            this.panel6.Controls.Add(this.ddCardSelect);
+            this.panel6.Controls.Add(this.label5);
+            this.panel6.Controls.Add(this.numTotalMemoryInMB);
+            this.panel6.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel6.Location = new System.Drawing.Point(8, 571);
+            this.panel6.Name = "panel6";
+            this.panel6.Size = new System.Drawing.Size(418, 90);
+            this.panel6.TabIndex = 10;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(8, 13);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(38, 20);
+            this.label6.TabIndex = 11;
+            this.label6.Text = "Use";
+            // 
+            // ddCardSelect
+            // 
+            this.ddCardSelect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ddCardSelect.FormattingEnabled = true;
+            this.ddCardSelect.Location = new System.Drawing.Point(53, 10);
+            this.ddCardSelect.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.ddCardSelect.Name = "ddCardSelect";
+            this.ddCardSelect.Size = new System.Drawing.Size(350, 28);
+            this.ddCardSelect.TabIndex = 10;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(9, 51);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(65, 20);
+            this.label5.TabIndex = 9;
+            this.label5.Text = "Memory";
+            // 
+            // numTotalMemoryInMB
+            // 
+            this.numTotalMemoryInMB.Location = new System.Drawing.Point(81, 48);
+            this.numTotalMemoryInMB.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.numTotalMemoryInMB.MaxValue = 1.7976931348623157E+308D;
+            this.numTotalMemoryInMB.MinValue = -1.7976931348623157E+308D;
+            this.numTotalMemoryInMB.Name = "numTotalMemoryInMB";
+            this.numTotalMemoryInMB.Size = new System.Drawing.Size(63, 26);
+            this.numTotalMemoryInMB.TabIndex = 4;
+            this.numTotalMemoryInMB.Text = "60";
+            this.numTotalMemoryInMB.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numTotalMemoryInMB.Units = 1D;
+            this.numTotalMemoryInMB.Value = 60D;
+            // 
             // panel5
             // 
+            this.panel5.Controls.Add(this.btnLoadLightSpectra);
             this.panel5.Controls.Add(this.lblSelectedCalib);
             this.panel5.Controls.Add(this.label4);
             this.panel5.Controls.Add(this.chkDoRgbPreview);
@@ -294,7 +352,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(190, 52);
+            this.label3.Location = new System.Drawing.Point(172, 52);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(14, 20);
             this.label3.TabIndex = 6;
@@ -303,20 +361,48 @@
             // 
             // btnLoadCalibration
             // 
-            this.btnLoadCalibration.Location = new System.Drawing.Point(302, 5);
+            this.btnLoadCalibration.Location = new System.Drawing.Point(248, 5);
             this.btnLoadCalibration.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnLoadCalibration.Name = "btnLoadCalibration";
-            this.btnLoadCalibration.Size = new System.Drawing.Size(112, 35);
+            this.btnLoadCalibration.Size = new System.Drawing.Size(166, 35);
             this.btnLoadCalibration.TabIndex = 5;
-            this.btnLoadCalibration.Text = "Load Calib";
+            this.btnLoadCalibration.Text = "Load Spectral Calib";
             this.btnLoadCalibration.UseVisualStyleBackColor = true;
             this.btnLoadCalibration.Click += new System.EventHandler(this.btnLoadCalibration_Click);
+            // 
+            // numEndWavelegnth
+            // 
+            this.numEndWavelegnth.Location = new System.Drawing.Point(187, 47);
+            this.numEndWavelegnth.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.numEndWavelegnth.MaxValue = 1.7976931348623157E+308D;
+            this.numEndWavelegnth.MinValue = -1.7976931348623157E+308D;
+            this.numEndWavelegnth.Name = "numEndWavelegnth";
+            this.numEndWavelegnth.Size = new System.Drawing.Size(44, 26);
+            this.numEndWavelegnth.TabIndex = 4;
+            this.numEndWavelegnth.Text = "800";
+            this.numEndWavelegnth.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numEndWavelegnth.Units = 1D;
+            this.numEndWavelegnth.Value = 800D;
+            // 
+            // numStartWavelength
+            // 
+            this.numStartWavelength.Location = new System.Drawing.Point(122, 48);
+            this.numStartWavelength.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.numStartWavelength.MaxValue = 1.7976931348623157E+308D;
+            this.numStartWavelength.MinValue = -1.7976931348623157E+308D;
+            this.numStartWavelength.Name = "numStartWavelength";
+            this.numStartWavelength.Size = new System.Drawing.Size(45, 26);
+            this.numStartWavelength.TabIndex = 3;
+            this.numStartWavelength.Text = "400";
+            this.numStartWavelength.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numStartWavelength.Units = 1D;
+            this.numStartWavelength.Value = 400D;
             // 
             // ddZeroFilling
             // 
             this.ddZeroFilling.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ddZeroFilling.FormattingEnabled = true;
-            this.ddZeroFilling.Location = new System.Drawing.Point(122, 5);
+            this.ddZeroFilling.Location = new System.Drawing.Point(122, 9);
             this.ddZeroFilling.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ddZeroFilling.Name = "ddZeroFilling";
             this.ddZeroFilling.Size = new System.Drawing.Size(109, 28);
@@ -343,87 +429,27 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Wavelengths";
             // 
-            // panel6
+            // btnLoadLightSpectra
             // 
-            this.panel6.Controls.Add(this.label6);
-            this.panel6.Controls.Add(this.ddCardSelect);
-            this.panel6.Controls.Add(this.label5);
-            this.panel6.Controls.Add(this.numTotalMemoryInMB);
-            this.panel6.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel6.Location = new System.Drawing.Point(8, 571);
-            this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(418, 90);
-            this.panel6.TabIndex = 10;
+            this.btnLoadLightSpectra.Location = new System.Drawing.Point(247, 43);
+            this.btnLoadLightSpectra.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.btnLoadLightSpectra.Name = "btnLoadLightSpectra";
+            this.btnLoadLightSpectra.Size = new System.Drawing.Size(166, 35);
+            this.btnLoadLightSpectra.TabIndex = 10;
+            this.btnLoadLightSpectra.Text = "Load Light Spectra";
+            this.btnLoadLightSpectra.UseVisualStyleBackColor = true;
+            this.btnLoadLightSpectra.Click += new System.EventHandler(this.btnLoadLightSpectra_Click);
             // 
-            // label5
+            // btnCreateLightsourceSpectra
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(9, 51);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(65, 20);
-            this.label5.TabIndex = 9;
-            this.label5.Text = "Memory";
-            // 
-            // ddCardSelect
-            // 
-            this.ddCardSelect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.ddCardSelect.FormattingEnabled = true;
-            this.ddCardSelect.Location = new System.Drawing.Point(53, 10);
-            this.ddCardSelect.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.ddCardSelect.Name = "ddCardSelect";
-            this.ddCardSelect.Size = new System.Drawing.Size(350, 28);
-            this.ddCardSelect.TabIndex = 10;
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(8, 13);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(38, 20);
-            this.label6.TabIndex = 11;
-            this.label6.Text = "Use";
-            // 
-            // numTotalMemoryInMB
-            // 
-            this.numTotalMemoryInMB.Location = new System.Drawing.Point(81, 48);
-            this.numTotalMemoryInMB.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.numTotalMemoryInMB.MaxValue = 1.7976931348623157E+308D;
-            this.numTotalMemoryInMB.MinValue = -1.7976931348623157E+308D;
-            this.numTotalMemoryInMB.Name = "numTotalMemoryInMB";
-            this.numTotalMemoryInMB.Size = new System.Drawing.Size(63, 26);
-            this.numTotalMemoryInMB.TabIndex = 4;
-            this.numTotalMemoryInMB.Text = "60";
-            this.numTotalMemoryInMB.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.numTotalMemoryInMB.Units = 1D;
-            this.numTotalMemoryInMB.Value = 60D;
-            // 
-            // numEndWavelegnth
-            // 
-            this.numEndWavelegnth.Location = new System.Drawing.Point(212, 48);
-            this.numEndWavelegnth.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.numEndWavelegnth.MaxValue = 1.7976931348623157E+308D;
-            this.numEndWavelegnth.MinValue = -1.7976931348623157E+308D;
-            this.numEndWavelegnth.Name = "numEndWavelegnth";
-            this.numEndWavelegnth.Size = new System.Drawing.Size(60, 26);
-            this.numEndWavelegnth.TabIndex = 4;
-            this.numEndWavelegnth.Text = "800";
-            this.numEndWavelegnth.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.numEndWavelegnth.Units = 1D;
-            this.numEndWavelegnth.Value = 800D;
-            // 
-            // numStartWavelength
-            // 
-            this.numStartWavelength.Location = new System.Drawing.Point(122, 48);
-            this.numStartWavelength.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.numStartWavelength.MaxValue = 1.7976931348623157E+308D;
-            this.numStartWavelength.MinValue = -1.7976931348623157E+308D;
-            this.numStartWavelength.Name = "numStartWavelength";
-            this.numStartWavelength.Size = new System.Drawing.Size(61, 26);
-            this.numStartWavelength.TabIndex = 3;
-            this.numStartWavelength.Text = "400";
-            this.numStartWavelength.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.numStartWavelength.Units = 1D;
-            this.numStartWavelength.Value = 400D;
+            this.btnCreateLightsourceSpectra.Location = new System.Drawing.Point(706, 0);
+            this.btnCreateLightsourceSpectra.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.btnCreateLightsourceSpectra.Name = "btnCreateLightsourceSpectra";
+            this.btnCreateLightsourceSpectra.Size = new System.Drawing.Size(223, 45);
+            this.btnCreateLightsourceSpectra.TabIndex = 15;
+            this.btnCreateLightsourceSpectra.Text = "Create Lightsource Spectra";
+            this.btnCreateLightsourceSpectra.UseVisualStyleBackColor = true;
+            this.btnCreateLightsourceSpectra.Click += new System.EventHandler(this.btnCreateLightsourceSpectra_Click);
             // 
             // DoForierTransformDlg
             // 
@@ -443,10 +469,10 @@
             this.panel2.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
             this.panel4.ResumeLayout(false);
-            this.panel5.ResumeLayout(false);
-            this.panel5.PerformLayout();
             this.panel6.ResumeLayout(false);
             this.panel6.PerformLayout();
+            this.panel5.ResumeLayout(false);
+            this.panel5.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -484,5 +510,7 @@
         private System.Windows.Forms.ComboBox ddCardSelect;
         private System.Windows.Forms.Label label5;
         private GSIControls.General.NumericControl numTotalMemoryInMB;
+        private System.Windows.Forms.Button btnLoadLightSpectra;
+        private System.Windows.Forms.Button btnCreateLightsourceSpectra;
     }
 }

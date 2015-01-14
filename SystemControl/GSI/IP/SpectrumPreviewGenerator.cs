@@ -35,6 +35,7 @@ namespace GSI.IP
             : this(processor, new PreviewStream(processor.Settings.Width, processor.Settings.Height, to))
         {
         }
+
         /// <summary>
         /// Creates a new spectrum preview generator.
         /// </summary>
@@ -181,6 +182,7 @@ namespace GSI.IP
                 CurCount = 0;
                 CurrentMode = SperctrumGeneratorBlockDoneMode.CreatingSpectrum;
                 Processor.DoSpectrumProcessing(DoProcessing, false);
+                Processor.Close();
                 CurrentMode = SperctrumGeneratorBlockDoneMode.CreatingPreview;
                 if (doValidate)
                     Preview.ValidatePreview((total, read) =>
@@ -191,6 +193,8 @@ namespace GSI.IP
 
                 if (OnCompleated != null)
                     OnCompleated(this, null);
+
+                
             };
 
             if (async)

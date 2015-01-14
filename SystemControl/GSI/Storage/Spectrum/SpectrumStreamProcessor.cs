@@ -87,59 +87,58 @@ namespace GSI.Storage.Spectrum
             double[] dvals=null;
             Action f = () =>
             {
-                using (BinaryReader reader = new BinaryReader(BaseStream))
+                BinaryReader reader = new BinaryReader(BaseStream);
+                do
                 {
-                    do
+                    int nread = (int)(Settings.NumberOfPixels - pixelOffset > maxNumberOfPixelsToRead ?
+                        maxNumberOfPixelsToRead : Settings.NumberOfPixels - pixelOffset);
+
+                    if (nread == 0)
+                        break;
+
+                    // read size and buffer.
+                    int totalNumberOfBytes = nread * Settings.NumberOfPrecisionBytes * Settings.FftDataSize;
+                    if (buffer == null || buffer.Length != totalNumberOfBytes)
                     {
-                        int nread = (int)(Settings.NumberOfPixels - pixelOffset > maxNumberOfPixelsToRead ?
-                            maxNumberOfPixelsToRead : Settings.NumberOfPixels - pixelOffset);
-
-                        if (nread == 0)
-                            break;
-
-                        // read size and buffer.
-                        int totalNumberOfBytes = nread * Settings.NumberOfPrecisionBytes * Settings.FftDataSize;
-                        if (buffer == null || buffer.Length != totalNumberOfBytes)
-                        {
-                            buffer = new byte[totalNumberOfBytes];
-                            vals = new float[nread * Settings.FftDataSize];
-                            if (Settings.IsDoublePrecision)
-                                dvals = new double[nread * Settings.FftDataSize];
-                        }
-
-                        if (IsAborted)
-                            break;
-
-                        // reading from the stream.
-                        reader.Read(buffer, 0, buffer.Length);
-
-                        if (IsAborted)
-                            break;
-
-                        // reading into the values array.
+                        buffer = new byte[totalNumberOfBytes];
+                        vals = new float[nread * Settings.FftDataSize];
                         if (Settings.IsDoublePrecision)
-                        {
-                            Buffer.BlockCopy(buffer, 0, dvals, 0, buffer.Length);
-                            ConvertDoubleToFloat(ref dvals, ref vals);
-                        }
-                        else
-                        {
-                            Buffer.BlockCopy(buffer, 0, vals, 0, buffer.Length);
-                        }
-                        int x = (int)(pixelOffset % Settings.Width);
-                        int y = (int)(pixelOffset / Settings.Width);
-
-                        // calling the processing function.
-                        doProcessing(this, x, y, nread, vals);
-
-                        if (BlockComplete != null)
-                            BlockComplete(this, new StreamProcessorDataReadEventArgs(x, y, nread, vals));
-
-                        pixelOffset += nread;
+                            dvals = new double[nread * Settings.FftDataSize];
                     }
-                    while (true);
-                    IsRunning = false;
+
+                    if (IsAborted)
+                        break;
+
+                    // reading from the stream.
+                    reader.Read(buffer, 0, buffer.Length);
+
+                    if (IsAborted)
+                        break;
+
+                    // reading into the values array.
+                    if (Settings.IsDoublePrecision)
+                    {
+                        Buffer.BlockCopy(buffer, 0, dvals, 0, buffer.Length);
+                        ConvertDoubleToFloat(ref dvals, ref vals);
+                    }
+                    else
+                    {
+                        Buffer.BlockCopy(buffer, 0, vals, 0, buffer.Length);
+                    }
+                    int x = (int)(pixelOffset % Settings.Width);
+                    int y = (int)(pixelOffset / Settings.Width);
+
+                    // calling the processing function.
+                    doProcessing(this, x, y, nread, vals);
+
+                    if (BlockComplete != null)
+                        BlockComplete(this, new StreamProcessorDataReadEventArgs(x, y, nread, vals));
+
+                    pixelOffset += nread;
                 }
+                while (true);
+                IsRunning = false;
+
             };
 
             if (async)
