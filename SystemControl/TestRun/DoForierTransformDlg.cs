@@ -648,8 +648,8 @@ namespace TestRun
                     // finding the normalization factor.
                     float[] maxpower = new float[prs.Count].Select(v => 255F).ToArray();
 
-                    float maxNormal = 255F / convertor.ToRGB(maxpower, prs).Max();
-                    float[] normals =// convertor.ToRGB(maxpower, prs).Select(v => 1F / v).ToArray();
+                    float maxNormal = 1F / convertor.ToRGB(maxpower, prs).Max();
+                    float[] normals = //convertor.ToRGB(maxpower, prs).Select(v => 1F / v).ToArray();
                         new float[3].Select(f => maxNormal).ToArray();
 
                     gen.DoRGBConvert = (amp, offset, length) =>

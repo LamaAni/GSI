@@ -45,7 +45,7 @@ namespace GSI.Calibration
         public static double GetZCoef(double lambda)
         {
             return
-                1.014 * Math.Exp(-0.5 * Math.Pow((Math.Log(lambda) - Math.Log(449.8)) / 0.051, 2));
+                1.839 * Math.Exp(-0.5 * Math.Pow((Math.Log(lambda) - Math.Log(449.8)) / 0.051, 2));
         }
     }
 }
