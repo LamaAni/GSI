@@ -25,7 +25,7 @@ namespace TestRun
         public DoForierTransformDlg()
         {
             InitializeComponent();
-            ddWhiteBalance.SelectedIndex = 0;
+            ddWhiteBalance.SelectedIndex = 1;
             LoadCurrentCalibration();
             LoadCardSelection();
         }
