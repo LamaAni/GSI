@@ -75,7 +75,7 @@ namespace GSI.Calibration
             // assuming a single white pixel.            
             float[] maxAmps = GenerateIntensityCorrection(converter.Frequencies);
             float[] rgb = converter.ToRGB(maxAmps, prs, normals);
-            return new float[3] { 1, rgb[2] / rgb[1], rgb[3] / rgb[1] };
+            return new float[3] { 1, rgb[1] / rgb[0], rgb[2] / rgb[0] };
         }
 
         #endregion

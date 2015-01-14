@@ -262,7 +262,7 @@ namespace TestRun
 
             img.Draw(g, 0, 0, img.Width, img.Height, gregion.X, gregion.Y, gregion.Width, gregion.Height, (data) =>
             {
-                DoImageCorrection(ref data);
+                DoImageCorrection(ref data, dataFilename);
             });
 
             timer.Mark("Draw");
@@ -272,13 +272,30 @@ namespace TestRun
             lblProgInfo.Text = "Load stream: " + timer["Stream"] + ", Clear GC: " + timer["Clear"] + ", Draw: " + timer["Draw"];
         }
 
-        unsafe void DoImageCorrection(ref float[] data)
+        unsafe void DoImageCorrection(ref float[] data, string forierSourceFile)
         {
             if (data.Length == 0)
                 return;
 
             // getting the rgb correction if any.
             float[] rgbCorrect = new float[3] { 1, 1, 1 };
+
+            if (ddWhiteBalance.SelectedIndex == 2)
+            {
+                GSI.Storage.Spectrum.SpectrumStreamReader reader =
+                    new SpectrumStreamReader(new FileStream(forierSourceFile,
+                         FileMode.Open));
+
+                // then need to load the correction from the white balance.
+                GSI.Calibration.FrequencyToRgbConvertor convertor =
+                    new GSI.Calibration.FrequencyToRgbConvertor(
+                        reader.Settings.GenerateSpectrumFrequencies().Select(f => (float)f).ToArray());
+
+                rgbCorrect = LightSourceCalibration.GenerateWhiteBalanceCorrection(convertor);
+
+                reader.Close();
+            }
+
             int l = data.Length;
             fixed (float* pdata = data)
             {
@@ -847,11 +864,8 @@ namespace TestRun
                 return;
             }
 
-            GSI.Storage.Spectrum.SpectrumCalibrationInfo Calib =
-                new SpectrumCalibrationInfo(File.ReadAllText(dlg.FileName));
-
             // overwriting calibration.
-            File.WriteAllText(GetLightSourceSpectrumDefaultFileName(), Calib.ToString());
+            File.WriteAllText(GetLightSourceSpectrumDefaultFileName(), mat.ToCSVString());
 
             // loading the current calibration.
             LoadCurrentCalibration();
