@@ -57,6 +57,13 @@ namespace TestRun
             return Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location) + "\\spectralcalib.csv";
         }
 
+        private static string GetLightSourceSpectrumDefaultFileName()
+        {
+            return Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location) + "\\lightsourcespectrum.csv";
+        }
+
+
+
         #endregion
 
         #region card selection
@@ -82,6 +89,7 @@ namespace TestRun
         #region calibration
 
         public GSI.Storage.Spectrum.SpectrumCalibrationInfo CurrentCalibration { get; private set; }
+        public GSI.Calibration.LightSourceCalibrationGenerator LightSourceCalibration { get; private set; }
         public const int PreferedZeroFill = 256;
         public void LoadCurrentCalibration()
         {
@@ -107,9 +115,31 @@ namespace TestRun
                     SelectCalibration(ddZeroFilling.Items.Count - 1);
                 }
             }
+            
+            // attempting to load the light source spectrum
+            if (File.Exists(GetLightSourceSpectrumDefaultFileName()))
+            {
+                string lsspectra = File.ReadAllText(GetLightSourceSpectrumDefaultFileName());
+                LightSourceCalibration = CreateLightSourceCalibration(lsspectra);
+            }
 
             if (!indexSelected)
                 SelectCalibration(0);
+        }
+
+        private static GSI.Calibration.LightSourceCalibrationGenerator CreateLightSourceCalibration(string lsspectra)
+        {
+            GSI.Storage.CSV.CSVMat mat = GSI.Storage.CSV.CSVMat.Parse(lsspectra);
+            float[] frequencies = new float[mat.LineCount];
+            float[] amplitudes = new float[mat.LineCount];
+            for (int i = 0; i < mat.LineCount; i++)
+            {
+                frequencies[i] = float.Parse(mat[i, 0]);
+                amplitudes[i] = float.Parse(mat[i, 1]);
+            }
+            var calib = new GSI.Calibration.LightSourceCalibrationGenerator(
+                frequencies, amplitudes);
+            return calib;
         }
 
         /// <summary>
@@ -231,8 +261,9 @@ namespace TestRun
 
             img.Draw(g, 0, 0, img.Width, img.Height, gregion.X, gregion.Y, gregion.Width, gregion.Height, (data) =>
             {
-                DoAutoLevel(ref data);
+                DoImageCorrection(ref data);
             });
+
             timer.Mark("Draw");
             img.Close();
             img.Dispose();
@@ -240,10 +271,16 @@ namespace TestRun
             lblProgInfo.Text = "Load stream: " + timer["Stream"] + ", Clear GC: " + timer["Clear"] + ", Draw: " + timer["Draw"];
         }
 
-        unsafe void DoAutoLevel(ref float[] data)
+        unsafe void DoImageCorrection(ref float[] data)
         {
             if (data.Length == 0)
                 return;
+
+            // getting the rgb correction if any.
+            float[] rgbCorrect = new float[3] { 1, 1, 1 };
+
+            
+
             fixed (float* pdata = data)
             {
                 float min = byte.MaxValue;
@@ -658,7 +695,7 @@ namespace TestRun
                     };
                 }
                 gen.Make(true);
-
+                
             });
 
         }
@@ -774,6 +811,96 @@ namespace TestRun
             SelectCalibration(ddZeroFilling.SelectedIndex);
         }
 
+        private void btnLoadLightSpectra_Click(object sender, EventArgs e)
+        {
+            // loads a calibration file and stores this calibration file as the last loaded.
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.Filter = "CSV|*.csv";
+            if (dlg.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+                return;
+
+            GSI.Storage.CSV.CSVMat mat = GSI.Storage.CSV.CSVMat.Parse(File.ReadAllText(dlg.FileName));
+            if (mat.GetMaxColumn() != 2 || mat.LineCount <= 1)
+            {
+                MessageBox.Show("A lightsource spectrum must be of two columns and at least two lines", "Error loading spectra");
+                return;
+            }
+
+            GSI.Storage.Spectrum.SpectrumCalibrationInfo Calib =
+                new SpectrumCalibrationInfo(File.ReadAllText(dlg.FileName));
+
+            // overwriting calibration.
+            File.WriteAllText(GetCalibrationFileName(), Calib.ToString());
+
+            // loading the current calibration.
+            LoadCurrentCalibration();
+        }
+
+        private void btnCreateLightsourceSpectra_Click(object sender, EventArgs e)
+        {
+            CreateLightsourceSpectra();
+        }
+
+        void CreateLightsourceSpectra()
+        {
+            string filename = "image.rawstack";
+
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.Filter = "Spectrum|*.sdat";
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                filename = dlg.FileName;
+            }
+            else
+            {
+                return;
+            }
+
+            SpectrumStreamProcessor processor = new SpectrumStreamProcessor(
+                        File.Open(filename, FileMode.Open));
+
+            // attempting to make the spectrum via the calibration.
+            if(processor.Settings.StartFrequency<0)
+            {
+                MessageBox.Show("The light spectra can only be generated from a claibrated measurement and forier transform");
+                processor.Close();
+                return;
+            }
+
+            float[] fs = new float[processor.Settings.FftDataSize];
+            float delta =(float) (processor.Settings.EndFrequency - processor.Settings.StartFrequency) * 1F / processor.Settings.FftDataSize;
+            for (int i = 0; i < fs.Length; i++)
+                fs[i] = i * delta + (float)processor.Settings.StartFrequency;
+
+            GSI.IP.AvarageSpectraGenerator asg =
+                new AvarageSpectraGenerator(0.1);
+
+            // calculating.
+            asg.Make(processor);
+
+            Task.Run(() =>
+            {
+                progBar.Maximum=10000;
+                while(asg.IsRunning)
+                {
+                    System.Threading.Thread.Sleep(100);
+                    int precentage=(int)Math.Floor(asg.TotalRead*10000.0/asg.TotalPixelsToBeRead);
+                    if (progBar.Value == precentage)
+                        progBar.Value = precentage;
+                }
+
+                // making and saving the matrix.
+                GSI.Storage.CSV.CSVMat mat = new CSVMat();
+                for (int i = 0; i < processor.Settings.FftDataSize; i++)
+                {
+                    mat[i, 0] = fs[i].ToString();
+                    mat[i, 1] = asg.AvarageSpectra[i].ToString();
+                }
+
+                File.WriteAllText(filename + ".lightspectra.csv", mat.ToCSVString());
+            });
+
+        }
 
     }
 }

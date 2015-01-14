@@ -73,6 +73,15 @@ namespace GSI.Storage.CSV
 
         #endregion
 
+        #region metrix methods
+
+        public int GetMaxColumn()
+        {
+            return m_data.Select(l => l.Count).Max();
+        }
+
+        #endregion
+
         #region convertsion methods
 
         void ParseCSV(string source)
@@ -99,6 +108,7 @@ namespace GSI.Storage.CSV
             m_data.ForEach(l =>
             {
                 builder.Append(string.Join(",", l.ToArray()));
+                builder.Append("\n");
             });
             return builder.ToString();
         }

@@ -219,7 +219,7 @@ namespace GSI.Calibration
 
                 // the following are always numbers, so no units needed.
                 //xcoef[i] = 1.155F * (float)Math.Exp(-Math.Pow((lambda - 593.1F) / 48.31F, 2)) +
-                //    0.4168F * (float)Math.Exp(-Math.Pow((lambda - 444.1F) / 27.49F, 2));
+                //0.4168F * (float)Math.Exp(-Math.Pow((lambda - 444.1F) / 27.49F, 2));
                 //ycoef[i] = 1.015F * (float)Math.Exp(-Math.Pow((lambda - 555.5F) / 65.89F, 2));
                 //zcoef[i] = 2.153F * (float)Math.Exp(-Math.Pow((lambda - 447.9F) / 31.05F, 2));
 

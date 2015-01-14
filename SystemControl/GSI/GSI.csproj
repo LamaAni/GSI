@@ -68,6 +68,7 @@
     <Compile Include="Context\AsyncPendingEventQueue.cs" />
     <Compile Include="Context\SpectralScan.cs" />
     <Compile Include="Context\SpectralWorkContext.cs" />
+    <Compile Include="IP\AvarageSpectraGenerator.cs" />
     <Compile Include="IP\Extentions.cs" />
     <Compile Include="IP\PreviewStream.cs" />
     <Compile Include="IP\ImageStream.cs" />
