@@ -591,13 +591,14 @@ namespace GSI.IP
             fixed (float* pdata = data)
             fixed (byte* pbuffer = imageDataBuffer)
             {
-                for (int i = 0; i < l; i++)
+                for (int i = 0; i < l; i++) // attempting to reverse image to fit windows defs.
                 {
+                    int pidx = l - i - 1;
                     if (pdata[i] > 255)
-                        pbuffer[i] = 255;
+                        pbuffer[pidx] = 255;
                     else if (pdata[i] < 0)
-                        pbuffer[i] = 0;
-                    else pbuffer[i] = (byte)pdata[i];
+                        pbuffer[pidx] = 0;
+                    else pbuffer[pidx] = (byte)pdata[i];
                 }
             }
         }

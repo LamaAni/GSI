@@ -30,6 +30,8 @@
         {
             this.panel1 = new System.Windows.Forms.Panel();
             this.grpCommands = new System.Windows.Forms.GroupBox();
+            this.stageControl = new GSIControls.Stage.StageControlBox();
+            this.scanParameters = new GSIControls.Stage.ScanImageParameters();
             this.btnCalibImageAndStage = new System.Windows.Forms.Button();
             this.btnSaveSettings = new System.Windows.Forms.Button();
             this.btnSnapshot = new System.Windows.Forms.Button();
@@ -39,6 +41,7 @@
             this.btnDoForierTransform = new System.Windows.Forms.Button();
             this.btnDoReconstructImage = new System.Windows.Forms.Button();
             this.pnlScanControl = new System.Windows.Forms.Panel();
+            this.scanRange = new GSIControls.Stage.ScanRangeBox();
             this.chkAskWhereToCapture = new System.Windows.Forms.CheckBox();
             this.btnCapture = new System.Windows.Forms.Button();
             this.lblStagePos = new System.Windows.Forms.Label();
@@ -47,9 +50,6 @@
             this.panel4 = new System.Windows.Forms.Panel();
             this.barProg = new System.Windows.Forms.ProgressBar();
             this.prevPannel = new GSIControls.Camera.PreviewDisplayPannel();
-            this.scanRange = new GSIControls.Stage.ScanRangeBox();
-            this.stageControl = new GSIControls.Stage.StageControlBox();
-            this.scanParameters = new GSIControls.Stage.ScanImageParameters();
             this.panel1.SuspendLayout();
             this.grpCommands.SuspendLayout();
             this.pnlScanControl.SuspendLayout();
@@ -88,6 +88,24 @@
             this.grpCommands.TabIndex = 1;
             this.grpCommands.TabStop = false;
             this.grpCommands.Text = "Commands";
+            // 
+            // stageControl
+            // 
+            this.stageControl.Location = new System.Drawing.Point(21, 111);
+            this.stageControl.Margin = new System.Windows.Forms.Padding(2);
+            this.stageControl.Name = "stageControl";
+            this.stageControl.Size = new System.Drawing.Size(250, 185);
+            this.stageControl.TabIndex = 42;
+            this.stageControl.DataChanged += new System.EventHandler(this.stageControl_DataChanged);
+            // 
+            // scanParameters
+            // 
+            this.scanParameters.Location = new System.Drawing.Point(14, 298);
+            this.scanParameters.Margin = new System.Windows.Forms.Padding(2);
+            this.scanParameters.Name = "scanParameters";
+            this.scanParameters.Size = new System.Drawing.Size(276, 342);
+            this.scanParameters.TabIndex = 41;
+            this.scanParameters.DataChanged += new System.EventHandler(this.scanImageParameters1_DataChanged);
             // 
             // btnCalibImageAndStage
             // 
@@ -192,6 +210,15 @@
             this.pnlScanControl.Size = new System.Drawing.Size(986, 165);
             this.pnlScanControl.TabIndex = 2;
             // 
+            // scanRange
+            // 
+            this.scanRange.Location = new System.Drawing.Point(8, 3);
+            this.scanRange.Margin = new System.Windows.Forms.Padding(2);
+            this.scanRange.Name = "scanRange";
+            this.scanRange.Size = new System.Drawing.Size(656, 149);
+            this.scanRange.TabIndex = 24;
+            this.scanRange.DataChanged += new System.EventHandler(this.scanRange_DataChanged);
+            // 
             // chkAskWhereToCapture
             // 
             this.chkAskWhereToCapture.Checked = true;
@@ -282,33 +309,6 @@
             this.prevPannel.Size = new System.Drawing.Size(986, 674);
             this.prevPannel.TabIndex = 0;
             this.prevPannel.Text = "prevPannel";
-            // 
-            // scanRange
-            // 
-            this.scanRange.Location = new System.Drawing.Point(8, 3);
-            this.scanRange.Margin = new System.Windows.Forms.Padding(2);
-            this.scanRange.Name = "scanRange";
-            this.scanRange.Size = new System.Drawing.Size(656, 149);
-            this.scanRange.TabIndex = 24;
-            this.scanRange.DataChanged += new System.EventHandler(this.scanRange_DataChanged);
-            // 
-            // stageControl
-            // 
-            this.stageControl.Location = new System.Drawing.Point(21, 111);
-            this.stageControl.Margin = new System.Windows.Forms.Padding(2);
-            this.stageControl.Name = "stageControl";
-            this.stageControl.Size = new System.Drawing.Size(250, 185);
-            this.stageControl.TabIndex = 42;
-            this.stageControl.DataChanged += new System.EventHandler(this.stageControl_DataChanged);
-            // 
-            // scanParameters
-            // 
-            this.scanParameters.Location = new System.Drawing.Point(14, 298);
-            this.scanParameters.Margin = new System.Windows.Forms.Padding(2);
-            this.scanParameters.Name = "scanParameters";
-            this.scanParameters.Size = new System.Drawing.Size(276, 342);
-            this.scanParameters.TabIndex = 41;
-            this.scanParameters.DataChanged += new System.EventHandler(this.scanImageParameters1_DataChanged);
             // 
             // Main
             // 

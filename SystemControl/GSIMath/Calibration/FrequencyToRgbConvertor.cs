@@ -218,15 +218,19 @@ namespace GSI.Calibration
                     (float)Math.Abs(freq[i + 1] - freq[i]);
 
                 // the following are always numbers, so no units needed.
-                xcoef[i] = 1.155F * (float)Math.Exp(-Math.Pow((lambda - 593.1F) / 48.31F, 2)) +
-                    0.4168F * (float)Math.Exp(-Math.Pow((lambda - 444.1F) / 27.49F, 2));
-                ycoef[i] = 1.015F * (float)Math.Exp(-Math.Pow((lambda - 555.5F) / 65.89F, 2));
-                zcoef[i] = 2.153F * (float)Math.Exp(-Math.Pow((lambda - 447.9F) / 31.05F, 2));
+                //xcoef[i] = 1.155F * (float)Math.Exp(-Math.Pow((lambda - 593.1F) / 48.31F, 2)) +
+                //    0.4168F * (float)Math.Exp(-Math.Pow((lambda - 444.1F) / 27.49F, 2));
+                //ycoef[i] = 1.015F * (float)Math.Exp(-Math.Pow((lambda - 555.5F) / 65.89F, 2));
+                //zcoef[i] = 2.153F * (float)Math.Exp(-Math.Pow((lambda - 447.9F) / 31.05F, 2));
 
-                // applying the delta frequency, back to frequency units.
-                xcoef[i] *= deltaf;
-                ycoef[i] *= deltaf;
-                zcoef[i] *= deltaf;
+                xcoef[i] = Convert.ToSingle(CIE1931ColorSpace.GetXCoef(lambda)) * deltaf;
+                ycoef[i] = Convert.ToSingle(CIE1931ColorSpace.GetYCoef(lambda)) * deltaf;
+                zcoef[i] = Convert.ToSingle(CIE1931ColorSpace.GetZCoef(lambda)) * deltaf;
+
+                //// applying the delta frequency, so we have frequency units for the coefficient.
+                //xcoef[i] *= deltaf;
+                //ycoef[i] *= deltaf;
+                //zcoef[i] *= deltaf;
             }
         }
 
@@ -240,11 +244,18 @@ namespace GSI.Calibration
             switch (m_method)
             {
                 default: // return sRGB
-                    return new float[3,3] { 
-                        { 3.1338561F, - 1.6168667F ,- 0.4906146F }, 
-                        { -0.9787684F,  1.9161415F,  0.0334540F}, 
-                        { 0.0719453F, -0.2289914F,  1.4052427F }
+                    return new float[3, 3] { 
+                        { 0.41847F, -0.15866F ,-0.082835F }, 
+                        { -0.091169F,  0.25243F,  0.015708F}, 
+                        { 0.00092090F, -0.0025498F,  0.17860F }
                     };
+                /* OLD
+                                     return new float[3,3] { 
+                    { 3.1338561F, - 1.6168667F ,- 0.4906146F }, 
+                    { -0.9787684F,  1.9161415F,  0.0334540F}, 
+                    { 0.0719453F, -0.2289914F,  1.4052427F }
+                };
+                 */
             }
         }
 

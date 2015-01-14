@@ -597,10 +597,16 @@ namespace TestRun
                     xCoef = convertor.XCoef;
                     yCoef = convertor.YCoef;
                     zCoef = convertor.ZCoef;
+
+                    gen.SkipOnPixelConvert = 0; // always take into account the entier spectrum becuse this
+                    // is function dependent.
                 }
-
-
-                gen.SkipOnPixelConvert = gen.Processor.Settings.FftDataSize / 20;
+                else
+                {
+                    // remove the DC since we have an avarage spectrum.
+                    gen.SkipOnPixelConvert = gen.Processor.Settings.FftDataSize / 20;
+                }
+                
                 progBar.Value = 0;
                 progBar.Maximum = 1;
                 CodeTimer timer = new CodeTimer();
@@ -642,7 +648,9 @@ namespace TestRun
                     // finding the normalization factor.
                     float[] maxpower = new float[prs.Count].Select(v => 255F).ToArray();
 
-                    float[] normals = convertor.ToRGB(maxpower, prs).Select(v => 1F / v).ToArray();
+                    float maxNormal = 255F / convertor.ToRGB(maxpower, prs).Max();
+                    float[] normals =// convertor.ToRGB(maxpower, prs).Select(v => 1F / v).ToArray();
+                        new float[3].Select(f => maxNormal).ToArray();
 
                     gen.DoRGBConvert = (amp, offset, length) =>
                     {

@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Calibration\CIE1931ColorSpace.cs" />
     <Compile Include="Calibration\SpatialRotation.cs" />
     <Compile Include="Calibration\FrequencyToRgbConvertor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
