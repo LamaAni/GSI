@@ -25,6 +25,7 @@ namespace TestRun
         public DoForierTransformDlg()
         {
             InitializeComponent();
+            ddWhiteBalance.SelectedIndex = 0;
             LoadCurrentCalibration();
             LoadCardSelection();
         }
@@ -278,25 +279,45 @@ namespace TestRun
 
             // getting the rgb correction if any.
             float[] rgbCorrect = new float[3] { 1, 1, 1 };
-
-            
-
+            int l = data.Length;
             fixed (float* pdata = data)
             {
                 float min = byte.MaxValue;
                 float max = 0;
-                for (int i = 0; i < data.Length; i++)
+                for (int i = 0; i <l; i++)
                 {
                     if (pdata[i] > max)
                         max = pdata[i];
                     if (pdata[i] < min)
                         min = pdata[i];
                 }
+
+                if (ddWhiteBalance.SelectedIndex == 1)
+                {
+                    // doing correction using the gray world sum.
+                    double[] rgbcorrectSum = new double[3];
+                    for (int i = 0; i < l; i++)
+                    {
+                        int rgbCorrectIndex = i % 3;
+                        rgbcorrectSum[rgbCorrectIndex] += pdata[i];
+                    }
+
+                    for (int i = 0; i < 3; i++)
+                    {
+                        rgbcorrectSum[i] /= (l / 3);
+                    }
+
+                    // assuming that red is 1.
+                    rgbCorrect[1] = (float)(rgbcorrectSum[0] / rgbcorrectSum[1]);
+                    rgbCorrect[2] = (float)(rgbcorrectSum[0] / rgbcorrectSum[2]);
+                }
+
                 // doing the conversion to 256 values.
                 float conversion = byte.MaxValue * 1.0F / (max - min);
-                for (int i = 0; i < data.Length; i++)
+                for (int i = 0; i < l; i++)
                 {
-                    float val = (pdata[i] * conversion);
+                    int rgbCorrectIndex = i % 3;
+                    float val = (pdata[i] * rgbCorrect[rgbCorrectIndex] * conversion);
                     val = val < 0 ? 0 : val;
                     val = val > 255 ? 255 : val;
                     pdata[i] = val;
@@ -830,7 +851,7 @@ namespace TestRun
                 new SpectrumCalibrationInfo(File.ReadAllText(dlg.FileName));
 
             // overwriting calibration.
-            File.WriteAllText(GetCalibrationFileName(), Calib.ToString());
+            File.WriteAllText(GetLightSourceSpectrumDefaultFileName(), Calib.ToString());
 
             // loading the current calibration.
             LoadCurrentCalibration();
