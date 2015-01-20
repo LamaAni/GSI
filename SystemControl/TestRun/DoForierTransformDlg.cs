@@ -277,68 +277,68 @@ namespace TestRun
             if (data.Length == 0)
                 return;
 
-            // getting the rgb correction if any.
-            float[] rgbCorrect = new float[3] { 1, 1, 1 };
-
-            if (ddWhiteBalance.SelectedIndex == 2)
-            {
-                GSI.Storage.Spectrum.SpectrumStreamReader reader =
-                    new SpectrumStreamReader(new FileStream(forierSourceFile,
-                         FileMode.Open));
-
-                // then need to load the correction from the white balance.
-                GSI.Calibration.FrequencyToRgbConvertor convertor =
-                    new GSI.Calibration.FrequencyToRgbConvertor(
-                        reader.Settings.GenerateSpectrumFrequencies().Select(f => (float)f).ToArray());
-
-                rgbCorrect = LightSourceCalibration.GenerateWhiteBalanceCorrection(convertor);
-
-                reader.Close();
-            }
-
-            int l = data.Length;
+            CodeTimer timer = new CodeTimer();
             fixed (float* pdata = data)
             {
-                float min = byte.MaxValue;
-                float max = 0;
-                for (int i = 0; i <l; i++)
-                {
-                    if (pdata[i] > max)
-                        max = pdata[i];
-                    if (pdata[i] < min)
-                        min = pdata[i];
-                }
+                // getting the rgb correction if any.
+                float[] rgbCorrect = new float[3] { 1, 1, 1 };
+                int l = data.Length;
 
-                if (ddWhiteBalance.SelectedIndex == 1)
+                timer.Mark("Prepare");
+
+                if (ddWhiteBalance.SelectedIndex == 2)
                 {
-                    // doing correction using the gray world sum.
-                    double[] rgbcorrectSum = new double[3];
-                    for (int i = 0; i < l; i++)
+                    GSI.Storage.Spectrum.SpectrumStreamReader reader =
+                        new SpectrumStreamReader(new FileStream(forierSourceFile,
+                             FileMode.Open));
+
+                    // then need to load the correction from the white balance.
+                    GSI.Calibration.FrequencyToRgbConvertor convertor =
+                        new GSI.Calibration.FrequencyToRgbConvertor(
+                            reader.Settings.GenerateSpectrumFrequencies().Select(f => (float)f).ToArray());
+
+                    rgbCorrect = LightSourceCalibration.GenerateWhiteBalanceCorrection(convertor);
+
+                    reader.Close();
+                }
+                else if (ddWhiteBalance.SelectedIndex == 1)
+                {
+                    // gray world white balance.
+                    double[] sum = new double[3];
+                    int rgbCorrectIndex = 0;
+
+                    fixed (double* psum = sum)
                     {
-                        int rgbCorrectIndex = i % 3;
-                        rgbcorrectSum[rgbCorrectIndex] += pdata[i];
+                        for (int i = 0; i < l; i++)
+                        {
+                            rgbCorrectIndex = i % 3;
+                            float val = pdata[i];
+                            if (!float.IsNaN(val))
+                                psum[rgbCorrectIndex] += val;
+                        }
                     }
 
+                    // calculating the avarage value.
                     for (int i = 0; i < 3; i++)
                     {
-                        rgbcorrectSum[i] /= (l / 3);
+                        sum[i] /= (l / 3);
                     }
 
                     // assuming that red is 1.
-                    rgbCorrect[1] = (float)(rgbcorrectSum[0] / rgbcorrectSum[1]);
-                    rgbCorrect[2] = (float)(rgbcorrectSum[0] / rgbcorrectSum[2]);
+                    rgbCorrect[0] = 1;
+                    rgbCorrect[1] = (float)(sum[0] / sum[1]);
+                    rgbCorrect[2] = (float)(sum[0] / sum[2]);
                 }
 
-                // doing the conversion to 256 values.
-                float conversion = byte.MaxValue * 1.0F / (max - min);
+                timer.Mark("White balance");
+
                 for (int i = 0; i < l; i++)
                 {
                     int rgbCorrectIndex = i % 3;
-                    float val = (pdata[i] * rgbCorrect[rgbCorrectIndex] * conversion);
-                    val = val < 0 ? 0 : val;
-                    val = val > 255 ? 255 : val;
-                    pdata[i] = val;
+                    pdata[i] = pdata[i] * rgbCorrect[rgbCorrectIndex];
                 }
+
+                timer.Mark("Correction");
             }
         }
 

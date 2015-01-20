@@ -165,8 +165,12 @@ namespace GSI.OpenCL
             if (prepare != null)
                 prepare();
 
+            GSI.Coding.CodeTimer timer = new Coding.CodeTimer(); 
+
             // call to prepare parameters.
             PrepareParameters();
+
+            timer.Mark("Set params");
 
             // event list associated with the execution.
             ComputeEventList eventList = new ComputeEventList();
@@ -182,8 +186,14 @@ namespace GSI.OpenCL
                 // executing.
                 commands.Execute(Kernal, null, new long[] { count }, null, eventList);
 
+                timer.Mark("Execute kernal");
+
+                // post read.
                 PostReadBufferCommands(eventList, commands);
 
+                timer.Mark("Read parameters");
+                
+                // finish.
                 commands.Finish();
 
                 commands.Dispose();

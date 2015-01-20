@@ -611,8 +611,8 @@ namespace GSI.Stage.Piror
         {
             Action dopath = () =>
             {
-                double speedOffsetY = useSpeedupOffsets ? vy : 0;
-                double seeedOffsetX = useSpeedupOffsets ? vx : 0;
+                double speedOffsetY = useSpeedupOffsets ? vy * 2 : 0;
+                double seeedOffsetX = useSpeedupOffsets ? vx * 2 : 0;
 
                 // going to start position.
                 this.StopStage();

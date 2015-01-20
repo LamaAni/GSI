@@ -583,22 +583,39 @@ namespace GSI.IP
         /// </summary>
         /// <param name="data"></param>
         /// <param name="imageDataBuffer"></param>
-        unsafe void ToImageData(float[] data, ref byte[] imageDataBuffer)
+        unsafe void ToImageData(float[] data, ref byte[] imageDataBuffer, bool doNormalization=true)
         {
             if (imageDataBuffer == null || imageDataBuffer.Length != data.Length)
                 imageDataBuffer = new byte[data.Length];
             int l = data.Length;
+            float max = 0, min = float.MaxValue;
+            float normal = 1;
             fixed (float* pdata = data)
             fixed (byte* pbuffer = imageDataBuffer)
             {
+                // calculating the image amplitude correction.
+                if (doNormalization)
+                {
+                    for (int i = 0; i < l; i++)
+                    {
+                        if (pdata[i] > max)
+                            max = pdata[i];
+                        if (pdata[i] < min)
+                            min = pdata[i];
+                    }
+
+                    normal = byte.MaxValue * 1.0F / (max - min);
+                }
+
                 for (int i = 0; i < l; i++) // attempting to reverse image to fit windows defs.
                 {
+                    float val = normal * pdata[i];
                     int pidx = l - i - 1;
-                    if (pdata[i] > 255)
+                    if (val > 255)
                         pbuffer[pidx] = 255;
-                    else if (pdata[i] < 0)
+                    else if (val < 0)
                         pbuffer[pidx] = 0;
-                    else pbuffer[pidx] = (byte)pdata[i];
+                    else pbuffer[pidx] = (byte)val;
                 }
             }
         }
