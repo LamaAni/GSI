@@ -25,6 +25,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestMatalb", "TestMatalb\Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSIMath", "GSIMath\GSIMath.csproj", "{3CD9EB99-29AA-42CC-8558-50F4CFDA2E23}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSIScanWebService", "GSIScanWebService\GSIScanWebService.csproj", "{97167749-0727-42E5-B484-E7EC400049DA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSIGateway", "GSIGateway\GSIGateway.csproj", "{CBDCDEE4-6FE7-43D8-8B51-F62A74B15ACA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{97167749-0727-42E5-B484-E7EC400049DA} = {97167749-0727-42E5-B484-E7EC400049DA}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +82,14 @@ Global
 		{3CD9EB99-29AA-42CC-8558-50F4CFDA2E23}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3CD9EB99-29AA-42CC-8558-50F4CFDA2E23}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3CD9EB99-29AA-42CC-8558-50F4CFDA2E23}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97167749-0727-42E5-B484-E7EC400049DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97167749-0727-42E5-B484-E7EC400049DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97167749-0727-42E5-B484-E7EC400049DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97167749-0727-42E5-B484-E7EC400049DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBDCDEE4-6FE7-43D8-8B51-F62A74B15ACA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBDCDEE4-6FE7-43D8-8B51-F62A74B15ACA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBDCDEE4-6FE7-43D8-8B51-F62A74B15ACA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBDCDEE4-6FE7-43D8-8B51-F62A74B15ACA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

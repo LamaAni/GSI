@@ -7,7 +7,7 @@ close all
 
 
 clr={'b';'g';'r'};
-fpath='G:\Measurements\';
+fpath='f:\Measurements\';
 
 
 for t=1:3
@@ -24,6 +24,9 @@ for t=1:3
     F=reshape(F,size(F,1)*size(F,2),size(F,3));
     F(isnan(F))=0;
     avSpec(:,t)=mean(F);
+end
+
+for t=1:3
     [peaks idx]=sort(avSpec(:,t));
     YN='No';
     k=length(idx);
@@ -39,8 +42,8 @@ for t=1:3
         k=k-1;
         close (gcf)
     end
+    
 end
-
 ch2Lambda = @(x) [x(1)./(wl_peak(1)+x(2)) - x(3) - wl(1);...
     x(1)./(wl_peak(2)+x(2)) - x(3) - wl(2);...
     x(1)./(wl_peak(3)+x(2)) - x(3) - wl(3)];
@@ -82,4 +85,4 @@ end
 axis([400 750 0 max(avSpec(:))])
 %%
 [fname,fpath]=uiputfile([fpath,'*.csv']);
-csvwrite([fpath,fname],calibrationCoefficient)
+csvwrite([fpath,fname],[256,1,1e-9,calibrationCoefficient])

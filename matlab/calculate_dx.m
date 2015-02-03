@@ -1,7 +1,7 @@
 clear all
 close all
 
-fpath='D:\Code\SystemControl\TestRun\bin\Release\'
+fpath='F:\Measurements\';
 [fname,fpath]=uigetfile([fpath,'*.bmp'],'Load filter');
 
 im=imread([fpath,fname]);
@@ -21,4 +21,4 @@ dx=round(wavelength./3.5)
 W=wave(1:dx:end);
 X=x(1:dx:end);
 
-plot(x,wave,'b',X,W,'.b')
+plot(x,wave,'b',X,W,'xr')

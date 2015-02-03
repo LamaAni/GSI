@@ -1,6 +1,6 @@
 clear all
 close all
-fpath='\\132.70.33.111\garini\MOSHE\';
+fpath='F:\Measurements\';
 [fname1,fpath1]=uigetfile([fpath,'\*.bmp'],'1st snapshot');
 [fname2,fpath2]=uigetfile([fpath1,'\*.bmp'],'2nd snapshot');
 % 
@@ -9,17 +9,17 @@ Snap2=double(imread([fpath2,fname2]));
 Snap1=Snap1(:,:,1);
 Snap2=Snap2(:,:,1);
 
-
-% runl=100;
-% corr=fast_xcorr2(Snap1,Snap2);
-% [x,y]=find_shift(corr);
-% r=sqrt(x.^2 + y.^2)
-% mag=r*5.5/runl
-% pixsize=runl/r
-% ang=atan(-y/x)
-
-ssize=size(Snap1);
-[ang,pixsize]=FindRotationAndPixelSize(Snap1(:),Snap2(:),ssize(2),100,0)
+format long
+runl=100;
+corr=fast_xcorr2(Snap1,Snap2);
+[x,y]=find_shift(corr);
+r=sqrt(x.^2 + y.^2)
+mag=r*5.5/runl
+pixsize=runl/r
+ang=atan(-y/x)
+format short
+% ssize=size(Snap1);
+% [ang,pixsize]=FindRotationAndPixelSize(Snap1(:),Snap2(:),ssize(2),100,0)
 
 proj=zeros(size(Snap1,1)+abs(y),size(Snap1,2)+abs(x),3);
 
