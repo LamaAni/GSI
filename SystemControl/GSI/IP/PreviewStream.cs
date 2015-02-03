@@ -299,7 +299,7 @@ namespace GSI.IP
                 Buffer.BlockCopy(buffer, 0, zoommedBuffer, 0, buffer.Length * sizeof(float));
                 return;
             }
-;
+
             double zoomRatio = GetZoomRatio(fromZoom, toZoom);
             int targetZoomPixValues = (int)(zwidth * zheight * ImageStream.NumberOfBytesPerPixel);
 
@@ -471,18 +471,7 @@ namespace GSI.IP
 
         #endregion
 
-        #region zoom index validation
-
-        public bool IsZoomLevelValid(int zoom)
-        {
-            if (zoom > 0 && !IsPreviewValid)
-                return false;
-            return true;
-        }
-
-        #endregion
-
-        #region painting on graphics surfaces
+        #region Zoom index calculations and validation
 
         /// <summary>
         /// Retuns the zoom level accoding to the size in zero zoom.
@@ -503,29 +492,128 @@ namespace GSI.IP
         }
 
         /// <summary>
-        /// Retruns the bits of the preview.
+        /// Returns the correct zoom level according to the target image.
         /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <param name="gx"></param>
-        /// <param name="gy"></param>
-        /// <param name="gwidth"></param>
-        /// <param name="gheight"></param>
-        /// <returns></returns>
-        public byte[] GetDrawBits(int x, int y, int width, int height)
+        /// <param name="widthInOriginal">The width in the original image</param>
+        /// <param name="heightInOriginal">The height in the original image</param>
+        /// <param name="widthInTargetImage">The width in the target image</param>
+        /// <param name="heightInTargetImage">The height in the target image</param>
+        /// <returns>The zoom index</returns>
+        public int GetZoomIndex(int widthInOriginal, int heightInOriginal, int widthInTargetImage, int heightInTargetImage)
         {
-            Bitmap map = new Bitmap(width, height);
-            Graphics g = Graphics.FromImage(map);
-            Draw(g, x, y, width, height, x, y, width, height);
-            ImageConverter converter = new ImageConverter();
-            byte[] data = (byte[])converter.ConvertTo(map, typeof(byte[]));
-            return data;
+            // calculating the zoom level from the width and height.
+            bool useWidth = widthInOriginal > heightInOriginal;
+            return GetZoomIndex(useWidth ? widthInTargetImage : heightInTargetImage, useWidth ? widthInOriginal : heightInOriginal);
         }
 
         /// <summary>
-        /// Get the zoom from the image data.
+        /// Checks if the zoom level is valid for the preview.
+        /// </summary>
+        /// <param name="zoom"></param>
+        /// <returns></returns>
+        public bool IsZoomLevelValid(int zoom)
+        {
+            if (zoom > 0 && !IsPreviewValid)
+                return false;
+            return true;
+        }
+
+        #endregion
+
+        #region Get reduced values image
+
+        /// <summary>
+        /// Calculates the correct zoom index and returns the correct zoom index values
+        /// for the image. Note that x,y,width,height are at the original image sizes.
+        /// </summary>
+        /// <returns>The pixel values for the correct zoom level according to the targetImageWidth and targetImageHeight</returns>
+        public float[] GetPreviewValues(int x, int y, int width, int height,  
+            int widthInTargetImage, int heightInTargetImage,
+            int zoom = -1)
+        {
+            zoom = zoom < 0 ? GetZoomIndex(width, height, widthInTargetImage, heightInTargetImage) : zoom;
+
+            // not that the zoom level is known, get the values accoding to the zoom level.
+            float[] source = ReadImageData(zoom, x, y, width, height);
+
+            // making the reduced image. (RGB).
+            float[] target = new float[widthInTargetImage * heightInTargetImage * 3];
+            MakePreviewReducedValues(source, width, ref target, widthInTargetImage);
+
+            // return the reduced image.
+            return target;
+        }
+
+        private unsafe void MakePreviewReducedValues(float[] source, int sourceStride, ref float[] target, int targetStride)
+        {
+            fixed (float* _source = source, _target = target)
+            {
+                MakePreviewReducedValuesHelper data =
+                    new MakePreviewReducedValuesHelper();
+
+                data.Source = _source;
+                data.Target = _target;
+
+                // the number of values in a pixel.
+                int npv = 3;
+
+                // calculating the stride zoom and length zoom.
+                float yz = (float)Math.Round(
+                    source.Length * targetStride * 1F / (sourceStride * target.Length));
+                float sz = (float)Math.Round(sourceStride * 1F / targetStride);
+
+                // total pixles.
+                int totalPixs = target.Length / npv;
+                // processing lines accodring to the stride.
+                //Parallel.For(0, totalPixs, (idx) =>
+                for (int idx = 0; idx < totalPixs; idx++)
+                {
+                    // calcilating the location.
+                    int yidx = idx / targetStride;
+                    int xidx = idx % targetStride;
+                    int x0 = (int)(sz * xidx); // the number of vlaues.
+                    int y0 = (int)(yz * yidx);
+                    int xend = (int)(sz * (xidx + 1));
+                    int yend = (int)(yz * (yidx + 1));
+
+                    // doing the avarage.
+                    float sumR = 0;
+                    float sumG = 0;
+                    float sumB = 0;
+                    for (int x = x0; x < xend; x++)
+                    {
+                        for (int y = y0; y < yend; y++)
+                        {
+                            int sourceIdx = (y * sourceStride + x) * npv;
+                            sumR += data.Source[sourceIdx];
+                            sumG += data.Source[sourceIdx + 1];
+                            sumB += data.Source[sourceIdx + 2];
+                        }
+                    }
+
+                    // calculating the avarage.
+                    int targetIdx = idx * npv;
+                    float norm = (1F * (xend - x0) * (yend - y0));
+                    data.Target[targetIdx] = sumR / norm;
+                    data.Target[targetIdx + 1] = sumG / norm;
+                    data.Target[targetIdx + 2] = sumB / norm;
+                }
+                //});
+            }
+        }
+
+        unsafe class MakePreviewReducedValuesHelper
+        {
+            public float* Source, Target;
+        }
+
+        #endregion
+
+        #region painting on graphics surfaces
+
+        /// <summary>
+        /// Draws the preview image on the graphics buffer. The image is reduced
+        /// to the graphics size.
         /// </summary>
         /// <param name="g"></param>
         /// <param name="x"></param>
@@ -541,32 +629,30 @@ namespace GSI.IP
         {
             CodeTimer timer = new CodeTimer();
             timer.Start();
-            // calculating the zoom level from the width and height.
-            bool useWidth = width > height;
-            int zoomLevel = GetZoomIndex(useWidth ? gwidth : gheight, useWidth ? width : height);
 
-            // the data as binary.
-            byte[] asBinary = null;
+            // getting the zoom level.
+            int zoom = GetZoomIndex(width, height, gwidth, gheight);
 
-            // getting the index for the zoom level.
-            double zr = GetZoomRatio(0, zoomLevel);
-            int zw = (int)(width * zr);
-            int zh = (int)(height * zr);
+            // creating the reduced image data.
+            float[] imageData = GetPreviewValues(x, y, width, height, gwidth, gheight, zoom);
+            timer.Mark("Create reduced preview data.");
 
-            timer.Mark("Prepare");
-
-            // loading the bits.
-            float[] imageData = ReadImageData(zoomLevel, x, y, width, height);
-            timer.Mark("Read data");
-
+            // processing the image data.
             if (processImageData != null)
                 processImageData(imageData);
             timer.Mark("Process data");
 
-            // marke image data.
-            ToImageData(imageData, ref asBinary);
+            // creating the binary data for windows.
+            byte[] asBinary = null;
+            ToWindowsImageData(imageData, ref asBinary);
             timer.Mark("Make image data");
 
+            // getting the zoom ratio.
+            double zr = GetZoomRatio(0, zoom);
+            int zw = (int)(width * zr);
+            int zh = (int)(height * zr);
+
+            // drawing onto the graphics.
             Bitmap img = new Bitmap(zw, zh, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
             BitmapData dat = img.LockBits(
                 new Rectangle(0, 0, img.Width, img.Height), ImageLockMode.WriteOnly, img.PixelFormat);
@@ -576,6 +662,42 @@ namespace GSI.IP
 
             g.DrawImage(img, gx, gy, gwidth, gheight);
             timer.Mark("Draw on GC");
+
+            //// calculating the zoom level from the width and height.
+            //bool useWidth = width > height;
+            //int zoomLevel = GetZoomIndex(useWidth ? gwidth : gheight, useWidth ? width : height);
+
+            //// the data as binary.
+            //byte[] asBinary = null;
+
+            //// getting the index for the zoom level.
+            //double zr = GetZoomRatio(0, zoomLevel);
+            //int zw = (int)(width * zr);
+            //int zh = (int)(height * zr);
+
+            //timer.Mark("Prepare");
+
+            //// loading the bits.
+            //float[] imageData = ReadImageData(zoomLevel, x, y, width, height);
+            //timer.Mark("Read data");
+
+            //if (processImageData != null)
+            //    processImageData(imageData);
+            //timer.Mark("Process data");
+
+            //// make image data.
+            //ToWindowsImageData(imageData, ref asBinary);
+            //timer.Mark("Make image data");
+
+            //Bitmap img = new Bitmap(zw, zh, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+            //BitmapData dat = img.LockBits(
+            //    new Rectangle(0, 0, img.Width, img.Height), ImageLockMode.WriteOnly, img.PixelFormat);
+            //Marshal.Copy(asBinary, 0, dat.Scan0, asBinary.Length);
+            //img.UnlockBits(dat);
+            //timer.Mark("Make image");
+
+            //g.DrawImage(img, gx, gy, gwidth, gheight);
+            //timer.Mark("Draw on GC");
         }
 
         /// <summary>
@@ -583,7 +705,7 @@ namespace GSI.IP
         /// </summary>
         /// <param name="data"></param>
         /// <param name="imageDataBuffer"></param>
-        unsafe void ToImageData(float[] data, ref byte[] imageDataBuffer)
+        unsafe void ToWindowsImageData(float[] data, ref byte[] imageDataBuffer)
         {
             if (imageDataBuffer == null || imageDataBuffer.Length != data.Length)
                 imageDataBuffer = new byte[data.Length];
