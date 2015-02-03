@@ -1,0 +1,19 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <script language="javascript" src="http://code.jquery.com/jquery-2.1.3.js">
+        </script>
+        <script>
+            function callServerForMove() {
+                $.ajax("HandleSimpleCommand.ashx?xv=" + xval.value + "&yv=" + yval.value);
+            }
+        </script>
+    </head>
+    <body>
+        @DateTime.Now.ToString()
+        <input type="text" id="xval" />
+        <input type="text" id="yval" />
+        <input type="button" onclick="callServerForMove()" value="go" />
+    </body>
+</html>
