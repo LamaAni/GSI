@@ -8,10 +8,11 @@ namespace GSI.Coding
 {
     public class CodeTimer : Collections.OrderedDictionary<string, TimeSpan>
     {
-        public CodeTimer()
+        public CodeTimer(bool autoStart=true)
         {
             watch = new System.Diagnostics.Stopwatch();
-            watch.Start();
+            if (autoStart)
+                watch.Start();
         }
 
         System.Diagnostics.Stopwatch watch;

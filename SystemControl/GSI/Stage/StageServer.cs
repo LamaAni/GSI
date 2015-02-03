@@ -182,6 +182,7 @@ namespace GSI.Stage
 
         void DoServiceReading()
         {
+            System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.AboveNormal;
             string pendingLine="";
             if (Port.BytesToRead > 0)
                 ReadExisting("Existing at port:");
@@ -230,6 +231,8 @@ namespace GSI.Stage
         /// </summary>
         void DoServriceProcessing()
         {
+            System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.AboveNormal;
+
             while (IsRunning)
             {
                 if (!Port.IsOpen)

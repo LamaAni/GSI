@@ -11,18 +11,20 @@ void SubtractAverage(int offset, // the vector offset to the location of the dat
 	float temp1 = 0;
 	float temp2 = 0;
 	int i = 0;
-
+	int idx = 0;
 	for (i = 0; i < l - 1; ++i)
 	{
-		temp1 += real[i + offset];
-		temp2 += imag[i + offset];
+		idx = i + offset;
+		temp1 += real[idx];
+		temp2 += imag[idx];
 	}
 	temp1 /= (1.0*l);
 	temp2 /= (1.0*l);
 	for (i = 0; i < l - 1; ++i)
 	{
-		real[i + offset] -= temp1;
-		imag[i + offset] -= temp2;
+		idx = i + offset;
+		real[idx] -= temp1;
+		imag[idx] -= temp2;
 	}
 
 }
@@ -37,18 +39,22 @@ void R2Reorder(int offset, // the vector offset to the location of the data.
 	float temp1 = 0;
 	int index1 = 0;
 	int index2 = 0;
+	int idx1offset = 0;
+	int idx2offset = 0;
 	for (index2 = 0; index2 < l - 1; ++index2)
 	{
 		if (index2 < index1)
 		{
+			idx1offset = offset + index1;
+			idx2offset = offset + index2;
 			// doing swaps.
-			temp1 = real[offset + index2];
-			real[offset + index2] = real[offset + index1];
-			real[offset + index1] = temp1;
+			temp1 = real[idx2offset];
+			real[idx2offset] = real[idx1offset];
+			real[idx1offset] = temp1;
 
-			temp1 = imag[offset + index2];
-			imag[offset + index2] = imag[offset + index1];
-			imag[offset + index1] = temp1;
+			temp1 = imag[idx2offset];
+			imag[idx2offset] = imag[idx1offset];
+			imag[idx1offset] = temp1;
 		}
 		int length = l;
 		do
@@ -65,7 +71,7 @@ void R2Reorder(int offset, // the vector offset to the location of the data.
 
 // Step of the R2 algorithem.
 void R2Step(int offset, // the vector offset to the location of the data.
-	int l , // the vector length, in power of 2.
+	int l, // the vector length, in power of 2.
 	global float* real, // the working real nums.
 	global float* imag, // the working image nums.
 	int k, // step inside the matrix. (See algorithem).
@@ -84,19 +90,23 @@ void R2Step(int offset, // the vector offset to the location of the data.
 
 	int num2 = levelSize << 1;
 	int index = k;
+	int idxoffset = 0;
+	int idxoffsetlevel = 0;
 	while (index < l)
 	{
-		rtemp2 = real[offset + index];
-		itemp2 = imag[offset + index];
+		idxoffset = offset + index;
+		idxoffsetlevel = idxoffset + levelSize;
+		rtemp2 = real[idxoffset];
+		itemp2 = imag[idxoffset];
 
-		rtemp3 = rtemp1*real[offset + index + levelSize] - itemp1*imag[offset + index + levelSize];
-		itemp3 = rtemp1*imag[offset + index + levelSize] + itemp1*real[offset + index + levelSize];
+		rtemp3 = rtemp1*real[idxoffsetlevel] - itemp1*imag[idxoffsetlevel];
+		itemp3 = rtemp1*imag[idxoffsetlevel] + itemp1*real[idxoffsetlevel];
 
-		real[offset + index] = rtemp2 + rtemp3;
-		imag[offset + index] = itemp2 + itemp3;
+		real[idxoffset] = rtemp2 + rtemp3;
+		imag[idxoffset] = itemp2 + itemp3;
 
-		real[offset + index + levelSize] = rtemp2 - rtemp3;
-		imag[offset + index + levelSize] = itemp2 - itemp3;
+		real[idxoffsetlevel] = rtemp2 - rtemp3;
+		imag[idxoffsetlevel] = itemp2 - itemp3;
 		index += num2;
 	}
 }
@@ -109,10 +119,12 @@ void ApplayMask(int offset, // the vector offset to the location of the data.
 	)
 {
 	int i = 0;
+	int idx = 0;
 	for (i = 0; i < l; i++)
 	{
-		real[offset + i] = real[offset + i] * mask[i];
-		imag[offset + i] = imag[offset + i] * mask[i];
+		idx = offset + i;
+		real[idx] = real[idx] * mask[i];
+		imag[idx] = imag[idx] * mask[i];
 	}
 }
 
@@ -154,10 +166,12 @@ void CalculateMag(
 {
 	int i = 0;
 	double val;
+	int idx = 0;
 	for (i = 0; i < l; i++)
 	{
-		val = sqrt(pow(real[offset + i], 2) + pow(imag[offset + i], 2));
-		mag[offset + i] = val;
+		idx = offset + i;
+		val = sqrt(pow(real[idx], 2) + pow(imag[idx], 2));
+		mag[idx] = val;
 	}
 }
 
@@ -190,11 +204,11 @@ kernel void R2FFT(
 	// Doing appodization of the matrix.
 	if (doMask == 1)
 		ApplayMask(offset, l, real, imag, mask);
-	
+
 	// added code to suppress the running of the FFT
 	// remove the comment and star from the following starred lines.
 	//*if(false){
-	
+
 	// bit reorder.
 	R2Reorder(offset, l, real, imag);
 
@@ -207,7 +221,7 @@ kernel void R2FFT(
 			R2Step(offset, l, real, imag, k, levelSize, isign);
 		levelSize *= 2;
 	}
-	
+
 	//*}
 
 	// finished, calculating magnitude.
