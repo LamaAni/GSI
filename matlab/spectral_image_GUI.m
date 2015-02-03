@@ -22,7 +22,7 @@ function varargout = spectral_image_GUI(varargin)
 
 % Edit the above text to modify the response to help spectral_image_GUI
 
-% Last Modified by GUIDE v2.5 30-Oct-2014 13:01:28
+% Last Modified by GUIDE v2.5 02-Feb-2015 12:07:50
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -60,10 +60,13 @@ axes(handles.txt_ax)
 axis off
 handles.txt=text(.5,.5,'','fontsize',14,'VerticalAlignment','middle','horizontalalignment','center');
 axes(handles.sp_ax)
-title('Spectrum')
-xlabel('\lambda (nm)')
-ylabel('Intensity')
-set(handles.sp_ax,'xlim',[400 700])
+title('Spectrum','fontsize',10)
+xlabel('\lambda (nm)','fontsize',10)
+ylabel('Intensity','fontsize',10)
+grid on
+set(handles.sp_ax,'xlim',[400 700],'xtick',400:25:700,'fontsize',6,'box','on')
+
+handles.fpath='f:\Measurements\';
 
 
 % Update handles structure
@@ -89,7 +92,6 @@ function load_btn_Callback(hObject, eventdata, handles)
 % hObject    handle to load_btn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-handles.fpath='G:\Measurements\';
 [handles.fname,handles.fpath]=uigetfile([handles.fpath,'*.mat'],'Load spectral image file');
 handles.filename=[handles.fpath,handles.fname];
 set(handles.txt,'string','Loading...')
@@ -98,6 +100,13 @@ handles.sp_data=load(handles.filename);
 axes(handles.im_ax);
 imshow(handles.sp_data.RGB);
 set(handles.txt,'string','')
+
+handles.BG_spec=nan;
+handles.smooth_BG=nan;
+
+handles.save_data=handles.sp_data.lambda(:);
+handles.spec_num=1;
+handles.save_header{handles.spec_num}='Lambda (nm)';
 
 guidata(hObject, handles);
 
@@ -138,16 +147,16 @@ axis([1,size(handles.sp_data.RGB,2),1,size(handles.sp_data.RGB,1)]);
 guidata(hObject, handles);
 
 
-% --- Executes on button press in show_spec.
-function show_spec_Callback(hObject, eventdata, handles)
-% hObject    handle to show_spec (see GCBO)
+% --- Executes on button press in show_px_spec.
+function show_px_spec_Callback(hObject, eventdata, handles)
+% hObject    handle to show_px_spec (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 
 set(handles.txt,'string',...
-    {'Use the mouse to see spectra:';'Left click - blue line';'Right click - green line';
-    'Middle click - red line';'Press ESC to exit'},...
+    {'Use the mouse to see spectra:';'Left click - red line';'Right click - green line';
+    'Middle click - blue line';'Press ESC to exit'},...
     'fontsize',10)
 m_btn=1;
 axes(handles.sp_ax);
@@ -167,41 +176,58 @@ while m_btn~=27
     [X,Y,m_btn]=ginput2(1);
     X=round(X);
     Y=round(Y);
-    pixel_spec=(handles.sp_data.spec((Y-w):(Y+w),(X-w):(X+w),:));
-    pixel_spec=mean(pixel_spec,1);
-    pixel_spec=mean(pixel_spec,2);
-    pixel_spec=pixel_spec(:);
-    peak=find(pixel_spec==max(pixel_spec),1);
+    handles.pixel_spec=(handles.sp_data.spec((Y-w):(Y+w),(X-w):(X+w),:));
+    handles.pixel_spec=mean(handles.pixel_spec,1);
+    handles.pixel_spec=mean(handles.pixel_spec,2);
+    handles.pixel_spec=handles.pixel_spec(:);
+    
+    switch get(handles.pl_type,'value')
+        case 1
+        case 2
+            handles.pixel_spec=handles.pixel_spec./handles.smooth_BG(:);
+        case 3
+            handles.pixel_spec=log10(handles.smooth_BG(:)./handles.pixel_spec);
+    end
+    
+    peak=find(handles.pixel_spec==max(handles.pixel_spec),1);
     axes(handles.sp_ax);
     if m_btn==1
         try
             delete(plt1)
         catch
         end
-        plt1=plot(handles.sp_data.lambda,pixel_spec,'b',[handles.sp_data.lambda(peak),handles.sp_data.lambda(peak)],[0,max(handles.sp_data.spec(:)).*1.2],':k');
-        handles.SPEC1(:,spec1)=pixel_spec;
+        plt1=plot(handles.sp_data.lambda,handles.pixel_spec,'r',[handles.sp_data.lambda(peak),handles.sp_data.lambda(peak)],[0,max(handles.sp_data.spec(:)).*1.2],'m--','linewidth',2);
+        handles.SPEC1(:,spec1)=handles.pixel_spec;
         spec1=spec1+1;
     elseif m_btn==2
         try
             delete(plt2)
         catch
         end
-        plt2=plot(handles.sp_data.lambda,pixel_spec,'r',[handles.sp_data.lambda(peak),handles.sp_data.lambda(peak)],[0,max(handles.sp_data.spec(:)).*1.2],':k');
-        handles.SPEC2(:,spec2)=pixel_spec;
-        spec2=spec2+1;        
+        plt2=plot(handles.sp_data.lambda,handles.pixel_spec,'b',[handles.sp_data.lambda(peak),handles.sp_data.lambda(peak)],[0,max(handles.sp_data.spec(:)).*1.2],'m--','linewidth',2);
+        handles.SPEC2(:,spec2)=handles.pixel_spec;
+        spec2=spec2+1;
     elseif m_btn==3
         try
             delete(plt3)
         catch
         end
-        plt3=plot(handles.sp_data.lambda,pixel_spec,'g',[handles.sp_data.lambda(peak),handles.sp_data.lambda(peak)],[0,max(handles.sp_data.spec(:)).*1.2],':k');
-        handles.SPEC3(:,spec3)=pixel_spec;
-        spec3=spec3+1;    
+        plt3=plot(handles.sp_data.lambda,handles.pixel_spec,'g',[handles.sp_data.lambda(peak),handles.sp_data.lambda(peak)],[0,max(handles.sp_data.spec(:)).*1.2],'m--','linewidth',2);
+        handles.SPEC3(:,spec3)=handles.pixel_spec;
+        spec3=spec3+1;
     end
-    title('Spectrum')
-    xlabel('\lambda (nm)')
-    ylabel('Intensity')
-    axis([400,700,0,1.2.*max(handles.sp_data.spec(:))]);
+    title(['Spectrum, peak @ ',num2str(round(handles.sp_data.lambda(peak))),'nm'],'fontsize',10)
+    xlabel('\lambda (nm)','fontsize',10)
+    switch get(handles.pl_type,'value')
+        case 1
+            ylabel('Intensity I(\lambda)','fontsize',10)
+        case 2
+            ylabel('Normalized intensity I/I_0','fontsize',10)
+        case 3
+            ylabel('Absorbance log_{10}(I_0/I)','fontsize',10)
+    end
+    set(handles.sp_ax,'ylim',[0,1.2.*max(handles.pixel_spec)]);
+    
     
 end
 set(handles.txt,'string','','fontsize',14)
@@ -236,16 +262,211 @@ function save_spec_Callback(hObject, eventdata, handles)
 % hObject    handle to save_spec (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-[handles.fname,handles.fpath]=uiputfile([handles.filename(1:end-4),'_specs.mat'],'Save Spectra data');
+
+[handles.fname,handles.fpath]=uiputfile([handles.filename(1:end-4),'_specs.txt'],'Save Spectra data');
+
 set(handles.txt,'string','Saving...')
 drawnow
 
-sp1=handles.SPEC1;
-sp2=handles.SPEC2;
-sp3=handles.SPEC3;
-lambda=handles.sp_data.lambda(:);
+fid = fopen([handles.fpath, handles.fname],'wt');
 
-save([handles.fpath,handles.fname],'sp1','sp2','sp3','lambda')
+for i=1:length(handles.save_header)
+    fprintf(fid,'%s',handles.save_header{i});
+    if i~=length(handles.save_header)
+        fprintf(fid,'\t');
+    else
+        fprintf(fid,'\n');
+    end
+end
 
+for i=1:size(handles.save_data,1)
+    for j=1:size(handles.save_data,2)
+        
+        fprintf(fid,'%f',handles.save_data(i,j));
+        if j~=size(handles.save_data,2)
+            fprintf(fid,'\t');
+        else
+            fprintf(fid,'\n');
+        end
+    end
+end
+
+fclose(fid)
+
+
+% 
+% sp1=handles.SPEC1;
+% sp2=handles.SPEC2;
+% sp3=handles.SPEC3;
+% lambda=handles.sp_data.lambda(:);
+% 
+% save([handles.fpath,handles.fname],'sp1','sp2','sp3','lambda')
+% 
 set(handles.txt,'string','')
 guidata(hObject, handles);
+
+
+% --- Executes on button press in show_av_spec.
+function show_av_spec_Callback(hObject, eventdata, handles)
+% hObject    handle to show_av_spec (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+set(handles.txt,'string',{'Use the mouse to define an area';'Double-click to exit'},'fontsize',10)
+
+while 1
+    
+    axes(handles.im_ax);
+    
+    rect=round(getrect);
+    
+    
+    try
+        delete(h_rect)
+    catch
+    end
+    
+    
+    if (rect(3)==0)|(rect(4)==0)
+        break
+    end
+    hold on
+    
+    h_rect=rectangle('Position',rect);
+    
+    spec_roi=handles.sp_data.spec(rect(2):(rect(2)+rect(4)), rect(1):(rect(1)+rect(3)),:);
+    spec_roi=reshape(spec_roi,size(spec_roi,1)*size(spec_roi,2),size(spec_roi,3));
+    spec_roi=mean(spec_roi);
+    
+    
+    
+    switch get(handles.pl_type,'value')
+        case 1
+            handles.pixel_spec=spec_roi(:);
+        case 2
+            handles.pixel_spec=spec_roi(:)./handles.smooth_BG(:);
+        case 3
+            handles.pixel_spec=log10(handles.smooth_BG(:)./spec_roi(:));
+    end
+    
+    peak=find(handles.pixel_spec==max(handles.pixel_spec),1);
+    axes(handles.sp_ax);
+    cla
+    hold on
+    try
+        delete(plt)
+    catch
+    end
+    plt=plot(handles.sp_data.lambda,handles.pixel_spec,'r',[handles.sp_data.lambda(peak),handles.sp_data.lambda(peak)],[0,max(handles.sp_data.spec(:)).*1.2],'m--','linewidth',2);
+    
+    title(['Spectrum, peak @ ',num2str(round(handles.sp_data.lambda(peak))),'nm'],'fontsize',10)
+    xlabel('\lambda (nm)','fontsize',10)
+    switch get(handles.pl_type,'value')
+        case 1
+            ylabel('Intensity I(\lambda)','fontsize',10)
+        case 2
+            ylabel('Normalized intensity I/I_0','fontsize',10)
+        case 3
+            ylabel('Absorbance log_{10}(I_0/I)','fontsize',10)
+    end
+    set(handles.sp_ax,'ylim',[0,1.2.*max(handles.pixel_spec)]);
+    
+end %while
+
+set(handles.txt,'string','')
+
+guidata(hObject, handles);
+
+
+% --- Executes on button press in load_ref.
+function load_ref_Callback(hObject, eventdata, handles)
+% hObject    handle to load_ref (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+[handles.fname,handles.fpath]=uigetfile([handles.fpath,'*.mat'],'Load reference image');
+handles.BG_spec=ref_spec([handles.fpath, handles.fname]);
+handles.smooth_BG=smooth(handles.BG_spec,3);
+
+guidata(hObject, handles);
+
+
+
+% --- Executes on selection change in pl_type.
+function pl_type_Callback(hObject, eventdata, handles)
+% hObject    handle to pl_type (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns pl_type contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from pl_type
+
+if get(handles.pl_type,'value')~=1
+    if isnan(handles.BG_spec)
+        msgbox('You must load reference spectrum!','Reference spectrum');
+        set(handles.pl_type,'value',1);
+    end
+end
+guidata(hObject, handles);
+
+
+% --- Executes during object creation, after setting all properties.
+function pl_type_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to pl_type (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: listbox controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in add_spec.
+function add_spec_Callback(hObject, eventdata, handles)
+% hObject    handle to add_spec (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+handles.spec_num=handles.spec_num+1;
+handles.save_data=[handles.save_data,handles.pixel_spec];
+handles.save_header{handles.spec_num}=['Spec. #',num2str(handles.spec_num-1,'%.2u')];
+guidata(hObject, handles);
+
+
+
+% --- Executes on button press in lambda_range.
+function lambda_range_Callback(hObject, eventdata, handles)
+% hObject    handle to lambda_range (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+wl_range=inputdlg({['min value (',num2str(ceil(min(handles.sp_data.lambda))),' nm)'];...
+    ['max value (',num2str(floor(max(handles.sp_data.lambda))),' nm)'];['Ticks interval']},...
+    'Wavelength Range',1,{'400';'700';'25'});
+minWL=str2num(wl_range{1});
+maxWL=str2num(wl_range{2});
+tickWL=str2num(wl_range{3});
+
+set(handles.sp_ax,'xlim',[minWL maxWL],'xtick',minWL:tickWL:maxWL);
+
+guidata(hObject, handles);
+
+
+% --- Executes on button press in smooting.
+function smooting_Callback(hObject, eventdata, handles)
+% hObject    handle to smooting (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+smth=str2num(cell2mat(inputdlg('Enter smoothing value:','Smoothing',1,{'3'})));
+handles.smooth_BG=smooth(handles.BG_spec,smth);
+
+figure
+plot(handles.sp_data.lambda,handles.BG_spec,'r:',handles.sp_data.lambda,handles.smooth_BG,'g','linewidth',2)
+legend('Reference spectrum','Smoothed spectrum','location','NorthWest')
+
+guidata(hObject, handles);
+
+

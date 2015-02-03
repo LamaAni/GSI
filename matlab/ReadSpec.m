@@ -1,10 +1,11 @@
-function spec=ReadSpec(fname)
+function [spec, channels]=ReadSpec(fname)
 
 gsiasm=NET.addAssembly('D:\Code\SystemControl\GSI\bin\Debug\GSI.dll');
 reader=GSI.Storage.Spectrum.SpectrumStreamReader.Open(fname);
 H=reader.Settings.Height;
 W=reader.Settings.Width;
 k=reader.Settings.FftDataSize;
+channels=double(reader.Settings.FftDataOffsetIndex+(1:k));
 
 im_size=double(H*W);
 spec=zeros(W-1,H-1,k);

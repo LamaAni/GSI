@@ -1,10 +1,12 @@
-function spec=ReadSpecROI(fname)
+function [spec, channels]=ReadSpecROI(fname)
+
 
 gsiasm=NET.addAssembly('D:\Code\SystemControl\GSI\bin\Debug\GSI.dll');
 reader=GSI.Storage.Spectrum.SpectrumStreamReader.Open(fname);
 H=reader.Settings.Height;
 W=reader.Settings.Width;
 k=reader.Settings.FftDataSize;
+channels=double(reader.Settings.FftDataOffsetIndex+(1:k));
 
 ROI=inputdlg({'start at W=?';'lenght:';'start at H=?';'lenght:'},['W=',num2str(W),'  ,  H=',num2str(H)],[1 50;1 50;1 50;1 50],{'1','1000','1','1000'});
 initialW=str2num(ROI{1});
@@ -40,3 +42,4 @@ end
 reader.Close;
 close(h)
 toc
+

@@ -8,15 +8,15 @@ f_path='G:\Measurements\';
 def_name=[spec_file(1:find(spec_file=='.',1,'first')),'mat'];
 [f_name,f_path] = uiputfile([f_path,def_name],'Save spectrum');
 
-spec=ReadSpecROI([f_path,spec_file]);
+[spec,chnls]=ReadSpecROI([f_path,spec_file]);
 calibrationCoefficient=csvread([f_path,cal_file]);
 
-chnls=1:size(spec,3);
-lambda=calibrationCoefficient(1)./(chnls + calibrationCoefficient(2)) - calibrationCoefficient(3);
+% chnls=1:size(spec,3);
+lambda=calibrationCoefficient(4)./(chnls + calibrationCoefficient(5)) - calibrationCoefficient(6);
 
-idx=find((lambda>=400)&(lambda<=760));
-lambda=lambda(idx);
-spec=spec(:,:,idx);
+% idx=find((lambda>=400)&(lambda<=760));
+% lambda=lambda(idx);
+% spec=spec(:,:,idx);
 
 %%
 RGB=spec2image(spec,lambda);
