@@ -637,9 +637,13 @@ namespace GSI.IP
             float[] imageData = GetPreviewValues(x, y, width, height, gwidth, gheight, zoom);
             timer.Mark("Create reduced preview data.");
 
+            NormalizeToImageValues(ref imageData);
+            timer.Mark("Normalization");
+
             // processing the image data.
             if (processImageData != null)
                 processImageData(imageData);
+
             timer.Mark("Process data");
 
             // creating the binary data for windows.
@@ -698,6 +702,33 @@ namespace GSI.IP
 
             //g.DrawImage(img, gx, gy, gwidth, gheight);
             //timer.Mark("Draw on GC");
+        }
+
+        unsafe void NormalizeToImageValues(ref float[] data)
+        {
+            fixed (float* pdata = data)
+            {
+                // moving to 256 value base.
+                float minval = float.MaxValue;
+                float maxval = 0;
+                int l = data.Length;
+
+                for (int i = 0; i < l; i++)
+                {
+                    float val = pdata[i];
+                    if (minval > val)
+                        minval = val;
+                    if (maxval < val)
+                        maxval = val;
+                }
+
+                float normal = 255 / (maxval - minval);
+                for (int i = 0; i < l; i++)
+                {
+                    float val = pdata[i];
+                    pdata[i] = (val - minval) * normal;
+                }
+            }
         }
 
         /// <summary>
