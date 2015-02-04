@@ -221,6 +221,7 @@ namespace TestRun
             }
             timer.Mark("Prepare");
             PreviewStream img = new PreviewStream(File.Open(previewFilename, FileMode.Open));
+
             if(!img.IsPreviewValid)
             {
                 MessageBox.Show("Preview is invalid. (Validate preview not run)");

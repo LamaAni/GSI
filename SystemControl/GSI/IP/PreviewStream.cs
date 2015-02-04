@@ -106,7 +106,7 @@ namespace GSI.IP
         public static PreviewStream Open(string filename)
         {
             if (!File.Exists(filename))
-                throw new Exception("File dose not exist.");
+                throw new Exception("File '" + filename + "' dose not exist.");
             FileStream strm = File.Open(filename, FileMode.Open, FileAccess.Read);
             PreviewStream pstrm = new PreviewStream(strm);
             return pstrm;
@@ -280,79 +280,6 @@ namespace GSI.IP
 
         #endregion
 
-        #region data manipulations
-
-        /// <summary>
-        /// Makes a data buffer for the specific zoom level that can 
-        /// </summary>
-        /// <param name="buffer"></param>
-        /// <param name="fromZoom"></param>
-        /// <param name="toZoom"></param>
-        /// <returns></returns>
-        private unsafe void MakeZoomData(float[] buffer, int fromZoom, int toZoom,
-            int zwidth,int zheight,
-            ref float[] zoommedBuffer)
-        {
-            if (fromZoom == toZoom)
-            {
-                zoommedBuffer = new float[buffer.Length];
-                Buffer.BlockCopy(buffer, 0, zoommedBuffer, 0, buffer.Length * sizeof(float));
-                return;
-            }
-
-            double zoomRatio = GetZoomRatio(fromZoom, toZoom);
-            int targetZoomPixValues = (int)(zwidth * zheight * ImageStream.NumberOfBytesPerPixel);
-
-            // remake if needed.
-            if (zoommedBuffer == null || zoommedBuffer.Length != targetZoomPixValues)
-                zoommedBuffer = new float[targetZoomPixValues];
-
-            if (fromZoom > toZoom)
-            {
-                // need to do reverse packaging.
-                int l = zoommedBuffer.Length;
-                fixed (float* pbuffer = buffer, pzbuffer = zoommedBuffer)
-                {
-                    for (int i = 0; i < l; i++)
-                    {
-                        int bidx = (int)(zoomRatio * i);
-                        pzbuffer[i] = pbuffer[bidx];
-                    }
-                }
-            }
-            else // need to avarage values to get conversion.
-            {
-                // this actually works for both cases but is slower!
-                int l = zoommedBuffer.Length;
-                int maxl = buffer.Length;
-                fixed (float* pbuffer = buffer, pzbuffer = zoommedBuffer)
-                {
-                    for (int i = 0; i < l; i++)
-                    {
-                        int bsidx = (int)(zoomRatio * i);
-                        int beidx = (int)(zoomRatio * (i + 1));
-                        if (beidx > bsidx)
-                        {
-                            float av = 0;
-                            int avcount = 0;
-                            for (int j = bsidx; j < beidx; j++)
-                            {
-                                if (j > maxl)
-                                    break;
-                                avcount += 1;
-                                av += pbuffer[j];
-                            }
-
-                            pzbuffer[i] = av / avcount;
-                        }
-                        else pzbuffer[i] = pbuffer[bsidx];
-                    }
-                }
-            }
-        }
-
-        #endregion
-
         #region data pixel reading
 
         /// <summary>
@@ -488,6 +415,8 @@ namespace GSI.IP
                 idx += 1;
                 cur = cur / ZoomRatio;
             }
+            if (idx >= ZoomLevels)
+                idx = ZoomLevels - 1;
             return idx;
         }
 
@@ -523,11 +452,40 @@ namespace GSI.IP
         #region Get reduced values image
 
         /// <summary>
+        /// Makes a preview and convertes it to the correct resolution, -1 for source resolution.
+        /// </summary>
+        /// <returns>The pixel values for the correct zoom level according to the targetImageWidth and targetImageHeight</returns>
+        public float[] MakePreview(int x, int y, int width, int height,
+            int longAxisNumberOfPixels)
+        {
+            longAxisNumberOfPixels = longAxisNumberOfPixels < 0 ? 
+                (width > height ? width : height) : longAxisNumberOfPixels;
+
+            // the long axis number of pixels to show.
+            int tw = width > height ? longAxisNumberOfPixels : (int)(longAxisNumberOfPixels * (width * 1.0 / height));
+            int th = height > width ? longAxisNumberOfPixels : (int)(longAxisNumberOfPixels * (height * 1.0 / width));
+
+            return GetPreviewValues(x, y, width, height, tw, th);
+        }
+
+        /// <summary>
         /// Calculates the correct zoom index and returns the correct zoom index values
         /// for the image. Note that x,y,width,height are at the original image sizes.
         /// </summary>
         /// <returns>The pixel values for the correct zoom level according to the targetImageWidth and targetImageHeight</returns>
-        public float[] GetPreviewValues(int x, int y, int width, int height,  
+        public float[] MakePreview(int x, int y, int width, int height,
+            int previewWidth, int previewHeight)
+        {
+            // the long axis number of pixels to show.
+            return GetPreviewValues(x, y, width, height, previewWidth, previewHeight);
+        }
+
+        /// <summary>
+        /// Calculates the correct zoom index and returns the correct zoom index values
+        /// for the image. Note that x,y,width,height are at the original image sizes.
+        /// </summary>
+        /// <returns>The pixel values for the correct zoom level according to the targetImageWidth and targetImageHeight</returns>
+        protected float[] GetPreviewValues(int x, int y, int width, int height,  
             int widthInTargetImage, int heightInTargetImage,
             int zoom = -1)
         {
@@ -538,73 +496,24 @@ namespace GSI.IP
 
             // making the reduced image. (RGB).
             float[] target = new float[widthInTargetImage * heightInTargetImage * 3];
-            MakePreviewReducedValues(source, width, ref target, widthInTargetImage);
+            ReduaceMatrixByValueAvarage(source, width, target, widthInTargetImage);
 
             // return the reduced image.
             return target;
         }
 
-        private unsafe void MakePreviewReducedValues(float[] source, int sourceStride, ref float[] target, int targetStride)
-        {
-            fixed (float* _source = source, _target = target)
-            {
-                MakePreviewReducedValuesHelper data =
-                    new MakePreviewReducedValuesHelper();
-
-                data.Source = _source;
-                data.Target = _target;
-
-                // the number of values in a pixel.
-                int npv = 3;
-
-                // calculating the stride zoom and length zoom.
-                float yz = (float)Math.Round(
-                    source.Length * targetStride * 1F / (sourceStride * target.Length));
-                float sz = (float)Math.Round(sourceStride * 1F / targetStride);
-
-                // total pixles.
-                int totalPixs = target.Length / npv;
-                // processing lines accodring to the stride.
-                //Parallel.For(0, totalPixs, (idx) =>
-                for (int idx = 0; idx < totalPixs; idx++)
-                {
-                    // calcilating the location.
-                    int yidx = idx / targetStride;
-                    int xidx = idx % targetStride;
-                    int x0 = (int)(sz * xidx); // the number of vlaues.
-                    int y0 = (int)(yz * yidx);
-                    int xend = (int)(sz * (xidx + 1));
-                    int yend = (int)(yz * (yidx + 1));
-
-                    // doing the avarage.
-                    float sumR = 0;
-                    float sumG = 0;
-                    float sumB = 0;
-                    for (int x = x0; x < xend; x++)
-                    {
-                        for (int y = y0; y < yend; y++)
-                        {
-                            int sourceIdx = (y * sourceStride + x) * npv;
-                            sumR += data.Source[sourceIdx];
-                            sumG += data.Source[sourceIdx + 1];
-                            sumB += data.Source[sourceIdx + 2];
-                        }
-                    }
-
-                    // calculating the avarage.
-                    int targetIdx = idx * npv;
-                    float norm = (1F * (xend - x0) * (yend - y0));
-                    data.Target[targetIdx] = sumR / norm;
-                    data.Target[targetIdx + 1] = sumG / norm;
-                    data.Target[targetIdx + 2] = sumB / norm;
-                }
-                //});
-            }
-        }
-
-        unsafe class MakePreviewReducedValuesHelper
+        unsafe class MakePreviewReducedValuesHelper : IDisposable
         {
             public float* Source, Target;
+
+            #region IDisposable Members
+
+            public void Dispose()
+            {
+                Source = null; Target = null;
+            }
+
+            #endregion
         }
 
         #endregion
@@ -637,7 +546,7 @@ namespace GSI.IP
             float[] imageData = GetPreviewValues(x, y, width, height, gwidth, gheight, zoom);
             timer.Mark("Create reduced preview data.");
 
-            NormalizeToImageValues(ref imageData);
+            NormalizeToImageValues(imageData);
             timer.Mark("Normalization");
 
             // processing the image data.
@@ -648,25 +557,21 @@ namespace GSI.IP
 
             // creating the binary data for windows.
             byte[] asBinary = null;
-            ToWindowsImageData(imageData, ref asBinary);
+            ToBinaryImageData(imageData, ref asBinary);
             timer.Mark("Make image data");
 
-            // getting the zoom ratio.
-            double zr = GetZoomRatio(0, zoom);
-            int zw = (int)(width * zr);
-            int zh = (int)(height * zr);
-
             // drawing onto the graphics.
-            Bitmap img = new Bitmap(zw, zh, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+            Bitmap img = new Bitmap(gwidth, gheight, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
             BitmapData dat = img.LockBits(
                 new Rectangle(0, 0, img.Width, img.Height), ImageLockMode.WriteOnly, img.PixelFormat);
             Marshal.Copy(asBinary, 0, dat.Scan0, asBinary.Length);
             img.UnlockBits(dat);
             timer.Mark("Make image");
-
             g.DrawImage(img, gx, gy, gwidth, gheight);
+
             timer.Mark("Draw on GC");
 
+            #region old draw
             //// calculating the zoom level from the width and height.
             //bool useWidth = width > height;
             //int zoomLevel = GetZoomIndex(useWidth ? gwidth : gheight, useWidth ? width : height);
@@ -702,9 +607,10 @@ namespace GSI.IP
 
             //g.DrawImage(img, gx, gy, gwidth, gheight);
             //timer.Mark("Draw on GC");
+            #endregion
         }
 
-        unsafe void NormalizeToImageValues(ref float[] data)
+        unsafe void NormalizeToImageValues(float[] data)
         {
             fixed (float* pdata = data)
             {
@@ -736,7 +642,7 @@ namespace GSI.IP
         /// </summary>
         /// <param name="data"></param>
         /// <param name="imageDataBuffer"></param>
-        unsafe void ToWindowsImageData(float[] data, ref byte[] imageDataBuffer)
+        unsafe void ToBinaryImageData(float[] data, ref byte[] imageDataBuffer, bool reveseForWindows = true)
         {
             if (imageDataBuffer == null || imageDataBuffer.Length != data.Length)
                 imageDataBuffer = new byte[data.Length];
@@ -746,7 +652,7 @@ namespace GSI.IP
             {
                 for (int i = 0; i < l; i++) // attempting to reverse image to fit windows defs.
                 {
-                    int pidx = l - i - 1;
+                    int pidx = reveseForWindows ? (l - i - 1) : i;
                     if (pdata[i] > 255)
                         pbuffer[pidx] = 255;
                     else if (pdata[i] < 0)
@@ -828,88 +734,6 @@ namespace GSI.IP
             return totalNumberOfLinesNeeded;
         }
 
-        //private unsafe void ReduceMatrixByZoomValue(float[] source, ref float[] target,
-        //     int sWidth, int sHeight, int tWidth, int tHeight, int nPixVals)
-        //{
-        //    int totalNumberOfValuesInReduced = source.Length / (ZoomRatio * ZoomRatio);
-        //    if (target == null || target.Length != totalNumberOfValuesInReduced)
-        //        target = new float[source.Length / (ZoomRatio * ZoomRatio)];
-
-        //    fixed (float* pSource = source, pTarget = target)
-        //    {
-        //        for (int y = 0; y < tHeight; y++)
-        //        {
-        //            for (int x = 0; x < tWidth; x++)
-        //            {
-        //                int sx = x * ZoomRatio;
-        //                int sy = y * ZoomRatio;
-        //                float av = 0;
-        //                int avcount = 0;
-        //                int colorOffset = 0;
-        //                for (int zx = 0; zx < ZoomRatio; zx++)
-        //                {
-        //                    for (int zy = 0; zy < ZoomRatio; zy++)
-        //                    {
-        //                        // internal zoom locations
-        //                        if (zx + sx > sWidth)
-        //                            continue;
-        //                        if (zy + sy > sHeight)
-        //                            continue;
-        //                        avcount += 1;
-        //                        int sourceIndex = (zy + sy) * sWidth * nPixVals + (zx + sx) * nPixVals;
-        //                        av = av + pSource[sourceIndex + colorOffset];
-        //                    }
-        //                }
-        //                av /= avcount;
-        //                float red = av;
-
-        //                colorOffset += 1;
-        //                avcount = 0;
-        //                av = 0;
-        //                for (int zx = 0; zx < ZoomRatio; zx++)
-        //                {
-        //                    for (int zy = 0; zy < ZoomRatio; zy++)
-        //                    {
-        //                        // internal zoom locations
-        //                        if (zx + sx > sWidth)
-        //                            continue;
-        //                        if (zy + sy > sHeight)
-        //                            continue;
-        //                        avcount += 1;
-        //                        int sourceIndex = (zy + sy) * sWidth * nPixVals + (zx + sx) * nPixVals;
-        //                        av = av + pSource[sourceIndex + colorOffset];
-        //                    }
-        //                }
-        //                av /= avcount;
-        //                float green = av;
-
-        //                colorOffset += 1;
-        //                avcount = 0;
-        //                av = 0;
-        //                for (int zx = 0; zx < ZoomRatio; zx++)
-        //                {
-        //                    for (int zy = 0; zy < ZoomRatio; zy++)
-        //                    {
-        //                        // internal zoom locations
-        //                        if (zx + sx > sWidth)
-        //                            continue;
-        //                        if (zy + sy > sHeight)
-        //                            continue;
-        //                        avcount += 1;
-        //                        int sourceIndex = (zy + sy) * sWidth * nPixVals + (zx + sx) * nPixVals;
-        //                        av = av + pSource[sourceIndex + colorOffset];
-        //                    }
-        //                }
-        //                av /= avcount;
-        //                float blue = av;
-        //                int reducedOffset = y * tWidth * nPixVals + x * nPixVals;
-        //                pTarget[reducedOffset] = red;
-        //                pTarget[reducedOffset + 1] = green;
-        //                pTarget[reducedOffset + 2] = blue;
-        //            }
-        //        }
-        //    }
-        //}
 
         /// <summary>
         /// Reduces the image matrix by avaraginng on the x,y axis. This procedure is done for each pixel seperatly.
@@ -959,80 +783,88 @@ namespace GSI.IP
                 }
             }
 
-            //fixed (float* pSource = source, pTarget = target)
-            //{
-            //    for (int y = 0; y < reducedHeight; y++)
-            //    {
-            //        for (int x = 0; x < reducedWidth; x++)
-            //        {
-            //            int sx = x * ZoomRatio;
-            //            int sy = y * ZoomRatio;
-            //            float av = 0;
-            //            int avcount = 0;
-            //            int colorOffset = 0;
-            //            for (int zx = 0; zx < ZoomRatio; zx++)
-            //            {
-            //                for (int zy = 0; zy < ZoomRatio; zy++)
-            //                {
-            //                    // internal zoom locations
-            //                    if (zx + sx > sWidth)
-            //                        continue;
-            //                    if (zy + sy > sHeight)
-            //                        continue;
-            //                    avcount += 1;
-            //                    int sourceIndex = (zy + sy) * sWidth * nPixVals + (zx + sx) * nPixVals;
-            //                    av = av + pSource[sourceIndex + colorOffset];
-            //                }
-            //            }
-            //            av /= avcount;
-            //            float red = av;
+        }
 
-            //            colorOffset += 1;
-            //            avcount = 0;
-            //            av = 0;
-            //            for (int zx = 0; zx < ZoomRatio; zx++)
-            //            {
-            //                for (int zy = 0; zy < ZoomRatio; zy++)
-            //                {
-            //                    // internal zoom locations
-            //                    if (zx + sx > sWidth)
-            //                        continue;
-            //                    if (zy + sy > sHeight)
-            //                        continue;
-            //                    avcount += 1;
-            //                    int sourceIndex = (zy + sy) * sWidth * nPixVals + (zx + sx) * nPixVals;
-            //                    av = av + pSource[sourceIndex + colorOffset];
-            //                }
-            //            }
-            //            av /= avcount;
-            //            float green = av;
+        private unsafe void ReduaceMatrixByValueAvarage(float[] source, int sourceStride, float[] target, int targetStride)
+        {
+            if (target == null)
+                throw new Exception("Cannot work on null target.");
+            fixed (float* _source = source, _target = target)
+            {
+                MakePreviewReducedValuesHelper data =
+                    new MakePreviewReducedValuesHelper();
 
-            //            colorOffset += 1;
-            //            avcount = 0;
-            //            av = 0;
-            //            for (int zx = 0; zx < ZoomRatio; zx++)
-            //            {
-            //                for (int zy = 0; zy < ZoomRatio; zy++)
-            //                {
-            //                    // internal zoom locations
-            //                    if (zx + sx > sWidth)
-            //                        continue;
-            //                    if (zy + sy > sHeight)
-            //                        continue;
-            //                    avcount += 1;
-            //                    int sourceIndex = (zy + sy) * sWidth * nPixVals + (zx + sx) * nPixVals;
-            //                    av = av + pSource[sourceIndex + colorOffset];
-            //                }
-            //            }
-            //            av /= avcount;
-            //            float blue = av;
-            //            int reducedOffset = y * tWidth * nPixVals + x * nPixVals;
-            //            pTarget[reducedOffset] = red;
-            //            pTarget[reducedOffset + 1] = green;
-            //            pTarget[reducedOffset + 2] = blue;
-            //        }
-            //    }
-            //}
+                data.Source = _source;
+                data.Target = _target;
+
+                // the number of values in a pixel.
+                int npv = 3;
+
+                // calculating the stride zoom and length zoom.
+                int height = source.Length / (sourceStride * npv);
+                int targetHeight = target.Length / (targetStride * npv);
+                float yz = height * 1F / targetHeight;
+                float sz = sourceStride * 1F / targetStride;
+
+                // total pixles.
+                int totalPixs = target.Length / npv;
+                // processing lines accodring to the stride.
+                Parallel.For(0, totalPixs, (idx) =>
+                //for (int idx = 0; idx < totalPixs; idx++)
+                {
+                    // calcilating the location in the target.
+                    int yidx = idx / targetStride;
+                    int xidx = idx % targetStride;
+
+                    // converting to the location in the source.
+                    int x0 = (int)Math.Floor(sz * xidx); // the start location in the source for x.
+                    int y0 = (int)Math.Floor(yz * yidx); // the start location in the source for y.
+                    int xend = (int)Math.Floor(sz * (xidx + 1)); // the end location in the source (start of next pixel).
+                    int yend = (int)Math.Floor(yz * (yidx + 1)); // the end location in the source (start of next pixel).
+
+                    // validating within bounds.
+                    if (x0 >= sourceStride)
+                        x0 = sourceStride - 1;
+                    if (y0 >= height)
+                        y0 = height - 1;
+
+                    if (xend <= x0)
+                        xend = x0 + 1;
+                    if (yend <= y0)
+                        yend = y0 + 1;
+
+                    if (xend >= sourceStride)
+                        xend = sourceStride;
+                    if (yend >= height)
+                        yend = height;
+
+                    // doing the avarage.
+                    float sumR = 0;
+                    float sumG = 0;
+                    float sumB = 0;
+                    for (int x = x0; x < xend; x++)
+                    {
+                        for (int y = y0; y < yend; y++)
+                        {
+                            int sourceIdx = (y * sourceStride + x) * npv;
+                            sumR += data.Source[sourceIdx];
+                            sumG += data.Source[sourceIdx + 1];
+                            sumB += data.Source[sourceIdx + 2];
+                        }
+                    }
+
+                    // calculating the avarage.
+                    int targetIdx = idx * npv;
+                    float norm = (1F * (xend - x0) * (yend - y0));
+                    data.Target[targetIdx] = sumR / norm;
+                    data.Target[targetIdx + 1] = sumG / norm;
+                    data.Target[targetIdx + 2] = sumB / norm;
+                }
+                );
+
+                data.Dispose();
+                //});
+            }
         }
 
         #endregion
