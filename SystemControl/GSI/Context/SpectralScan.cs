@@ -335,7 +335,8 @@ namespace GSI.Context
                     ()=>
                     {
                         // point reached
-                        Context.Camera.Capture();
+                        //Context.Camera.Capture();
+                        System.Threading.Thread.Sleep(100);
                     },
                     ()=>
                     {
