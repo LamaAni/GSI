@@ -639,6 +639,38 @@ namespace GSI.Stage.Piror
             else dopath();
         }
 
+        public void DoStopMotionPath(double x0, double y0, double x1, double y1, double deltaX, double deltaY, bool async, Action started, Action reachedPosition, Action ended)
+        {
+            Action dopath = () =>
+            {
+                double curX = x0;
+                double curY = y0;
+
+                // going to start position.
+                this.StopStage();
+
+                if (started != null)
+                    started();
+
+                while (curX<x1 && curY < y1)
+                {
+                    this.SetPosition(curX, curY);
+                    this.WaitUntilPositionByMove(curX, curY);
+                    if (reachedPosition != null)
+                        reachedPosition(curX, curY);
+                    curX += deltaX;
+                    curY += deltaY;
+                }
+
+                if (ended != null)
+                    ended();
+            };
+
+            if (async)
+                Task.Run(dopath);
+            else dopath();
+        }
+
         #endregion
 
         #region ITimeKeeper Members

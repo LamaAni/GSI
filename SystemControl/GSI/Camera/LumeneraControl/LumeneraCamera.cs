@@ -342,6 +342,9 @@ namespace GSI.Camera.LumeneraControl
         Queue<Tuple<byte[],DateTime>> PendingCaptures =
             new Queue<Tuple<byte[],DateTime>>();
 
+        //Queue<System.Threading.Tasks.TaskCompletionSource<byte[]>> PendingImageWaits = new Queue<TaskCompletionSource<byte[]>>();
+        Queue<System.Threading.ManualResetEvent> PendingImageWaits = new Queue<System.Threading.ManualResetEvent>();
+
         /// <summary>
         /// Initializes the capture process.
         /// </summary>
@@ -358,14 +361,15 @@ namespace GSI.Camera.LumeneraControl
                 {
                     if (PendingCaptures.Count == 0)
                     {
-                        System.Threading.Thread.Sleep(10);
                         IsProcessingPendingImages = false;
+                        System.Threading.Thread.Sleep(10);
                         continue;
                     }
 
                     IsProcessingPendingImages = true;
                     Tuple<byte[], DateTime> capture = PendingCaptures.Dequeue();
                     byte[] data = ValidateDataSize(capture.Item1);
+
                     if (ImageCaptured != null)
                     {
                         ImageRecivedEventArgs args = new ImageRecivedEventArgs(
@@ -374,9 +378,21 @@ namespace GSI.Camera.LumeneraControl
 
                         ImageCaptured(this, args);
                     }
+
+                    while (PendingImageWaits.Count > 0)
+                    {
+                        PendingImageWaits.Dequeue().Set();
+                    }
                 }
                 IsProcessingPendingImages = false;
             });
+        }
+
+        public void WaitForImage()
+        {
+            System.Threading.ManualResetEvent wfi = new System.Threading.ManualResetEvent(false);
+            PendingImageWaits.Enqueue(wfi);
+            wfi.WaitOne();
         }
 
         int _captureCount;
@@ -495,6 +511,13 @@ namespace GSI.Camera.LumeneraControl
                 OnStartCapture(this, null);
 
             InitCapture();
+        }
+
+        public void Capture()
+        {
+            this.StartCapture();
+            this.WaitForImage();
+            this.StopCapture();
         }
 
         public void StopCapture()

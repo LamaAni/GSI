@@ -69,6 +69,21 @@ namespace GSI.Stage
             Action started, Action ended);
 
         /// <summary>
+        /// Run through the specific path using the specified parameters.
+        /// </summary>
+        /// <param name="x0"></param>
+        /// <param name="y0"></param>
+        /// <param name="x1"></param>
+        /// <param name="y1"></param>
+        /// <param name="async">If true the the command is executed async.</param>
+        /// <param name="ended">Called when started.</param>
+        /// <param name="started">Called when edned</param>
+        void DoStopMotionPath(double x0, double y0, double x1, double y1,
+            double deltaX, double deltaY,
+            bool async,
+            Action started, Action reachedPosition, Action ended);
+
+        /// <summary>
         /// The rotated plain agnle, in radians, to be taken into account when sending commands to the 
         /// stage.
         /// </summary>

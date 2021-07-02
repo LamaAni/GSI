@@ -407,6 +407,7 @@ namespace TestRun
 
             GSI.Context.SpectralScan scan = new GSI.Context.SpectralScan(
                 context, rect,
+                ScanInfo.DeltaX,
                 ScanInfo.DeltaXInPixels,
                 ScanInfo.ScanSpeed,
                 ScanInfo.DoSpeedup);
