@@ -206,6 +206,7 @@
             this.scanRange.Size = new System.Drawing.Size(437, 97);
             this.scanRange.TabIndex = 24;
             this.scanRange.DataChanged += new System.EventHandler(this.scanRange_DataChanged);
+            this.scanRange.Load += new System.EventHandler(this.scanRange_Load);
             // 
             // chkAskWhereToCapture
             // 

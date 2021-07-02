@@ -410,7 +410,8 @@ namespace TestRun
                 ScanInfo.DeltaX,
                 ScanInfo.DeltaXInPixels,
                 ScanInfo.ScanSpeed,
-                ScanInfo.DoSpeedup);
+                ScanInfo.DoSpeedup,
+                ScanInfo.DoStopMotion);
 
             // updates the current text.
             barProg.Maximum = scan.LineSize;
@@ -646,6 +647,11 @@ namespace TestRun
 
             UpdateControlsToScanInfo();
             StoreScanInfo();
+        }
+
+        private void scanRange_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

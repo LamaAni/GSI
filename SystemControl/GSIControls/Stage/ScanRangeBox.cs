@@ -115,6 +115,11 @@ namespace GSIControls.Stage
             CallChanged(e);
         }
 
+        private void doStopMotion_CheckedChanged(object sender, EventArgs e)
+        {
+            CallChanged(e);
+        }
+
         #endregion
 
         #region external methods
@@ -135,6 +140,7 @@ namespace GSIControls.Stage
         public void PopulateScanInfo(ScanInfo info)
         {
             info.DoSpeedup = chkDoSpeedup.Checked;
+            info.DoStopMotion = chkDoStopMotion.Checked;
             info.StartX = numStartX.Value;
             info.StartY = numStartY.Value;
             info.OffsetX = numXOffset.Value;

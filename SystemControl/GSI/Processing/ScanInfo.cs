@@ -54,6 +54,12 @@ namespace GSI.Processing
         public bool DoSpeedup { get; set; }
 
         [DataMember]
+        /// <summary>
+        /// If true then speedup is nessesary.
+        /// </summary>
+        public bool DoStopMotion { get; set; }
+
+        [DataMember]
         private double m_StageAngle;
 
         /// <summary>
