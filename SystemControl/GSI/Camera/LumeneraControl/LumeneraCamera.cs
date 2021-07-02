@@ -525,10 +525,10 @@ namespace GSI.Camera.LumeneraControl
         {
             this.cur_capture_images_count = max_images;
 
+            StartCaptureTS = DateTime.Now;
+
             if (IsCapturing)
                 return;
-
-            StartCaptureTS = DateTime.Now;
 
             // no need to save anything.
             PendingCaptures.Clear();
