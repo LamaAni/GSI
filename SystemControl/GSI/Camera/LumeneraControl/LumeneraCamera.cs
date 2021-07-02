@@ -404,7 +404,7 @@ namespace GSI.Camera.LumeneraControl
         {
             System.Threading.ManualResetEvent wfi = new System.Threading.ManualResetEvent(false);
             PendingImageWaits.Enqueue(wfi);
-            return wfi
+            return wfi;
         }
 
         int _captureCount;
