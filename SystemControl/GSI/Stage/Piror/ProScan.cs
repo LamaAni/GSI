@@ -526,6 +526,8 @@ namespace GSI.Stage.Piror
             // event to wait for compleated.
             AutoResetEvent waitForMe = new AutoResetEvent(false);
 
+            int max_attempts_before_reset = 20;
+            int cur_attempts = 0;
             Func<double, double, bool> checkPositionReched = (X, Y) =>
             {
                 bool xOK = X <= x + MinDeltaX && X >= x - MinDeltaX;
@@ -542,6 +544,15 @@ namespace GSI.Stage.Piror
                 if (checkPositionReched(e.X, e.Y))
                 {
                     waitForMe.Set();
+                }
+                else
+                {
+                    if (cur_attempts >= max_attempts_before_reset)
+                    {
+                        cur_attempts = 0;
+                        this.SetPosition(x, y);
+                    }
+                    else cur_attempts += 1;
                 }
             };
 
