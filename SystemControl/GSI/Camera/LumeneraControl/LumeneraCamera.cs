@@ -541,13 +541,6 @@ namespace GSI.Camera.LumeneraControl
 
         public void Capture()
         {
-            this.StopCapture();
-            if (this.PendingCaptures.Count > 0)
-            {
-                var dumpHandle = this.GetImageWaitHandle();
-                dumpHandle.WaitOne();
-            }
-
             var started = DateTime.Now;
             var handle = this.GetImageWaitHandle();
             this.StartCapture(1);
