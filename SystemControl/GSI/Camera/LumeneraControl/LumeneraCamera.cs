@@ -543,6 +543,7 @@ namespace GSI.Camera.LumeneraControl
         {
             var started = DateTime.Now;
             var handle = this.GetImageWaitHandle();
+            this.SetZeroTime();
             this.StartCapture(1);
             handle.WaitOne();
             var captureTimeMs = (DateTime.Now - started).TotalMilliseconds;
