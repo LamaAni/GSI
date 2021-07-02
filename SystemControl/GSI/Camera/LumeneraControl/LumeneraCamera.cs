@@ -548,6 +548,7 @@ namespace GSI.Camera.LumeneraControl
             handle.WaitOne();
             var captureTimeMs = (DateTime.Now - started).TotalMilliseconds;
             this.StopCapture();
+            this.PendingCaptures.Clear();
         }
 
         public void StopCapture()
