@@ -360,13 +360,6 @@ namespace GSI.Camera.LumeneraControl
             {
                 while (IsCapturing || PendingCaptures.Count > 0)
                 {
-                    if (PendingCaptures.Count == 0)
-                    {
-                        IsProcessingPendingImages = false;
-                        System.Threading.Thread.Sleep(10);
-                        continue;
-                    }
-
                     if (this.cur_capture_images_count == 0)
                     {
                         this.cur_capture_images_count = -1;
@@ -374,14 +367,26 @@ namespace GSI.Camera.LumeneraControl
                         break;
                     }
 
-                    if (this.cur_capture_images_count > -1)
+                    if (PendingCaptures.Count == 0)
                     {
-                        this.cur_capture_images_count -= 1;
+                        IsProcessingPendingImages = false;
+                        System.Threading.Thread.Sleep(10);
+                        continue;
                     }
 
                     IsProcessingPendingImages = true;
                     Tuple<byte[], DateTime> capture = PendingCaptures.Dequeue();
+
+                    if (capture.Item2 < StartCaptureTS)
+                        continue;
+
                     byte[] data = ValidateDataSize(capture.Item1);
+
+
+                    if (this.cur_capture_images_count > -1)
+                    {
+                        this.cur_capture_images_count -= 1;
+                    }
 
                     if (ImageCaptured != null)
                     {
@@ -502,6 +507,8 @@ namespace GSI.Camera.LumeneraControl
 
         public bool IsCapturing { get; private set; }
 
+        public DateTime StartCaptureTS { get; private set; }
+
         /// <summary>
         /// If true, then processing captured images.
         /// </summary>
@@ -520,6 +527,8 @@ namespace GSI.Camera.LumeneraControl
 
             if (IsCapturing)
                 return;
+
+            StartCaptureTS = DateTime.Now;
 
             // no need to save anything.
             PendingCaptures.Clear();
