@@ -360,15 +360,16 @@ namespace GSI.Camera.LumeneraControl
             {
                 while (IsCapturing || PendingCaptures.Count > 0)
                 {
+                    if (this.cur_capture_images_count == 0)
+                    {
+                        this.cur_capture_images_count = -1;
+                        this.StopCapture();
+                        break;
+                    }
+
                     if (this.cur_capture_images_count > -1)
                     {
                         this.cur_capture_images_count -= 1;
-                        if (this.cur_capture_images_count == 0)
-                        {
-                            this.cur_capture_images_count = -1;
-                            this.StopCapture();
-                            break;
-                        }
                     }
 
                     if (PendingCaptures.Count == 0)
