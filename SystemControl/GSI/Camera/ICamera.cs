@@ -71,7 +71,7 @@ namespace GSI.Camera
         /// Starts the data capture.
         /// </summary>
         /// <returns></returns>
-        void StartCapture();
+        void StartCapture(int max_images=-1);
 
         /// <summary>
         /// Ends the data captrue.
