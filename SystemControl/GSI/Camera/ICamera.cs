@@ -41,7 +41,7 @@ namespace GSI.Camera
         /// Returns the camera timer resolution in seconds.
         /// </summary>
         double TimerResolution { get; }
-        
+
         /// <summary>
         /// The current time in the camera clock.
         /// </summary>
@@ -68,13 +68,13 @@ namespace GSI.Camera
         void Capture();
 
         /// <summary>
-        /// Starts the data capture.
+        /// Starts the continues data capture.
         /// </summary>
         /// <returns></returns>
-        void StartCapture(int max_images=-1);
+        void StartCapture(int max_images = -1);
 
         /// <summary>
-        /// Ends the data captrue.
+        /// Ends the continues data captrue.
         /// </summary>
         /// <returns></returns>
         void StopCapture();
