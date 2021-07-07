@@ -363,13 +363,13 @@ namespace GSI.Stage.Piror
         /// <returns></returns>
         public string SendCommandUntilEnd(string cmd, int timeout = 3000)
         {
-            bool recivedResponce = false;
+            bool receivedResponce = false;
             string responce = "";
 
             StageCommand scmnd = new StageCommand(cmd, 0, (rsp) =>
                 {
                     responce = rsp;
-                    recivedResponce = true;
+                    receivedResponce = true;
                 });
 
             scmnd.StopOnResponse = (rsp) =>
@@ -381,7 +381,7 @@ namespace GSI.Stage.Piror
 
             DateTime start = DateTime.Now;
 
-            while (!recivedResponce)
+            while (!receivedResponce)
             {
                 System.Threading.Thread.Sleep(1);
                 if ((DateTime.Now - start).TotalMilliseconds > timeout)
@@ -404,18 +404,18 @@ namespace GSI.Stage.Piror
         /// <returns></returns>
         public string SendCommand(string cmd, uint responceLines)
         {
-            bool recivedResponce = false;
+            bool receivedResponce = false;
             string responce = "";
             this.Server.AppendCommand(
                 new StageCommand(cmd, responceLines, (rsp) =>
                 {
                     responce = rsp;
-                    recivedResponce = true;
+                    receivedResponce = true;
                 }));
 
             if (responceLines > 0)
             {
-                while (!recivedResponce)
+                while (!receivedResponce)
                 {
                     System.Threading.Thread.Sleep(1);
                 }
@@ -463,16 +463,16 @@ namespace GSI.Stage.Piror
             Rotate(AbsolutePositionX, AbsolutePositionY, out rotatedX, out rotatedY, -Angle, Resolution);
             PositionX = rotatedX;
             PositionY = rotatedY;
-            if (OnRecivedPosition != null)
-                OnRecivedPosition(this,
-                    new PositionRecivedEventArgs(PositionX, PositionY, ZeroTime + Watch.Elapsed, ZeroTime));
+            if (OnreceivedPosition != null)
+                OnreceivedPosition(this,
+                    new PositionreceivedEventArgs(PositionX, PositionY, ZeroTime + Watch.Elapsed, ZeroTime));
         }
 
         /// <summary>
-        /// Called when a position is recived by the device.
+        /// Called when a position is received by the device.
         /// <para>NOTE! if this action takes a long time if will stop the reading thread.</para>
         /// </summary>
-        public event EventHandler<PositionRecivedEventArgs> OnRecivedPosition;
+        public event EventHandler<PositionreceivedEventArgs> OnreceivedPosition;
 
         /// <summary>
         /// The position in the X direction.
@@ -536,7 +536,7 @@ namespace GSI.Stage.Piror
                 return;
 
             // check if reached position
-            EventHandler<PositionRecivedEventArgs> checkReached = (s, e) =>
+            EventHandler<PositionreceivedEventArgs> checkReached = (s, e) =>
             {
                 if (checkPositionReched(e.X, e.Y))
                 {
@@ -544,9 +544,9 @@ namespace GSI.Stage.Piror
                 }
             };
 
-            OnRecivedPosition += checkReached;
+            OnreceivedPosition += checkReached;
             waitForMe.WaitOne();
-            OnRecivedPosition -= checkReached;
+            OnreceivedPosition -= checkReached;
         }
 
                 /// <summary>
@@ -578,7 +578,7 @@ namespace GSI.Stage.Piror
             AutoResetEvent waitForMe = new AutoResetEvent(false);
 
             // check if reached position
-            EventHandler<PositionRecivedEventArgs> checkReached = (s, e) =>
+            EventHandler<PositionreceivedEventArgs> checkReached = (s, e) =>
             {
                 bool xOK = vx == 0 || directionX * (x - e.X) < 0;
                 bool yOk = vy == 0 || directionY * (y - e.Y) < 0;
@@ -588,9 +588,9 @@ namespace GSI.Stage.Piror
                 }
             };
 
-            OnRecivedPosition += checkReached;
+            OnreceivedPosition += checkReached;
             waitForMe.WaitOne();
-            OnRecivedPosition -= checkReached;
+            OnreceivedPosition -= checkReached;
         }
         
         /// <summary>

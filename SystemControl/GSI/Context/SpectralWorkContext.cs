@@ -21,20 +21,20 @@ namespace GSI.Context
             Context = context;
 
             // bining events to the capturing mechanisem. 
-            _positionEventHandler = new EventHandler<PositionRecivedEventArgs>(PositionReader_OnRecivedPosition);
-            _imageEventHandler = new EventHandler<ImageRecivedEventArgs>(Camera_ImageCaptured);
+            _positionEventHandler = new EventHandler<PositionreceivedEventArgs>(PositionReader_OnreceivedPosition);
+            _imageEventHandler = new EventHandler<ImagereceivedEventArgs>(Camera_ImageCaptured);
             Context.Camera.ImageCaptured += _imageEventHandler;
-            Context.PositionControl.OnRecivedPosition += _positionEventHandler;
+            Context.PositionControl.OnreceivedPosition += _positionEventHandler;
 
             // creating the invocation queue. this queue will store in memory
             // new invocations if previus invocations have not compleated. 
-            ImageInvokeQueue = new AsyncPendingEventQueue<ImageRecivedEventArgs>(
+            ImageInvokeQueue = new AsyncPendingEventQueue<ImagereceivedEventArgs>(
                 (ev) =>
                 {
                     if (OnImageCaptured != null)
                         OnImageCaptured(this, ev);
                 }, false);
-            PositionInvokeQueue = new AsyncPendingEventQueue<PositionRecivedEventArgs>((ev) =>
+            PositionInvokeQueue = new AsyncPendingEventQueue<PositionreceivedEventArgs>((ev) =>
                 {
                     if (OnPositionCapture != null)
                         OnPositionCapture(this, ev);
@@ -52,8 +52,8 @@ namespace GSI.Context
 
         #region members
 
-        EventHandler<PositionRecivedEventArgs> _positionEventHandler;
-        EventHandler<ImageRecivedEventArgs> _imageEventHandler;
+        EventHandler<PositionreceivedEventArgs> _positionEventHandler;
+        EventHandler<ImagereceivedEventArgs> _imageEventHandler;
 
         /// <summary>
         /// The spctral context associated with work context. (Created it).
@@ -69,13 +69,13 @@ namespace GSI.Context
         /// Called when a position is captured (with time).Use CurrentTimeInSeconds for timing.
         /// The position pumping will be done async if Async=true. (Recommended).
         /// </summary>
-        public event EventHandler<PositionRecivedEventArgs> OnPositionCapture;
+        public event EventHandler<PositionreceivedEventArgs> OnPositionCapture;
 
         /// <summary>
         /// Called when an image is captured. Use CurrentTimeInSeconds for timing.
         /// The capture pumping will be done async if Async=true. (Recommended).
         /// </summary>
-        public event EventHandler<ImageRecivedEventArgs> OnImageCaptured;
+        public event EventHandler<ImagereceivedEventArgs> OnImageCaptured;
 
         /// <summary>
         /// The position reader.
@@ -115,25 +115,25 @@ namespace GSI.Context
         /// <summary>
         /// The position invoke queue.
         /// </summary>
-        public AsyncPendingEventQueue<PositionRecivedEventArgs> PositionInvokeQueue { get; private set; }
+        public AsyncPendingEventQueue<PositionreceivedEventArgs> PositionInvokeQueue { get; private set; }
 
         /// <summary>
         /// The image invoke queue.
         /// </summary>
-        public AsyncPendingEventQueue<ImageRecivedEventArgs> ImageInvokeQueue { get; private set; }
+        public AsyncPendingEventQueue<ImagereceivedEventArgs> ImageInvokeQueue { get; private set; }
 
         #endregion
 
         #region methods
 
-        void PositionReader_OnRecivedPosition(object sender, PositionRecivedEventArgs e)
+        void PositionReader_OnreceivedPosition(object sender, PositionreceivedEventArgs e)
         {
             if (HasBeenDisposed)
                 throw new Exception("Reached disposed work context (position event)");
             PositionInvokeQueue.PushEvent(e);
         }
 
-        void Camera_ImageCaptured(object sender, ImageRecivedEventArgs e)
+        void Camera_ImageCaptured(object sender, ImagereceivedEventArgs e)
         {
             if (HasBeenDisposed)
                 throw new Exception("Reached disposed work context (Image event)");
@@ -169,7 +169,7 @@ namespace GSI.Context
 
         public void Dispose()
         {
-            PositionControl.OnRecivedPosition -= _positionEventHandler;
+            PositionControl.OnreceivedPosition -= _positionEventHandler;
             Camera.ImageCaptured -= _imageEventHandler;
             HasBeenDisposed = true;
         }

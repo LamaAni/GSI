@@ -73,8 +73,8 @@ namespace GSIControls.Camera
         /// <summary>
         /// A handles collection to allow detaching of the camera.
         /// </summary>
-        Dictionary<ICamera, EventHandler<GSI.Camera.ImageRecivedEventArgs>> drawHandlers
-           = new Dictionary<ICamera, EventHandler<ImageRecivedEventArgs>>();
+        Dictionary<ICamera, EventHandler<GSI.Camera.ImagereceivedEventArgs>> drawHandlers
+           = new Dictionary<ICamera, EventHandler<ImagereceivedEventArgs>>();
 
         /// <summary>
         /// A handles collection to allow detaching of the camera.
@@ -134,7 +134,7 @@ namespace GSIControls.Camera
             {
                 DrawImage(e.Data, e.Width, e.Height, (ICamera)s);
             };
-            camera.PreviewImageRecived += drawHandlers[camera];
+            camera.PreviewImagereceived += drawHandlers[camera];
             settingsChangedHandlers[camera] = (s, e) =>
             {
                 ClearImage();
@@ -151,7 +151,7 @@ namespace GSIControls.Camera
         {
             if (!drawHandlers.ContainsKey(camera))
                 return false;
-            camera.PreviewImageRecived -= drawHandlers[camera];
+            camera.PreviewImagereceived -= drawHandlers[camera];
             drawHandlers.Remove(camera);
             camera.SettingsChanged -= settingsChangedHandlers[camera];
             settingsChangedHandlers.Remove(camera);

@@ -23,14 +23,14 @@ namespace GSI.Camera
         event EventHandler OnEndCapture;
 
         /// <summary>
-        /// Called when an image is recived.
+        /// Called when an image is received.
         /// </summary>
-        event EventHandler<ImageRecivedEventArgs> ImageCaptured;
+        event EventHandler<ImagereceivedEventArgs> ImageCaptured;
 
         /// <summary>
-        /// Called when a preview image has been recived.
+        /// Called when a preview image has been received.
         /// </summary>
-        event EventHandler<ImageRecivedEventArgs> PreviewImageRecived;
+        event EventHandler<ImagereceivedEventArgs> PreviewImagereceived;
 
         /// <summary>
         /// Called after the settings have changed.

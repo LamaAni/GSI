@@ -68,7 +68,7 @@ namespace CameraTester
                 fpswr.WriteLine(Camera.ActualFrameRate);
             };
 
-            Camera.PreviewImageRecived += (s, ev) =>
+            Camera.PreviewImagereceived += (s, ev) =>
             {
                 lblCameraElapsed.Text =
                     Camera.CameraElapsed.TotalSeconds.ToString("0000.00");

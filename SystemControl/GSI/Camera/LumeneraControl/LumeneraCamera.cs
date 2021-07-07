@@ -78,12 +78,12 @@ namespace GSI.Camera.LumeneraControl
         public bool IsConnected { get; private set; }
 
         /// <summary>
-        /// The total number of images recived from the callback.
+        /// The total number of images received from the callback.
         /// </summary>
         public long TotalNumerOfImages { get; private set; }
 
         /// <summary>
-        /// The total number of captrued images recived.
+        /// The total number of captrued images received.
         /// </summary>
         public long TotalNumberOfCapturedImages { get; private set; }
 
@@ -191,9 +191,9 @@ namespace GSI.Camera.LumeneraControl
                         SettingsChanged(this, null);
                 };
             
-            // adding the camera data callback, the context is the camera itself.
-            __data_recived_callback = data_recived_callback;
-            api.AddStreamingCallback(Handle, __data_recived_callback, Handle);
+            // adding the camera data callback, the context is the camera itself. received
+            __data_received_callback = data_received_callback;
+            api.AddStreamingCallback(Handle, __data_received_callback, Handle);
 
             // If monochrome invert vertical
             ColorFormat = (dll.LucamColorFormat)api.GetProperty(Handle, dll.LucamProperty.COLOR_FORMAT);
@@ -317,12 +317,12 @@ namespace GSI.Camera.LumeneraControl
                     DateTime stamp = _pendingPreview.Item2;
 
                     preview = ValidateDataSize(preview);
-                    if (PreviewImageRecived != null)
+                    if (PreviewImagereceived != null)
                     {
-                        ImageRecivedEventArgs args =
-                            new ImageRecivedEventArgs(Settings.Width, Settings.Height, preview,
+                        ImagereceivedEventArgs args =
+                            new ImagereceivedEventArgs(Settings.Width, Settings.Height, preview,
                                 Settings.PixelFormat, stamp, _CameraComputerClock);
-                        PreviewImageRecived(this, args);
+                        PreviewImagereceived(this, args);
                     }
                     _pendingPreview = null;
                     System.Threading.Thread.Sleep(PreviewDelayInMs);
@@ -368,7 +368,7 @@ namespace GSI.Camera.LumeneraControl
                     byte[] data = ValidateDataSize(capture.Item1);
                     if (ImageCaptured != null)
                     {
-                        ImageRecivedEventArgs args = new ImageRecivedEventArgs(
+                        ImagereceivedEventArgs args = new ImagereceivedEventArgs(
                             Settings.Width, Settings.Height, data, Settings.PixelFormat, capture.Item2,
                             _CameraComputerClock);
 
@@ -416,7 +416,7 @@ namespace GSI.Camera.LumeneraControl
 
         protected abstract byte[] ValidateDataSize(byte[] data);
 
-        dll.LucamStreamingCallback __data_recived_callback;
+        dll.LucamStreamingCallback __data_received_callback;
         
         protected byte[] GetDataFromPointer(int n, IntPtr pData, out ushort timestamp)
         {
@@ -426,7 +426,7 @@ namespace GSI.Camera.LumeneraControl
             return image;
         }
 
-        void data_recived_callback(IntPtr context, IntPtr pData, int n)
+        void data_received_callback(IntPtr context, IntPtr pData, int n)
         {
             bool hasPreview = IsPreviewing && _pendingPreview == null;
             ushort timestamp;
@@ -476,7 +476,7 @@ namespace GSI.Camera.LumeneraControl
         /// </summary>
         public bool IsProcessingPendingImages { get; private set; }
 
-        public event EventHandler<ImageRecivedEventArgs> ImageCaptured;
+        public event EventHandler<ImagereceivedEventArgs> ImageCaptured;
 
         public double TimerResolution
         {
@@ -505,7 +505,7 @@ namespace GSI.Camera.LumeneraControl
                 OnEndCapture(this, null);
         }
 
-        public event EventHandler<ImageRecivedEventArgs> PreviewImageRecived;
+        public event EventHandler<ImagereceivedEventArgs> PreviewImagereceived;
 
         /// <summary>
         /// Called after the settings have changed.
