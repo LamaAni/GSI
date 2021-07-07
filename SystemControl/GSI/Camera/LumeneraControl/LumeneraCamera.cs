@@ -22,7 +22,7 @@ namespace GSI.Camera.LumeneraControl
         {
             dll.LucamVersion[] cameras = api.EnumCameras();
             List<CameraConnectionInfo> infos = new List<CameraConnectionInfo>();
-            for (int i = 0; i < cameras.Length;i++ )
+            for (int i = 0; i < cameras.Length; i++)
             {
                 infos.Add(new CameraConnectionInfo(i + 1, cameras[i], useGigEInterface));
             }
@@ -190,7 +190,7 @@ namespace GSI.Camera.LumeneraControl
                     if (SettingsChanged != null)
                         SettingsChanged(this, null);
                 };
-            
+
             // adding the camera data callback, the context is the camera itself. received
             __data_received_callback = data_received_callback;
             api.AddStreamingCallback(Handle, __data_received_callback, Handle);
@@ -339,33 +339,55 @@ namespace GSI.Camera.LumeneraControl
 
         #region Capture
 
-        Queue<Tuple<byte[],DateTime>> PendingCaptures =
-            new Queue<Tuple<byte[],DateTime>>();
+        Queue<Tuple<byte[], DateTime>> PendingCaptures =
+            new Queue<Tuple<byte[], DateTime>>();
+
+        //Queue<System.Threading.Tasks.TaskCompletionSource<byte[]>> PendingImageWaits = new Queue<TaskCompletionSource<byte[]>>();
+        Queue<System.Threading.ManualResetEvent> PendingImageWaits = new Queue<System.Threading.ManualResetEvent>();
 
         /// <summary>
         /// Initializes the capture process.
         /// </summary>
         protected void InitCapture()
         {
-            if(IsCapturing)
+            if (IsCapturing)
                 return;
             IsCapturing = true;
             if (IsProcessingPendingImages)
                 return;
             IsProcessingPendingImages = false;
-            Task.Run(()=>{
+            Task.Run(() =>
+            {
                 while (IsCapturing || PendingCaptures.Count > 0)
                 {
+                    if (this.cur_capture_images_count == 0)
+                    {
+                        this.cur_capture_images_count = -1;
+                        this.StopCapture();
+                        break;
+                    }
+
                     if (PendingCaptures.Count == 0)
                     {
-                        System.Threading.Thread.Sleep(10);
                         IsProcessingPendingImages = false;
+                        System.Threading.Thread.Sleep(10);
                         continue;
                     }
 
                     IsProcessingPendingImages = true;
                     Tuple<byte[], DateTime> capture = PendingCaptures.Dequeue();
+
+                    if (capture.Item2 < StartCaptureTS)
+                        continue;
+
                     byte[] data = ValidateDataSize(capture.Item1);
+
+
+                    if (this.cur_capture_images_count > -1)
+                    {
+                        this.cur_capture_images_count -= 1;
+                    }
+
                     if (ImageCaptured != null)
                     {
                         ImagereceivedEventArgs args = new ImagereceivedEventArgs(
@@ -374,9 +396,21 @@ namespace GSI.Camera.LumeneraControl
 
                         ImageCaptured(this, args);
                     }
+
+                    while (PendingImageWaits.Count > 0)
+                    {
+                        PendingImageWaits.Dequeue().Set();
+                    }
                 }
                 IsProcessingPendingImages = false;
             });
+        }
+
+        protected System.Threading.ManualResetEvent GetImageWaitHandle()
+        {
+            System.Threading.ManualResetEvent wfi = new System.Threading.ManualResetEvent(false);
+            PendingImageWaits.Enqueue(wfi);
+            return wfi;
         }
 
         int _captureCount;
@@ -395,6 +429,8 @@ namespace GSI.Camera.LumeneraControl
         DateTime _CameraComputerClock = DateTime.MinValue;
         long cameraClock = 0;
         ushort lastTimestampRead = 0;
+
+        int cur_capture_images_count = -1;
 
         /// <summary>
         /// Resets the camera clock value, should be noted by the 
@@ -417,7 +453,7 @@ namespace GSI.Camera.LumeneraControl
         protected abstract byte[] ValidateDataSize(byte[] data);
 
         dll.LucamStreamingCallback __data_received_callback;
-        
+
         protected byte[] GetDataFromPointer(int n, IntPtr pData, out ushort timestamp)
         {
             byte[] image = new byte[n];
@@ -432,7 +468,7 @@ namespace GSI.Camera.LumeneraControl
             ushort timestamp;
             byte[] data = null;
             data = GetDataFromPointer(n, pData, out timestamp);
-            
+
             // Circular condition on the timestamp value.
             int timestampActuall = timestamp < lastTimestampRead ? timestamp + ushort.MaxValue :
                 timestamp;
@@ -442,7 +478,7 @@ namespace GSI.Camera.LumeneraControl
 
             // adding the clock dt.
             cameraClock += dtInRatio;
-            
+
             // calculating rates.
             lastTimestampRead = timestamp;
             ActualFrameRate = 1.0 / (dtInRatio * 1.0 / CameraClockFrequency);
@@ -471,6 +507,8 @@ namespace GSI.Camera.LumeneraControl
 
         public bool IsCapturing { get; private set; }
 
+        public DateTime StartCaptureTS { get; private set; }
+
         /// <summary>
         /// If true, then processing captured images.
         /// </summary>
@@ -483,11 +521,15 @@ namespace GSI.Camera.LumeneraControl
             get { return 1.0 / Stopwatch.Frequency; }
         }
 
-        public void StartCapture()
+        public void StartCapture(int max_images = -1)
         {
+            this.cur_capture_images_count = max_images;
+
+            StartCaptureTS = DateTime.Now;
+
             if (IsCapturing)
                 return;
-            
+
             // no need to save anything.
             PendingCaptures.Clear();
 
@@ -495,6 +537,18 @@ namespace GSI.Camera.LumeneraControl
                 OnStartCapture(this, null);
 
             InitCapture();
+        }
+
+        public void Capture()
+        {
+            var started = DateTime.Now;
+            var handle = this.GetImageWaitHandle();
+            this.SetZeroTime();
+            this.StartCapture(1);
+            handle.WaitOne();
+            var captureTimeMs = (DateTime.Now - started).TotalMilliseconds;
+            this.StopCapture();
+            this.PendingCaptures.Clear();
         }
 
         public void StopCapture()

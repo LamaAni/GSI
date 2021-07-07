@@ -22,13 +22,17 @@ namespace GSI.Context
         /// image axis (perpendicular to the direction of the bytes in the image)</param>
         public SpectralScan(SpectralWorkContext context,
             SpectralScanRectangle region, 
-            double stepSizeInPx, double scanSpeed, bool useSpeedupOffsets)
+            double stepSize,
+            double stepSizeInPx,
+            double scanSpeed, bool useSpeedupOffsets, bool doStopMotion=false)
         {
             Context = context;
             Region = region;
             ScanSpeed = scanSpeed;
+            StepSize = stepSize;
             StepSizeInPixels = stepSizeInPx;
             UseSpeedupOffsets = useSpeedupOffsets;
+            DoStopMotion = doStopMotion;
             
             CalculateScanParameters();
         }
@@ -57,10 +61,21 @@ namespace GSI.Context
         public double StepSizeInPixels { get; private set; }
 
         /// <summary>
+        /// The step size in pixiels.
+        /// </summary>
+        public double StepSize { get; private set; }
+
+        /// <summary>
         /// If true, the stage will take some offsets to 
         /// allow for gradient speeup.
         /// </summary>
         public bool UseSpeedupOffsets { get; private set; }
+
+        /// <summary>
+        /// If true, uses stop motion configuration to do the scan, otherwise
+        /// uses continues motion to scan.
+        /// </summary>
+        public bool DoStopMotion { get; private set; }
 
         /// <summary>
         /// Called when the vect
@@ -180,6 +195,9 @@ namespace GSI.Context
             double x = Region.InvertedScanAxis ? Region.Y : Region.X;
             double y = !Region.InvertedScanAxis ? Region.Y : Region.X;
 
+            double stopMotionDeltaX = Region.InvertedScanAxis ? 0 : StepSize;
+            double stopMotionDeltaY = Region.InvertedScanAxis ? StepSize : 0;
+
             // creating the stacking collector.
             Processing.StackingCollector collector = new Processing.StackingCollector(
                 ImageWidth, ImageHeight, StepSizeInPixels,
@@ -215,6 +233,7 @@ namespace GSI.Context
 
                 return offsetFromZero;
             };
+
             collector.VectorReady += (s, e) =>
             {
                 if (CurrentVectorIndex < LineSize)
@@ -236,7 +255,6 @@ namespace GSI.Context
                 if (VectorCaptured != null)
                     VectorCaptured(this, null);
             };
-
 
             Context.OnImageCaptured += (s, e) =>
             {
@@ -298,7 +316,36 @@ namespace GSI.Context
                 // need to sleep since stage is funcked up.
                 System.Threading.Thread.Sleep(100);
 
-                Context.PositionControl.DoPath(x0, y0, x1, y1, vx, vy, false, UseSpeedupOffsets,
+                if (DoStopMotion)
+                {
+                    Context.PositionControl.DoStopMotionPath(x0, y0, x1, y1, stopMotionDeltaX, stopMotionDeltaY, false,
+                    () =>
+                    {
+                        // start
+                        Context.Camera.StopCapture();
+                        Context.Camera.SetZeroTime();
+                        captureStartPosition = Context.PositionControl.PositionX;
+
+                        // set the recording state.
+                        IsRecording = true;
+
+                        // reached end position.
+                        CurrentLineIndex += 1;
+                    },
+                    ()=>
+                    {
+                        // point reached
+                        Context.Camera.Capture();
+                        // System.Threading.Thread.Sleep(100);
+                    },
+                    ()=>
+                    {
+                        // end
+                        Context.StopCapture();
+                    });
+                }
+                else {
+                    Context.PositionControl.DoPath(x0, y0, x1, y1, vx, vy, false, UseSpeedupOffsets,
                     () =>
                     {
                         // the zero time of the camera.
@@ -320,6 +367,7 @@ namespace GSI.Context
                         // reched end position. stop recording.
                         Context.StopCapture();
                     });
+                }
 
                 // waiting for images in memory before continue (memory issues),
                 // and not to allow stacking of overflow images;

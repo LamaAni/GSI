@@ -55,8 +55,9 @@ namespace GSI.Stage.Piror
             MinDeltaX = 2;
             MinDeltaY = 2;
             Server = new StageServer(port, IdleCommands);
-            Server.LineValidator = (rsp) => { 
-                return rsp.Trim() != "R"; 
+            Server.LineValidator = (rsp) =>
+            {
+                return rsp.Trim() != "R";
             };
 
             // called to update params.
@@ -88,7 +89,7 @@ namespace GSI.Stage.Piror
             Server.AppendCommand(new StageCommand("RES s", 1, (rsp) =>
             {
                 double val;
-                if(double.TryParse(rsp,out val))
+                if (double.TryParse(rsp, out val))
                 {
                     Resolution = val;
                 }
@@ -112,7 +113,7 @@ namespace GSI.Stage.Piror
         void PreformBoudRateValidation(SerialPort port)
         {
             int oidx = -1;
-            for (int i = 0; i < ValidBaudRate.Length;i++ )
+            for (int i = 0; i < ValidBaudRate.Length; i++)
             {
                 if (port.BaudRate == ValidBaudRate[i])
                 {
@@ -124,7 +125,7 @@ namespace GSI.Stage.Piror
             if (oidx < 0)
                 throw new Exception("Boud rate invalid for pro scan, " + port.BaudRate);
 
-            bool wasOpen=port.IsOpen;
+            bool wasOpen = port.IsOpen;
             if (port.IsOpen)
                 port.Close();
             // cehck if current boud rate is good.
@@ -161,7 +162,7 @@ namespace GSI.Stage.Piror
         /// <param name="port"></param>
         bool IsBaudRateValid(SerialPort port, int baudRate)
         {
-           // port.WriteTimeout = 100;
+            // port.WriteTimeout = 100;
             port.BaudRate = baudRate;
             port.Open();
             port.ReadExisting();
@@ -209,7 +210,7 @@ namespace GSI.Stage.Piror
         /// </summary>
         public StageServer Server { get; private set; }
 
-        public List<StageCommand> IdleCommands  { get; private set; }
+        public List<StageCommand> IdleCommands { get; private set; }
 
         /// <summary>
         /// True if the server is running.
@@ -288,7 +289,7 @@ namespace GSI.Stage.Piror
         {
             // rotation in space according to the rotation matrix.
             double vxt, vyt;
-            Rotate(vx, vy, out vxt, out vyt, angle,resolution);
+            Rotate(vx, vy, out vxt, out vyt, angle, resolution);
             return new Tuple<double, double>(vxt, vyt);
         }
 
@@ -390,7 +391,7 @@ namespace GSI.Stage.Piror
                     break;
                 }
             }
-            
+
             return responce;
         }
 
@@ -525,6 +526,8 @@ namespace GSI.Stage.Piror
             // event to wait for compleated.
             AutoResetEvent waitForMe = new AutoResetEvent(false);
 
+            int max_attempts_before_reset = 20;
+            int cur_attempts = 0;
             Func<double, double, bool> checkPositionReched = (X, Y) =>
             {
                 bool xOK = X <= x + MinDeltaX && X >= x - MinDeltaX;
@@ -542,6 +545,15 @@ namespace GSI.Stage.Piror
                 {
                     waitForMe.Set();
                 }
+                else
+                {
+                    if (cur_attempts >= max_attempts_before_reset)
+                    {
+                        cur_attempts = 0;
+                        this.SetPosition(x, y);
+                    }
+                    else cur_attempts += 1;
+                }
             };
 
             OnreceivedPosition += checkReached;
@@ -549,7 +561,7 @@ namespace GSI.Stage.Piror
             OnreceivedPosition -= checkReached;
         }
 
-                /// <summary>
+        /// <summary>
         /// Waits until the position has reached. (Using delta) 
         /// <param name="accurate">IF true, then uses up cpu time.</param>
         /// </summary>
@@ -592,7 +604,7 @@ namespace GSI.Stage.Piror
             waitForMe.WaitOne();
             OnreceivedPosition -= checkReached;
         }
-        
+
         /// <summary>
         /// Called to execute a path. The path is defined by the speed
         /// and the positions.
@@ -607,7 +619,7 @@ namespace GSI.Stage.Piror
         /// <param name="ended">Called when started.</param>
         /// <param name="started">Called when edned</param>
         public void DoPath(double startX, double startY, double endX, double endY,
-            double vx, double vy, bool asynced,bool useSpeedupOffsets, Action started, Action ended)
+            double vx, double vy, bool asynced, bool useSpeedupOffsets, Action started, Action ended)
         {
             Action dopath = () =>
             {
@@ -639,6 +651,38 @@ namespace GSI.Stage.Piror
             else dopath();
         }
 
+        public void DoStopMotionPath(double x0, double y0, double x1, double y1, double deltaX, double deltaY, bool async, Action started, Action reachedPosition, Action ended)
+        {
+            Action dopath = () =>
+            {
+                double curX = x0;
+                double curY = y0;
+
+                // going to start position.
+                this.StopStage();
+
+                if (started != null)
+                    started();
+
+                while (curX <= x1 && curY <= y1)
+                {
+                    this.SetPosition(curX, curY);
+                    this.WaitUntilPositionByMove(curX, curY);
+                    if (reachedPosition != null)
+                        reachedPosition();
+                    curX += deltaX;
+                    curY += deltaY;
+                }
+
+                if (ended != null)
+                    ended();
+            };
+
+            if (async)
+                Task.Run(dopath);
+            else dopath();
+        }
+
         #endregion
 
         #region ITimeKeeper Members
@@ -655,9 +699,10 @@ namespace GSI.Stage.Piror
 
     }
 
-    public enum ProScanBaudRates { 
-        B9600 = 96, 
-        B19200 = 19, 
+    public enum ProScanBaudRates
+    {
+        B9600 = 96,
+        B19200 = 19,
         B38400 = 38
     };
 }

@@ -63,10 +63,15 @@ namespace GSI.Camera
         int Height { get; }
 
         /// <summary>
+        /// Single shot camera capture.
+        /// </summary>
+        void Capture();
+
+        /// <summary>
         /// Starts the data capture.
         /// </summary>
         /// <returns></returns>
-        void StartCapture();
+        void StartCapture(int max_images=-1);
 
         /// <summary>
         /// Ends the data captrue.
