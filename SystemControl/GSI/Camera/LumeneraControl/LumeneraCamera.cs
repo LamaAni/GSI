@@ -573,6 +573,7 @@ namespace GSI.Camera.LumeneraControl
             snapshotSettings.Exposure = Convert.ToSingle(Settings.m_exposure);
             snapshotSettings.Format = Settings.GetUnderliningFormat();
             snapshotSettings.Gain = Convert.ToSingle(Settings.m_gain);
+            snapshotSettings.Timeout = snapshotSettings.Exposure + 1000;
 
             byte[] data = null;
 
