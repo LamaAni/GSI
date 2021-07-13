@@ -572,19 +572,36 @@ namespace GSI.Camera.LumeneraControl
 
         public void Capture()
         {
-            dll.LucamSnapshot snapshotSettings = new dll.LucamSnapshot();
-            snapshotSettings.Exposure = Convert.ToSingle(Settings.m_exposure);
-            snapshotSettings.Format = Settings.GetUnderliningFormat();
-            snapshotSettings.Gain = Convert.ToSingle(Settings.m_gain);
-            snapshotSettings.Timeout = snapshotSettings.Exposure + 1000;
+            var consecutive_error_count = 0;
+            while (true)
+            {
+                try
+                {
+                    dll.LucamSnapshot snapshotSettings = new dll.LucamSnapshot();
+                    snapshotSettings.Exposure = Convert.ToSingle(Settings.m_exposure);
+                    snapshotSettings.Format = Settings.GetUnderliningFormat();
+                    snapshotSettings.Gain = Convert.ToSingle(Settings.m_gain);
+                    snapshotSettings.Timeout = snapshotSettings.Exposure + 1000;
 
-            byte[] data = null;
+                    byte[] data = null;
 
-            DateTime started = System.DateTime.Now;
+                    DateTime started = System.DateTime.Now;
 
-            api.TakeSnapshot(Handle, snapshotSettings, data);
+                    api.TakeSnapshot(Handle, snapshotSettings, data);
 
-            TimeSpan elapsed = System.DateTime.Now - started;
+                    TimeSpan elapsed = System.DateTime.Now - started;
+
+                    break;
+                }
+                catch (Exception err)
+                {
+                    consecutive_error_count += 1;
+                    if (consecutive_error_count >= 3)
+                    {
+                        throw err;
+                    }
+                }
+            }
         }
 
         public void StopCapture()
