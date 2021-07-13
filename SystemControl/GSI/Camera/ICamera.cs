@@ -23,14 +23,14 @@ namespace GSI.Camera
         event EventHandler OnEndCapture;
 
         /// <summary>
-        /// Called when an image is recived.
+        /// Called when an image is received.
         /// </summary>
-        event EventHandler<ImageRecivedEventArgs> ImageCaptured;
+        event EventHandler<ImagereceivedEventArgs> ImageCaptured;
 
         /// <summary>
-        /// Called when a preview image has been recived.
+        /// Called when a preview image has been received.
         /// </summary>
-        event EventHandler<ImageRecivedEventArgs> PreviewImageRecived;
+        event EventHandler<ImagereceivedEventArgs> PreviewImagereceived;
 
         /// <summary>
         /// Called after the settings have changed.
@@ -41,7 +41,7 @@ namespace GSI.Camera
         /// Returns the camera timer resolution in seconds.
         /// </summary>
         double TimerResolution { get; }
-        
+
         /// <summary>
         /// The current time in the camera clock.
         /// </summary>
@@ -62,6 +62,7 @@ namespace GSI.Camera
         /// </summary>
         int Height { get; }
 
+<<<<<<< HEAD
         /// <summary>
         /// Strart stop video streaming.
         /// </summary>
@@ -70,17 +71,21 @@ namespace GSI.Camera
 
         /// <summary>
         /// Single shot camera capture.
+=======
+        /// <summary>
+        /// Single shot camera capture.
+>>>>>>> 9fb96419ff7c193ec0891f22984774049f751faa
         /// </summary>
         void Capture();
 
         /// <summary>
-        /// Starts the data capture.
+        /// Starts the continues data capture.
         /// </summary>
         /// <returns></returns>
-        void StartCapture(int max_images=-1);
+        void StartCapture(int max_images = -1);
 
         /// <summary>
-        /// Ends the data captrue.
+        /// Ends the continues data captrue.
         /// </summary>
         /// <returns></returns>
         void StopCapture();

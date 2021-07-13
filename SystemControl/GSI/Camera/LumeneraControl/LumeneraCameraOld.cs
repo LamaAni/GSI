@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace GSI.Camera.LumeneraControl
 {
-    public abstract class LumeneraCamera : ICamera
+    public abstract class LumeneraCameraOld : ICamera
     {
         #region static methods
 
@@ -189,21 +189,11 @@ namespace GSI.Camera.LumeneraControl
 
                     if (SettingsChanged != null)
                         SettingsChanged(this, null);
-<<<<<<< HEAD
-                };
-
-            // adding the camera data callback, the context is the camera itself.
-            __data_recived_callback = data_recived_callback;
-            __data_snapshot_callback = data_snapshot_callback;
-            api.AddStreamingCallback(Handle, __data_recived_callback, Handle);
-            api.AddSnapshotCallback(Handle, __data_snapshot_callback, Handle);
-=======
                 };
 
             // adding the camera data callback, the context is the camera itself. received
             __data_received_callback = data_received_callback;
             api.AddStreamingCallback(Handle, __data_received_callback, Handle);
->>>>>>> 9fb96419ff7c193ec0891f22984774049f751faa
 
             // If monochrome invert vertical
             ColorFormat = (dll.LucamColorFormat)api.GetProperty(Handle, dll.LucamProperty.COLOR_FORMAT);
@@ -462,14 +452,8 @@ namespace GSI.Camera.LumeneraControl
 
         protected abstract byte[] ValidateDataSize(byte[] data);
 
-<<<<<<< HEAD
-        dll.LucamStreamingCallback __data_recived_callback;
-        dll.LucamStreamingCallback __data_snapshot_callback;
-
-=======
         dll.LucamStreamingCallback __data_received_callback;
 
->>>>>>> 9fb96419ff7c193ec0891f22984774049f751faa
         protected byte[] GetDataFromPointer(int n, IntPtr pData, out ushort timestamp)
         {
             byte[] image = new byte[n];
@@ -478,13 +462,6 @@ namespace GSI.Camera.LumeneraControl
             return image;
         }
 
-<<<<<<< HEAD
-        void process_camera_data(byte[] data, ushort timestamp, bool invoke_capture = false)
-        {
-            bool hasPreview = IsPreviewing && _pendingPreview == null;
-
-            // Circular condition on the timestamp value.
-=======
         void data_received_callback(IntPtr context, IntPtr pData, int n)
         {
             bool hasPreview = IsPreviewing && _pendingPreview == null;
@@ -493,7 +470,6 @@ namespace GSI.Camera.LumeneraControl
             data = GetDataFromPointer(n, pData, out timestamp);
 
             // Circular condition on the timestamp value.
->>>>>>> 9fb96419ff7c193ec0891f22984774049f751faa
             int timestampActuall = timestamp < lastTimestampRead ? timestamp + ushort.MaxValue :
                 timestamp;
 
@@ -507,39 +483,20 @@ namespace GSI.Camera.LumeneraControl
             lastTimestampRead = timestamp;
             ActualFrameRate = 1.0 / (dtInRatio * 1.0 / CameraClockFrequency);
 
-            if (hasPreview  || invoke_capture)
+            if (hasPreview || IsCapturing)
             {
                 Tuple<byte[], DateTime> image =
                     new Tuple<byte[], DateTime>(data, _CameraComputerClock + CameraElapsed);
-
                 if (hasPreview)
                 {
                     _pendingPreview = image;
                 }
 
-                if (invoke_capture)
+                if (IsCapturing)
                 {
                     PostCapture(image);
                 }
             }
-        }
-
-        void data_snapshot_callback(IntPtr context, IntPtr pData, int n)
-        {
-            ushort timestamp;
-            byte[] data = null;
-
-            data = GetDataFromPointer(n, pData, out timestamp);
-            process_camera_data(data, timestamp, true);
-        }
-
-        void data_recived_callback(IntPtr context, IntPtr pData, int n)
-        {
-            ushort timestamp;
-            byte[] data = null;
-
-            data = GetDataFromPointer(n, pData, out timestamp);
-            process_camera_data(data, timestamp, IsCapturing);
         }
 
         #endregion
@@ -582,27 +539,6 @@ namespace GSI.Camera.LumeneraControl
             InitCapture();
         }
 
-<<<<<<< HEAD
-        public void Stream(bool enabled = true)
-        {
-            bool is_currently_streaming = this.IsStreaming();
-            if (is_currently_streaming && !enabled)
-                this.StopStreamVideo();
-            else if (!is_currently_streaming && enabled)
-                this.StartStreamVideo();
-        }
-
-        public void Capture()
-        {
-            dll.LucamSnapshot snapshotSettings = new dll.LucamSnapshot();
-            snapshotSettings.Exposure = Convert.ToSingle(Settings.m_exposure);
-            snapshotSettings.Format = Settings.GetUnderliningFormat();
-            snapshotSettings.Gain = Convert.ToSingle(Settings.m_gain);
-
-            byte[] data = null;
-
-            api.TakeSnapshot(Handle, snapshotSettings, data);
-=======
         public void Capture()
         {
             var started = DateTime.Now;
@@ -613,17 +549,14 @@ namespace GSI.Camera.LumeneraControl
             var captureTimeMs = (DateTime.Now - started).TotalMilliseconds;
             this.StopCapture();
             this.PendingCaptures.Clear();
->>>>>>> 9fb96419ff7c193ec0891f22984774049f751faa
         }
 
         public void StopCapture()
         {
-            if (IsCapturing)
-            {
-                IsCapturing = false;
-                if (OnEndCapture != null)
-                    OnEndCapture(this, null);
-            }
+            IsCapturing = false;
+
+            if (OnEndCapture != null)
+                OnEndCapture(this, null);
         }
 
         public event EventHandler<ImagereceivedEventArgs> PreviewImagereceived;

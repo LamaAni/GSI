@@ -15,10 +15,10 @@ namespace GSI.Stage
     public interface IPositionControl : ITimeKeeper
     {
         /// <summary>
-        /// Called when a position is recived by the device.
+        /// Called when a position is received by the device.
         /// <para>NOTE! if this action takes a long time if will stop the reading thread.</para>
         /// </summary>
-        event EventHandler<PositionRecivedEventArgs> OnRecivedPosition;
+        event EventHandler<PositionreceivedEventArgs> OnreceivedPosition;
 
         /// <summary>
         /// The x position.
@@ -95,9 +95,9 @@ namespace GSI.Stage
         void SetAsHome();
     }
 
-    public class PositionRecivedEventArgs : EventArgs
+    public class PositionreceivedEventArgs : EventArgs
     {
-        public PositionRecivedEventArgs(double x, double y, DateTime stamp, DateTime zeroTime)
+        public PositionreceivedEventArgs(double x, double y, DateTime stamp, DateTime zeroTime)
         {
             X = x;
             Y = y;

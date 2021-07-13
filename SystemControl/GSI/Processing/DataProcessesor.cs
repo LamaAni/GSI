@@ -108,11 +108,11 @@ namespace GSI.Processing
         /// <summary>
         /// Called to do data processing on read vectors.
         /// </summary>
-        /// <param name="onRecivedVectors">Action to ttake when vectors recived, (start index, number read, data vectors multidim, data vector)</param>
-        /// <param name="recivedVector">Called to do some actions when vectors are recived.</param>
+        /// <param name="onreceivedVectors">Action to ttake when vectors received, (start index, number read, data vectors multidim, data vector)</param>
+        /// <param name="receivedVector">Called to do some actions when vectors are received.</param>
         /// <param name="useBuffers">If true, the same memory buffers will be used for faster reading. 
         /// Otherwise a new memory buffer will be created on each read (slower).</param>
-        public void DoDataProcessing(Action<int, int, byte[, ,], byte[]> onRecivedVectors, bool useBuffers = true)
+        public void DoDataProcessing(Action<int, int, byte[, ,], byte[]> onreceivedVectors, bool useBuffers = true)
         {
             // set the aborted to false.
             Aborted = false;
@@ -159,8 +159,8 @@ namespace GSI.Processing
                 if (Aborted)
                     break;
 
-                if (onRecivedVectors != null)
-                    onRecivedVectors(curVectorIndex, n, vectors, readbuffer);
+                if (onreceivedVectors != null)
+                    onreceivedVectors(curVectorIndex, n, vectors, readbuffer);
 
                 timer.Mark("Processing");
 

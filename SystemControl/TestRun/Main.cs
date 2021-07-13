@@ -31,7 +31,7 @@ namespace TestRun
         #region members
 
         /// <summary>
-        /// The last preview image recived.
+        /// The last preview image received.
         /// </summary>
         public byte[] LastPreviewImage { get; private set; }
         public DateTime LastPreviewTimeStamp = DateTime.Now;
@@ -134,7 +134,7 @@ namespace TestRun
                 // attach the camera to the display.
                 prevPannel.AttachCamera(Camera);
 
-                Camera.PreviewImageRecived += (s, ev) =>
+                Camera.PreviewImagereceived += (s, ev) =>
                 {
                     SetLastPreviewData(ev.Data, ev.TimeStamp);
                     StringBuilder sb = new StringBuilder();

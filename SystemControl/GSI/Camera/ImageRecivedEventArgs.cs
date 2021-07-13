@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 namespace GSI.Camera
 {
     /// <summary>
-    /// Image recived in camera event args.
+    /// Image received in camera event args.
     /// </summary>
-    public class ImageRecivedEventArgs : EventArgs
+    public class ImagereceivedEventArgs : EventArgs
     {
         /// <summary>
         /// 
@@ -22,7 +22,7 @@ namespace GSI.Camera
         /// <param name="format"></param>
         /// <param name="timeStamp">The time elapsed till the image from last timer reset.</param>
         /// <param name="TimeOfLastSync">The time of the last camera sync</param>
-        internal ImageRecivedEventArgs(int width, int height, byte[] data,
+        internal ImagereceivedEventArgs(int width, int height, byte[] data,
             dll.LucamPixelFormat format, DateTime timeStamp, DateTime TimeOfLastSync)
         {
             Width = width;
