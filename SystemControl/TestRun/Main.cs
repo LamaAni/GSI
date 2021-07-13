@@ -225,6 +225,7 @@ namespace TestRun
 
         void SetPreview(bool active)
         {
+            btnVideo.BackColor = Camera.IsPreviewing ? Color.Green : Color.Gray;
             if (active && !Camera.IsPreviewing)
             {
                 btnTogglePreview.BackColor = connectEndabledColor;
@@ -652,6 +653,12 @@ namespace TestRun
         private void scanRange_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void btnVideo_Click(object sender, EventArgs e)
+        {
+            this.SetPreview(!Camera.IsPreviewing);
+            
         }
     }
 }

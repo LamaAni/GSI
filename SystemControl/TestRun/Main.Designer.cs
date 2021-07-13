@@ -50,6 +50,7 @@
             this.panel4 = new System.Windows.Forms.Panel();
             this.barProg = new System.Windows.Forms.ProgressBar();
             this.prevPannel = new GSIControls.Camera.PreviewDisplayPannel();
+            this.btnVideo = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.grpCommands.SuspendLayout();
             this.pnlScanControl.SuspendLayout();
@@ -59,6 +60,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.btnVideo);
             this.panel1.Controls.Add(this.grpCommands);
             this.panel1.Controls.Add(this.btnConnect);
             this.panel1.Controls.Add(this.btnDoForierTransform);
@@ -158,7 +160,7 @@
             // 
             this.btnConnect.Location = new System.Drawing.Point(12, 12);
             this.btnConnect.Name = "btnConnect";
-            this.btnConnect.Size = new System.Drawing.Size(197, 23);
+            this.btnConnect.Size = new System.Drawing.Size(112, 23);
             this.btnConnect.TabIndex = 0;
             this.btnConnect.Text = "Connect";
             this.btnConnect.UseVisualStyleBackColor = true;
@@ -236,7 +238,7 @@
             this.lblStagePos.ForeColor = System.Drawing.Color.White;
             this.lblStagePos.Location = new System.Drawing.Point(221, 21);
             this.lblStagePos.Name = "lblStagePos";
-            this.lblStagePos.Size = new System.Drawing.Size(62, 13);
+            this.lblStagePos.Size = new System.Drawing.Size(69, 15);
             this.lblStagePos.TabIndex = 3;
             this.lblStagePos.Text = "[Stage Pos]";
             // 
@@ -246,7 +248,7 @@
             this.lblStatus.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblStatus.Location = new System.Drawing.Point(6, 6);
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(35, 13);
+            this.lblStatus.Size = new System.Drawing.Size(41, 15);
             this.lblStatus.TabIndex = 16;
             this.lblStatus.Text = "label5";
             // 
@@ -290,6 +292,16 @@
             this.prevPannel.Size = new System.Drawing.Size(657, 438);
             this.prevPannel.TabIndex = 0;
             this.prevPannel.Text = "prevPannel";
+            // 
+            // btnVideo
+            // 
+            this.btnVideo.Location = new System.Drawing.Point(130, 11);
+            this.btnVideo.Name = "btnVideo";
+            this.btnVideo.Size = new System.Drawing.Size(74, 24);
+            this.btnVideo.TabIndex = 33;
+            this.btnVideo.Text = "Preview";
+            this.btnVideo.UseVisualStyleBackColor = true;
+            this.btnVideo.Click += new System.EventHandler(this.btnVideo_Click);
             // 
             // Main
             // 
@@ -339,6 +351,7 @@
         private GSIControls.Stage.ScanRangeBox scanRange;
         private GSIControls.Stage.ScanImageParameters scanParameters;
         private GSIControls.Stage.StageControlBox stageControl;
+        private System.Windows.Forms.Button btnVideo;
     }
 }
 

@@ -63,6 +63,12 @@ namespace GSI.Camera
         int Height { get; }
 
         /// <summary>
+        /// Strart stop video streaming.
+        /// </summary>
+        /// <param name="enabled">If true then start the streaming</param>
+        void Stream(bool enabled = true);
+
+        /// <summary>
         /// Single shot camera capture.
         /// </summary>
         void Capture();
