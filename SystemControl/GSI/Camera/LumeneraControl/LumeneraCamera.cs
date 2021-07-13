@@ -601,8 +601,8 @@ namespace GSI.Camera.LumeneraControl
                 }
                 catch (Exception err)
                 {
-                    System.Threading.Thread.Sleep(10);
                     consecutive_error_count += 1;
+                    if (consecutive_error_count > 1) System.Threading.Thread.Sleep(1000);
                     if (consecutive_error_count >= 3)
                     {
                         throw err;
