@@ -501,6 +501,8 @@ namespace GSI.Camera.LumeneraControl
             return image;
         }
 
+        Tuple<byte[], DateTime> snapshot_callback_last_result = null;
+
         void data_snapshot_callback(IntPtr context, IntPtr pData, int n)
         {
             ushort timestamp;
@@ -508,8 +510,7 @@ namespace GSI.Camera.LumeneraControl
 
             data = GetDataFromPointer(n, pData, out timestamp);
             var image = process_camera_data(data, timestamp, false);
-            data = ValidateDataSize(image.Item1);
-            EmitImageCaptured(data, image.Item2);
+            snapshot_callback_last_result = image;
         }
 
         void data_recived_callback(IntPtr context, IntPtr pData, int n)
@@ -590,6 +591,11 @@ namespace GSI.Camera.LumeneraControl
                     api.TakeSnapshot(Handle, snapshotSettings, data);
 
                     TimeSpan elapsed = System.DateTime.Now - started;
+
+                    var image = snapshot_callback_last_result;
+
+                    data = ValidateDataSize(image.Item1);
+                    EmitImageCaptured(data, image.Item2);
 
                     break;
                 }
