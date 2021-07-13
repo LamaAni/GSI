@@ -62,7 +62,6 @@ namespace GSI.Camera
         /// </summary>
         int Height { get; }
 
-<<<<<<< HEAD
         /// <summary>
         /// Strart stop video streaming.
         /// </summary>
@@ -71,10 +70,6 @@ namespace GSI.Camera
 
         /// <summary>
         /// Single shot camera capture.
-=======
-        /// <summary>
-        /// Single shot camera capture.
->>>>>>> 9fb96419ff7c193ec0891f22984774049f751faa
         /// </summary>
         void Capture();
 
