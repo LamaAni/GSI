@@ -54,10 +54,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Camera\ImageRecivedEventArgs.cs" />
     <Compile Include="Camera\LumeneraControl\CameraSettings.cs" />
     <Compile Include="Camera\LumeneraControl\CameraPreviewInfo.cs" />
     <Compile Include="Camera\LumeneraControl\LumeneraCamera.cs" />
-    <Compile Include="Camera\ImagereceivedEventArgs.cs" />
     <Compile Include="Camera\ICamera.cs" />
     <Compile Include="Camera\LumeneraControl\CameraConnectionInfo.cs" />
     <Compile Include="Camera\LumeneraControl\Lt255.cs" />
