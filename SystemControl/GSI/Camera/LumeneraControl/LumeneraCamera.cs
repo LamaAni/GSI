@@ -577,7 +577,11 @@ namespace GSI.Camera.LumeneraControl
 
             byte[] data = null;
 
+            DateTime started = System.DateTime.Now
+
             api.TakeSnapshot(Handle, snapshotSettings, data);
+
+            TimeSpan elapsed = System.DateTime.Now - started
         }
 
         public void StopCapture()
