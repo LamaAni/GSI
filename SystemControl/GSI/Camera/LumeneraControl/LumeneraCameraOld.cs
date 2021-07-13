@@ -470,11 +470,11 @@ namespace GSI.Camera.LumeneraControl
             data = GetDataFromPointer(n, pData, out timestamp);
 
             // Circular condition on the timestamp value.
-            int timestampActuall = timestamp < lastTimestampRead ? timestamp + ushort.MaxValue :
+            int timestampActual = timestamp < lastTimestampRead ? timestamp + ushort.MaxValue :
                 timestamp;
 
             // Time diffrent from last.
-            ushort dtInRatio = (ushort)(timestampActuall - lastTimestampRead);
+            ushort dtInRatio = (ushort)(timestampActual - lastTimestampRead);
 
             // adding the clock dt.
             cameraClock += dtInRatio;

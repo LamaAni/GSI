@@ -1075,7 +1075,7 @@
             Gets or sets the <see cref="T:ZedGraph.GraphPane"/> property for the control
             </summary>
             <remarks>
-            <see cref="T:ZedGraph.ZedGraphControl"/> actually uses a <see cref="P:ZedGraph.ZedGraphControl.MasterPane"/> object
+            <see cref="T:ZedGraph.ZedGraphControl"/> Actualy uses a <see cref="P:ZedGraph.ZedGraphControl.MasterPane"/> object
             to hold a list of <see cref="P:ZedGraph.ZedGraphControl.GraphPane"/> objects.  This property really only
             accesses the first <see cref="P:ZedGraph.ZedGraphControl.GraphPane"/> in the list.  If there is more
             than one <see cref="P:ZedGraph.ZedGraphControl.GraphPane"/>, use the <see cref="P:ZedGraph.ZedGraphControl.MasterPane"/>
@@ -1374,7 +1374,7 @@
             the <see cref="P:ZedGraph.ZedGraphControl.ScrollMinY2"/> and <see cref="P:ZedGraph.ZedGraphControl.ScrollMaxY2"/> values are not set to the
             same proportions as <see cref="P:ZedGraph.ZedGraphControl.ScrollMinY"/> and <see cref="P:ZedGraph.ZedGraphControl.ScrollMaxY"/> with respect
             to the actual <see cref="P:ZedGraph.Scale.Min"/> and <see cref="P:ZedGraph.Scale.Max"/>.  Also note that
-            this property is actually just an alias to the <see cref="P:ZedGraph.ScrollRange.IsScrollable"/>
+            this property is Actualy just an alias to the <see cref="P:ZedGraph.ScrollRange.IsScrollable"/>
             property of the first element of <see cref="P:ZedGraph.ZedGraphControl.YScrollRangeList"/>.
             </remarks>
             <seealso cref="P:ZedGraph.ZedGraphControl.IsShowVScrollBar"/>
@@ -1445,7 +1445,7 @@
             value applies only to the scroll bar settings.  Axis panning (see <see cref="P:ZedGraph.ZedGraphControl.IsEnableVPan"/>)
             is not affected by this value.  Note that this value can be overridden by
             <see cref="P:ZedGraph.ZedGraphControl.IsAutoScrollRange"/> and <see cref="M:ZedGraph.ZedGraphControl.SetScrollRangeFromData"/>.  Also note that
-            this property is actually just an alias to the <see cref="P:ZedGraph.ScrollRange.Min"/>
+            this property is Actualy just an alias to the <see cref="P:ZedGraph.ScrollRange.Min"/>
             property of the first element of <see cref="P:ZedGraph.ZedGraphControl.YScrollRangeList"/>.
             </remarks>
             <value>A double value indicating the minimum axis value</value>
@@ -1461,7 +1461,7 @@
             value applies only to the scroll bar settings.  Axis panning (see <see cref="P:ZedGraph.ZedGraphControl.IsEnableVPan"/>)
             is not affected by this value.  Note that this value can be overridden by
             <see cref="P:ZedGraph.ZedGraphControl.IsAutoScrollRange"/> and <see cref="M:ZedGraph.ZedGraphControl.SetScrollRangeFromData"/>.  Also note that
-            this property is actually just an alias to the <see cref="P:ZedGraph.ScrollRange.Max"/>
+            this property is Actualy just an alias to the <see cref="P:ZedGraph.ScrollRange.Max"/>
             property of the first element of <see cref="P:ZedGraph.ZedGraphControl.YScrollRangeList"/>.
             </remarks>
             <value>A double value indicating the maximum axis value</value>
@@ -1477,7 +1477,7 @@
             value applies only to the scroll bar settings.  Axis panning (see <see cref="P:ZedGraph.ZedGraphControl.IsEnableVPan"/>)
             is not affected by this value.  Note that this value can be overridden by
             <see cref="P:ZedGraph.ZedGraphControl.IsAutoScrollRange"/> and <see cref="M:ZedGraph.ZedGraphControl.SetScrollRangeFromData"/>.  Also note that
-            this property is actually just an alias to the <see cref="P:ZedGraph.ScrollRange.Min"/>
+            this property is Actualy just an alias to the <see cref="P:ZedGraph.ScrollRange.Min"/>
             property of the first element of <see cref="P:ZedGraph.ZedGraphControl.Y2ScrollRangeList"/>.
             </remarks>
             <value>A double value indicating the minimum axis value</value>
@@ -1493,7 +1493,7 @@
             value applies only to the scroll bar settings.  Axis panning (see <see cref="P:ZedGraph.ZedGraphControl.IsEnableVPan"/>)
             is not affected by this value.  Note that this value can be overridden by
             <see cref="P:ZedGraph.ZedGraphControl.IsAutoScrollRange"/> and <see cref="M:ZedGraph.ZedGraphControl.SetScrollRangeFromData"/>.  Also note that
-            this property is actually just an alias to the <see cref="P:ZedGraph.ScrollRange.Max"/>
+            this property is Actualy just an alias to the <see cref="P:ZedGraph.ScrollRange.Max"/>
             property of the first element of <see cref="P:ZedGraph.ZedGraphControl.Y2ScrollRangeList"/>.
             </remarks>
             <value>A double value indicating the maximum axis value</value>
@@ -2725,8 +2725,8 @@
             ChildClass bar = (ChildClass) ((ICloneable)foo).Clone();
             </code>
             Assume that ChildClass is inherited from ParentClass.  Even though foo is declared with
-            ParentClass, it is actually an instance of ChildClass.  Calling the ICloneable implementation
-            of Clone() on foo actually calls ChildClass.Clone() as if it were a virtual function.
+            ParentClass, it is Actualy an instance of ChildClass.  Calling the ICloneable implementation
+            of Clone() on foo Actualy calls ChildClass.Clone() as if it were a virtual function.
             </remarks>
             <returns>A deep copy of this object</returns>
         </member>
@@ -3698,8 +3698,8 @@
             ChildClass bar = (ChildClass) ((ICloneable)foo).Clone();
             </code>
             Assume that ChildClass is inherited from ParentClass.  Even though foo is declared with
-            ParentClass, it is actually an instance of ChildClass.  Calling the ICloneable implementation
-            of Clone() on foo actually calls ChildClass.Clone() as if it were a virtual function.
+            ParentClass, it is Actualy an instance of ChildClass.  Calling the ICloneable implementation
+            of Clone() on foo Actualy calls ChildClass.Clone() as if it were a virtual function.
             </remarks>
             <returns>A deep copy of this object</returns>
         </member>
@@ -4228,7 +4228,7 @@
         <member name="T:ZedGraph.Chart">
             <summary>
             Class that handles the properties of the charting area (where the curves are
-            actually drawn), which is bounded by the <see cref="T:ZedGraph.XAxis"/>, <see cref="T:ZedGraph.YAxis"/>,
+            Actualy drawn), which is bounded by the <see cref="T:ZedGraph.XAxis"/>, <see cref="T:ZedGraph.YAxis"/>,
             and <see cref="T:ZedGraph.Y2Axis"/>.
             </summary>
             
@@ -4396,7 +4396,7 @@
             </summary>
             <remarks>For this type to work properly, your <see cref="T:ZedGraph.IPointList"/> must contain
             <see cref="T:ZedGraph.StockPt"/> objects, rather than ordinary <see cref="T:ZedGraph.PointPair"/> types.
-            This is because the <see cref="T:ZedGraph.OHLCBarItem"/> type actually displays 5 data values
+            This is because the <see cref="T:ZedGraph.OHLCBarItem"/> type Actualy displays 5 data values
             but the <see cref="T:ZedGraph.PointPair"/> only stores 3 data values.  The <see cref="T:ZedGraph.StockPt"/>
             stores <see cref="P:ZedGraph.StockPt.Date"/>, <see cref="F:ZedGraph.StockPt.Close"/>,
             <see cref="F:ZedGraph.StockPt.Open"/>, <see cref="P:ZedGraph.StockPt.High"/>, and
@@ -4583,8 +4583,8 @@
             ChildClass bar = (ChildClass) ((ICloneable)foo).Clone();
             </code>
             Assume that ChildClass is inherited from ParentClass.  Even though foo is declared with
-            ParentClass, it is actually an instance of ChildClass.  Calling the ICloneable implementation
-            of Clone() on foo actually calls ChildClass.Clone() as if it were a virtual function.
+            ParentClass, it is Actualy an instance of ChildClass.  Calling the ICloneable implementation
+            of Clone() on foo Actualy calls ChildClass.Clone() as if it were a virtual function.
             </remarks>
             <returns>A deep copy of this object</returns>
         </member>
@@ -5925,7 +5925,7 @@
             This method works for
             both X and Y direction axes, and it works for angled text (assuming that a bounding box
             is an appropriate measure).  Technically, labels at 45 degree angles could fit better than
-            the return value of this method since the bounding boxes can overlap without the labels actually
+            the return value of this method since the bounding boxes can overlap without the labels Actualy
             overlapping.
             </remarks>
             <param name="pane">A reference to the <see cref="T:ZedGraph.GraphPane"/> object
@@ -8365,8 +8365,8 @@
             ChildClass bar = (ChildClass) ((ICloneable)foo).Clone();
             </code>
             Assume that ChildClass is inherited from ParentClass.  Even though foo is declared with
-            ParentClass, it is actually an instance of ChildClass.  Calling the ICloneable implementation
-            of Clone() on foo actually calls ChildClass.Clone() as if it were a virtual function.
+            ParentClass, it is Actualy an instance of ChildClass.  Calling the ICloneable implementation
+            of Clone() on foo Actualy calls ChildClass.Clone() as if it were a virtual function.
             </remarks>
             <returns>A deep copy of this object</returns>
         </member>
@@ -8600,9 +8600,9 @@
             will be rendered.
             </summary>
             <remarks>Note that this rectangle has x, y, width, and height.  Most of the
-            GDI+ graphic primitive actually draw one pixel beyond those dimensions.  For
+            GDI+ graphic primitive Actualy draw one pixel beyond those dimensions.  For
             example, for a rectangle of ( X=0, Y=0, Width=100, Height=100 ), GDI+ would
-            draw into pixels 0 through 100, which is actually 101 pixels.  For the
+            draw into pixels 0 through 100, which is Actualy 101 pixels.  For the
             ZedGraph Rect, a Width of 100 pixels means that pixels 0 through 99 are used</remarks>
             <value>Units are pixels.</value>
             <seealso cref="M:ZedGraph.PaneBase.ReSize(System.Drawing.Graphics,System.Drawing.RectangleF)"/>
@@ -12125,7 +12125,7 @@
             (<see cref="F:ZedGraph.BarBase.Y"/> or
             <see cref="F:ZedGraph.BarBase.Y2"/>), you will need to change the symbol to
             <see cref="F:ZedGraph.SymbolType.VDash"/> to get horizontal "I-Beams".
-            Since the horizontal segments are actually symbols, their widths are
+            Since the horizontal segments are Actualy symbols, their widths are
             controlled by the symbol size in <see cref="P:ZedGraph.ErrorBar.Symbol"/>,
             specified in points (1/72nd inch).  The position of each "I-Beam" is set
             according to the <see cref="T:ZedGraph.PointPair"/> values.  The independent axis
@@ -12727,8 +12727,8 @@
             ChildClass bar = (ChildClass) ((ICloneable)foo).Clone();
             </code>
             Assume that ChildClass is inherited from ParentClass.  Even though foo is declared with
-            ParentClass, it is actually an instance of ChildClass.  Calling the ICloneable implementation
-            of Clone() on foo actually calls ChildClass.Clone() as if it were a virtual function.
+            ParentClass, it is Actualy an instance of ChildClass.  Calling the ICloneable implementation
+            of Clone() on foo Actualy calls ChildClass.Clone() as if it were a virtual function.
             </remarks>
             <returns>A deep copy of this object</returns>
         </member>
@@ -12802,7 +12802,7 @@
             </summary>
             <remarks>
             The currently required space is calculated using <see cref="M:ZedGraph.Axis.CalcSpace(System.Drawing.Graphics,ZedGraph.GraphPane,System.Single,System.Single@)"/>, and is
-            based on current data ranges, font sizes, etc.  The "space" is actually the amount of space
+            based on current data ranges, font sizes, etc.  The "space" is Actualy the amount of space
             required to fit the tic marks, scale labels, and axis title.
             </remarks>
             <param name="g">A graphic device object to be drawn into.  This is normally e.Graphics from the
@@ -13816,7 +13816,7 @@
             date calculations are done using Astronomical Julian Day numbers.  The Astronomical Julian
             Day number is defined as the number of days since noon on January 1st, 4713 B.C.
             (also referred to as 12:00 on January 1, -4712).
-            NOTE: MS Excel actually has an error in the Serial Date calculations because it
+            NOTE: MS Excel Actualy has an error in the Serial Date calculations because it
             errantly assumes 1900 is a leap year.  The XDate calculations do not have this same
             error.  Therefore, XDate and Excel Date Serial values are 1 day different up until
             the date value of 60 (in Excel, this is February 29th, 1900, and in XDate, this is
@@ -15930,7 +15930,7 @@
         <member name="M:ZedGraph.RollingPointPairList.GetNextIndex">
             <summary>
             Calculate that the next index in the buffer that should receive a new data point.
-            Note that this method actually advances the buffer, so a datapoint should be
+            Note that this method Actualy advances the buffer, so a datapoint should be
             added at _mBuffer[_headIdx].
             </summary>
             <returns>The index position of the new head element</returns>
@@ -18082,7 +18082,7 @@
             is calculated using the currently required space multiplied by a fraction
             (<paramref>bufferFraction</paramref>).
             The currently required space is calculated using <see cref="M:ZedGraph.Axis.CalcSpace(System.Drawing.Graphics,ZedGraph.GraphPane,System.Single,System.Single@)"/>, and is
-            based on current data ranges, font sizes, etc.  The "space" is actually the amount of space
+            based on current data ranges, font sizes, etc.  The "space" is Actualy the amount of space
             required to fit the tic marks, scale labels, and axis title.
             The calculation is done by calling the <see cref="M:ZedGraph.Axis.SetMinSpaceBuffer(System.Drawing.Graphics,ZedGraph.GraphPane,System.Single,System.Boolean)"/> method for
             each <see cref="T:ZedGraph.Axis"/>.
@@ -20237,7 +20237,7 @@
         <member name="F:ZedGraph.SampleMultiPointList.DataCollection">
             <summary>
             This is where the data are stored.  Duplicating the <see cref="T:ZedGraph.SampleMultiPointList"/>
-            copies the reference to this <see cref="T:System.Collections.ArrayList"/>, but does not actually duplicate
+            copies the reference to this <see cref="T:System.Collections.ArrayList"/>, but does not Actualy duplicate
             the data.
             </summary>
         </member>
@@ -21417,7 +21417,7 @@
             is assigned with <see cref="P:ZedGraph.BarSettings.Base"/>, and is a
             <see cref="T:ZedGraph.BarBase"/> enum type.  If <see cref="P:ZedGraph.BarSettings.Base"/>
             is set to <see cref="F:ZedGraph.BarBase.Y"/> or <see cref="F:ZedGraph.BarBase.Y2"/>, then
-            the bars will actually be horizontal, since the X axis becomes the
+            the bars will Actualy be horizontal, since the X axis becomes the
             value axis and the Y or Y2 axis becomes the independent axis.</remarks>
             <author> John Champion </author>
             <version> $Revision: 3.18 $ $Date: 2007-11-03 04:41:28 $ </version>
@@ -21572,7 +21572,7 @@
         <member name="P:ZedGraph.ZoomStateStack.Top">
             <summary>
             Gets a reference to the <see cref="T:ZedGraph.ZoomState"/> object at the top of the stack,
-            without actually removing it from the stack.
+            without Actualy removing it from the stack.
             </summary>
             <value>A <see cref="T:ZedGraph.ZoomState"/> object reference, or null if the stack is empty.</value>
         </member>
@@ -23398,7 +23398,7 @@
             </summary>
             <remarks>For this type to work properly, your <see cref="T:ZedGraph.IPointList"/> must contain
             <see cref="T:ZedGraph.StockPt"/> objects, rather than ordinary <see cref="T:ZedGraph.PointPair"/> types.
-            This is because the <see cref="T:ZedGraph.OHLCBarItem"/> type actually displays 5 data values
+            This is because the <see cref="T:ZedGraph.OHLCBarItem"/> type Actualy displays 5 data values
             but the <see cref="T:ZedGraph.PointPair"/> only stores 3 data values.  The <see cref="T:ZedGraph.StockPt"/>
             stores <see cref="P:ZedGraph.StockPt.Date"/>, <see cref="F:ZedGraph.StockPt.Close"/>,
             <see cref="F:ZedGraph.StockPt.Open"/>, <see cref="P:ZedGraph.StockPt.High"/>, and
@@ -24600,7 +24600,7 @@
             The color hue value, ranging from 0 to 255.
             </summary>
             <remarks>
-            This property is actually a rescaling of the 360 degrees on the color wheel to 255
+            This property is Actualy a rescaling of the 360 degrees on the color wheel to 255
             possible values.  Therefore, every 42.5 units is a new sector, with the following
             convention:  red=0, yellow=42.5, green=85, cyan=127.5, blue=170, magenta=212.5
             </remarks>
@@ -25356,7 +25356,7 @@
             <remarks>
             Note that this value, when defined, will determine the color that is used in the legend.
             If this value is set to double.MaxValue, then it remains "undefined."  In this case, the
-            legend symbols will actually be filled with a color gradient representing the range of
+            legend symbols will Actualy be filled with a color gradient representing the range of
             colors.
             </remarks>
             <seealso cref="F:ZedGraph.FillType.GradientByX"/>

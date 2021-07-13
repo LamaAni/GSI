@@ -347,6 +347,15 @@ namespace GSI.Camera.LumeneraControl
         //Queue<System.Threading.Tasks.TaskCompletionSource<byte[]>> PendingImageWaits = new Queue<TaskCompletionSource<byte[]>>();
         Queue<System.Threading.ManualResetEvent> PendingImageWaits = new Queue<System.Threading.ManualResetEvent>();
 
+        protected void EmitImageCaptured(byte[] data, DateTime ts)
+        {
+            ImagereceivedEventArgs args = new ImagereceivedEventArgs(
+                            Settings.Width, Settings.Height, data, Settings.PixelFormat, ts,
+                            _CameraComputerClock);
+
+            ImageCaptured(this, args);
+        }
+
         /// <summary>
         /// Initializes the capture process.
         /// </summary>
@@ -392,11 +401,7 @@ namespace GSI.Camera.LumeneraControl
 
                     if (ImageCaptured != null)
                     {
-                        ImagereceivedEventArgs args = new ImagereceivedEventArgs(
-                            Settings.Width, Settings.Height, data, Settings.PixelFormat, capture.Item2,
-                            _CameraComputerClock);
-
-                        ImageCaptured(this, args);
+                        EmitImageCaptured(data, capture.Item2);
                     }
 
                     while (PendingImageWaits.Count > 0)
@@ -465,16 +470,16 @@ namespace GSI.Camera.LumeneraControl
             return image;
         }
 
-        void process_camera_data(byte[] data, ushort timestamp, bool invoke_capture = false)
+        Tuple<byte[], DateTime> process_camera_data(byte[] data, ushort timestamp, bool invoke_capture = false)
         {
             bool hasPreview = IsPreviewing && _pendingPreview == null;
 
             // Circular condition on the timestamp value.
-            int timestampActuall = timestamp < lastTimestampRead ? timestamp + ushort.MaxValue :
+            int timestampActual = timestamp < lastTimestampRead ? timestamp + ushort.MaxValue :
                 timestamp;
 
             // Time diffrent from last.
-            ushort dtInRatio = (ushort)(timestampActuall - lastTimestampRead);
+            ushort dtInRatio = (ushort)(timestampActual - lastTimestampRead);
 
             // adding the clock dt.
             cameraClock += dtInRatio;
@@ -483,21 +488,17 @@ namespace GSI.Camera.LumeneraControl
             lastTimestampRead = timestamp;
             ActualFrameRate = 1.0 / (dtInRatio * 1.0 / CameraClockFrequency);
 
-            if (hasPreview || invoke_capture)
-            {
-                Tuple<byte[], DateTime> image =
-                    new Tuple<byte[], DateTime>(data, _CameraComputerClock + CameraElapsed);
+            Tuple<byte[], DateTime> image =
+                                new Tuple<byte[], DateTime>(data, _CameraComputerClock + CameraElapsed);
 
-                if (hasPreview)
-                {
-                    _pendingPreview = image;
-                }
+            if (hasPreview)
+                _pendingPreview = image;
 
-                if (invoke_capture)
-                {
-                    PostCapture(image);
-                }
-            }
+
+            if (invoke_capture)
+                PostCapture(image);
+
+            return image;
         }
 
         void data_snapshot_callback(IntPtr context, IntPtr pData, int n)
@@ -506,7 +507,9 @@ namespace GSI.Camera.LumeneraControl
             byte[] data = null;
 
             data = GetDataFromPointer(n, pData, out timestamp);
-            process_camera_data(data, timestamp, true);
+            var image = process_camera_data(data, timestamp, false);
+            data = ValidateDataSize(image.Item1);
+            EmitImageCaptured(data, image.Item2);
         }
 
         void data_recived_callback(IntPtr context, IntPtr pData, int n)

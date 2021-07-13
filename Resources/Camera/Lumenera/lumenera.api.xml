@@ -3850,7 +3850,7 @@
         <member name="M:Lumenera.USB.api.SetFrameRate(System.IntPtr,System.Double)">
             <summary>
             Set the frame rate for the specified camera. Note that the camera may not support an arbitrary frame rate.
-            To determine which frame rate is actually configured the user should call GetFrameRate() afterwards.
+            To determine which frame rate is Actualy configured the user should call GetFrameRate() afterwards.
             </summary>
             <param name="h">Lucam API camera handle.</param>
             <param name="frameRate">Frame rate.</param>
