@@ -194,8 +194,8 @@ namespace GSI.Camera.LumeneraControl
             // adding the camera data callback, the context is the camera itself.
             __data_recived_callback = data_recived_callback;
             __data_snapshot_callback = data_snapshot_callback;
-            api.AddStreamingCallback(Handle, __data_recived_callback, Handle);
-            api.AddSnapshotCallback(Handle, __data_snapshot_callback, Handle);
+            if (api.AddStreamingCallback(Handle, __data_recived_callback, Handle) < 0) throw new Exception("Could not set callback for stream");
+            if (api.AddSnapshotCallback(Handle, __data_snapshot_callback, Handle) < 0) throw new Exception("Could not set callback for snapshot");
 
             // If monochrome invert vertical
             ColorFormat = (dll.LucamColorFormat)api.GetProperty(Handle, dll.LucamProperty.COLOR_FORMAT);
@@ -483,7 +483,7 @@ namespace GSI.Camera.LumeneraControl
             lastTimestampRead = timestamp;
             ActualFrameRate = 1.0 / (dtInRatio * 1.0 / CameraClockFrequency);
 
-            if (hasPreview  || invoke_capture)
+            if (hasPreview || invoke_capture)
             {
                 Tuple<byte[], DateTime> image =
                     new Tuple<byte[], DateTime>(data, _CameraComputerClock + CameraElapsed);
